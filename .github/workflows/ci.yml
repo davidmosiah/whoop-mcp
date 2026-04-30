@@ -19,3 +19,4 @@ jobs:
       - run: npm run typecheck
       - run: npm run build
       - run: npm run smoke
+      - run: npm run test:summary

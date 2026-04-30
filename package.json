@@ -17,7 +17,8 @@
     "start": "node dist/index.js",
     "dev": "tsx src/index.ts",
     "smoke": "node scripts/smoke-tools.mjs",
-    "test": "npm run typecheck && npm run build && npm run smoke"
+    "test": "npm run typecheck && npm run build && npm run smoke && npm run test:summary",
+    "test:summary": "node scripts/summary-fixture-test.mjs"
   },
   "keywords": [
     "mcp",

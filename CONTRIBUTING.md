@@ -9,6 +9,7 @@ npm ci
 npm run typecheck
 npm run build
 npm run smoke
+npm run test:summary
 ```
 
 ## Design rules
@@ -25,4 +26,5 @@ npm run smoke
 - `npm run typecheck` passes.
 - `npm run build` passes.
 - `npm run smoke` passes.
+- `npm run test:summary` passes when summary logic changes.
 - README/tools docs are updated when behavior changes.
