@@ -8,7 +8,7 @@ mcp_servers:
     command: npx
     args:
       - -y
-      - "@davidbatista/whoop-mcp-server"
+      - "whoop-mcp-unofficial"
 ```
 
 Recommended first run:

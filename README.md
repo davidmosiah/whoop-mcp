@@ -46,7 +46,7 @@ Official WHOOP API docs: <https://developer.whoop.com/api/>
 After npm publication:
 
 ```bash
-npx -y @davidbatista/whoop-mcp-server doctor
+npx -y whoop-mcp-unofficial doctor
 ```
 
 For MCP clients, use the package with no subcommand so it starts the MCP stdio server.
@@ -86,9 +86,9 @@ read:recovery read:cycles read:workout read:sleep read:profile read:body_measure
 This is the recommended path for non-technical setup:
 
 ```bash
-npx -y @davidbatista/whoop-mcp-server setup
-npx -y @davidbatista/whoop-mcp-server auth
-npx -y @davidbatista/whoop-mcp-server doctor
+npx -y whoop-mcp-unofficial setup
+npx -y whoop-mcp-unofficial auth
+npx -y whoop-mcp-unofficial doctor
 ```
 
 What these commands do:
@@ -127,7 +127,7 @@ For npm/npx usage after publication:
   "mcpServers": {
     "whoop": {
       "command": "npx",
-      "args": ["-y", "@davidbatista/whoop-mcp-server"]
+      "args": ["-y", "whoop-mcp-unofficial"]
     }
   }
 }
@@ -140,7 +140,7 @@ If you do not run `setup`, you can still provide `WHOOP_CLIENT_ID`, `WHOOP_CLIEN
 Recommended for humans:
 
 ```bash
-npx -y @davidbatista/whoop-mcp-server auth
+npx -y whoop-mcp-unofficial auth
 ```
 
 Manual MCP-client flow:

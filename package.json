@@ -1,5 +1,5 @@
 {
-  "name": "@davidbatista/whoop-mcp-server",
+  "name": "whoop-mcp-unofficial",
   "version": "0.1.0",
   "description": "Unofficial MCP server for connecting AI agents to the WHOOP API.",
   "type": "module",
