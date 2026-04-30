@@ -6,12 +6,12 @@
     "url": "https://github.com/davidmosiah/whoop-mcp",
     "source": "github"
   },
-  "version": "0.1.1",
+  "version": "0.1.2",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "whoop-mcp-unofficial",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "transport": {
         "type": "stdio"
       },
@@ -46,7 +46,7 @@
         },
         {
           "name": "WHOOP_PRIVACY_MODE",
-          "description": "Optional payload mode: summary, structured, or raw. Defaults to structured.",
+          "description": "Optional payload mode: summary, structured, or raw. Defaults to structured. raw means full WHOOP API payloads, not raw device sensor streams.",
           "isRequired": false,
           "format": "string",
           "isSecret": false

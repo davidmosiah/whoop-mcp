@@ -4,7 +4,7 @@ import { DEFAULT_LIMIT, DEFAULT_MAX_PAGES, MAX_PAGES, MAX_WHOOP_LIMIT } from "..
 export const ResponseFormatSchema = z.enum(["markdown", "json"]).default("markdown");
 export const PrivacyModeValueSchema = z.enum(["summary", "structured", "raw"]);
 export const PrivacyModeSchema = PrivacyModeValueSchema.optional()
-  .describe("Optional per-call payload privacy override. Defaults to WHOOP_PRIVACY_MODE or structured. raw returns full WHOOP API payloads.");
+  .describe("Optional per-call payload privacy override. Defaults to WHOOP_PRIVACY_MODE or structured. raw returns full WHOOP API payloads, not raw device sensor streams.");
 
 export const DateTimeSchema = z.string()
   .datetime({ offset: true })
@@ -131,6 +131,39 @@ export const PrivacyAuditOutputSchema = z.object({
   redacted_key_patterns: z.array(z.string()),
   notes: z.array(z.string())
 }).strict();
+
+export const CapabilitiesOutputSchema = z.object({
+  project: z.string(),
+  mcp_name: z.string(),
+  creator: z.object({
+    name: z.string(),
+    github: z.string()
+  }).strict(),
+  unofficial: z.boolean(),
+  api_boundary: z.object({
+    source: z.string(),
+    raw_definition: z.string(),
+    does_not_include: z.array(z.string())
+  }).strict(),
+  auth_model: z.object({
+    type: z.string(),
+    token_storage: z.string(),
+    recommended_redirect_uri: z.string(),
+    default_scopes: z.array(z.string())
+  }).strict(),
+  privacy_modes: z.array(z.object({
+    mode: PrivacyModeValueSchema,
+    use_when: z.string()
+  }).strict()),
+  supported_data: z.array(z.object({
+    name: z.string(),
+    examples: z.array(z.string()),
+    tools: z.array(z.string())
+  }).strict()),
+  recommended_agent_flow: z.array(z.string()),
+  contribution_paths: z.array(z.string()),
+  links: z.record(z.string())
+}).passthrough();
 
 export const ConnectionStatusOutputSchema = z.object({
   ok: z.boolean(),

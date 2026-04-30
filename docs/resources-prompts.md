@@ -2,6 +2,7 @@
 
 ## Resources
 
+- `whoop://capabilities`
 - `whoop://latest/recovery`
 - `whoop://latest/sleep`
 - `whoop://latest/cycle`
@@ -9,6 +10,8 @@
 - `whoop://summary/weekly`
 
 Resources return JSON and respect the configured privacy mode where applicable.
+
+`whoop://capabilities` is static and does not call WHOOP. It is designed for agents that need to understand the project boundary, supported data, unsupported sensor streams, privacy modes and recommended tool order.
 
 ## Prompts
 

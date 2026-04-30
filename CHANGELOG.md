@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.2
+
+- Add `whoop_capabilities` and `whoop://capabilities` so agents can discover supported data, unsupported raw sensor streams, privacy modes and recommended tool order without calling WHOOP.
+- Add explicit data-boundary documentation for raw WHOOP API payloads vs raw device sensor streams.
+- Add FAQ, roadmap, install-help/data-coverage issue templates and PR checklist.
+- Improve the GitHub Pages site with data-boundary, FAQ and community/contribution sections.
+
 ## 0.1.1
 
 - Add `whoop-mcp-unofficial` as a binary alias so `npx -y whoop-mcp-unofficial setup` works directly.

@@ -31,6 +31,8 @@
     </a>
     <nav class="nav" aria-label="Primary navigation">
       <a href="#why">Why it matters</a>
+      <a href="#data">Data</a>
+      <a href="#faq">FAQ</a>
       <a href="#setup">Setup</a>
       <a href="#use">Prompts</a>
       <a href="#privacy">Privacy</a>
@@ -90,6 +92,61 @@
           <p>Your AI can suggest whether to push, maintain, deload, protect sleep or investigate a pattern.</p>
         </article>
       </div>
+    </section>
+
+    <section class="story-section" id="data">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Data boundary</p>
+        <h2>Clear about what WHOOP exposes.</h2>
+        <p class="section-lede">The bridge uses the official WHOOP OAuth API. It can expose the full API payload when you opt in, but it does not claim access to continuous sensor streams.</p>
+      </div>
+      <div class="story-grid">
+        <article class="story-card" data-reveal>
+          <span>Yes</span>
+          <h3>Processed WHOOP records</h3>
+          <p>Recovery, HRV, resting heart rate, sleep stages, cycles, strain, workouts, heart-rate zones, profile and body measurements.</p>
+        </article>
+        <article class="story-card" data-reveal>
+          <span>Raw</span>
+          <h3>Raw API payloads</h3>
+          <p><code>privacy_mode=raw</code> returns the upstream JSON from supported WHOOP endpoints. It is opt-in because health data is sensitive.</p>
+        </article>
+        <article class="story-card" data-reveal>
+          <span>No</span>
+          <h3>No sensor streams</h3>
+          <p>Continuous or second-by-second heart-rate samples are not available through the official WHOOP API, so they are outside this MCP today.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="faq-section" id="faq">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Questions people ask first</p>
+        <h2>Precise answers before anyone installs.</h2>
+        <p class="section-lede">A good health-data bridge should be explicit about what it can read, what it cannot read, and where the trust boundary sits.</p>
+      </div>
+      <div class="faq-grid">
+        <details class="faq-item" data-reveal open>
+          <summary>Does this fetch raw sensor data?</summary>
+          <p>No. <code>raw</code> means the full JSON returned by supported WHOOP API endpoints. It does not mean continuous heart-rate samples, accelerometer data or raw device telemetry.</p>
+        </details>
+        <details class="faq-item" data-reveal>
+          <summary>What should my agent call first?</summary>
+          <p>Start with <code>whoop_capabilities</code>, then <code>whoop_connection_status</code>, then <code>whoop_daily_summary</code> or <code>whoop_weekly_summary</code>.</p>
+        </details>
+        <details class="faq-item" data-reveal>
+          <summary>Where do secrets live?</summary>
+          <p>WHOOP credentials and tokens stay on your machine under <code>~/.whoop-mcp/</code>. Tools intentionally do not return OAuth token values.</p>
+        </details>
+        <details class="faq-item" data-reveal>
+          <summary>Is this medical advice?</summary>
+          <p>No. It gives recovery, sleep, training and performance context for your own agent workflows. It is not diagnosis, treatment or emergency monitoring.</p>
+        </details>
+      </div>
+      <p class="inline-link-row" data-reveal>
+        <a href="faq.md">Read the full FAQ</a>
+        <a href="roadmap.md">See the roadmap</a>
+      </p>
     </section>
 
     <section class="setup-section" id="setup">
@@ -250,6 +307,21 @@ Run setup, auth and doctor with npx.
 Add the MCP config to my client.
 Verify the connection.
 Keep tokens local and never print secrets.</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="community-section" id="community">
+      <div class="community-card" data-reveal>
+        <div>
+          <p class="eyebrow">For builders</p>
+          <h2>Open source, with a clear edge.</h2>
+          <p>Built by <a href="https://github.com/davidmosiah">David Mosiah</a> for people exploring practical AI-agent systems around personal health, recovery and performance. The project is small enough to understand, but serious about privacy, OAuth and agent ergonomics.</p>
+        </div>
+        <div class="community-actions">
+          <a class="button primary" href="https://github.com/davidmosiah/whoop-mcp/issues/new/choose">Open an issue</a>
+          <a class="button secondary" href="https://github.com/davidmosiah/whoop-mcp/blob/main/CONTRIBUTING.md">Contribute</a>
+          <a class="button secondary" href="roadmap.md">Roadmap</a>
         </div>
       </div>
     </section>
