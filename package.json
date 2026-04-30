@@ -15,7 +15,9 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "start": "node dist/index.js",
-    "dev": "tsx src/index.ts"
+    "dev": "tsx src/index.ts",
+    "smoke": "node scripts/smoke-tools.mjs",
+    "test": "npm run typecheck && npm run build && npm run smoke"
   },
   "keywords": [
     "mcp",
@@ -39,5 +41,13 @@
   },
   "engines": {
     "node": ">=20"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davidmosiah/whoop-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/davidmosiah/whoop-mcp/issues"
+  },
+  "homepage": "https://github.com/davidmosiah/whoop-mcp#readme"
 }

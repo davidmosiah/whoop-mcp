@@ -1,8 +1,16 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { AuthUrlInputSchema, CollectionInputSchema, ExchangeCodeInputSchema, IdInputSchema } from "../schemas/common.js";
+import {
+  AuthUrlInputSchema,
+  CollectionInputSchema,
+  DailySummaryInputSchema,
+  ExchangeCodeInputSchema,
+  IdInputSchema,
+  WeeklySummaryInputSchema
+} from "../schemas/common.js";
 import { getConfig } from "../services/config.js";
 import { bulletList, formatCollection, makeError, makeResponse } from "../services/format.js";
+import { buildDailySummary, buildWeeklySummary, formatSummaryMarkdown } from "../services/summary.js";
 import { WhoopClient } from "../services/whoop-client.js";
 
 function client(): WhoopClient {
@@ -183,6 +191,46 @@ export function registerWhoopTools(server: McpServer): void {
   registerCollectionTool(server, "whoop_list_recoveries", "WHOOP Recoveries", "/v2/recovery", "List WHOOP recoveries sorted by related sleep start time descending. Requires read:recovery scope.");
   registerCollectionTool(server, "whoop_list_sleeps", "WHOOP Sleeps", "/v2/activity/sleep", "List WHOOP sleep activities. Supports start/end filters and WHOOP pagination. Requires read:sleep scope.");
   registerCollectionTool(server, "whoop_list_workouts", "WHOOP Workouts", "/v2/activity/workout", "List WHOOP workouts. Supports start/end filters and WHOOP pagination. Requires read:workout scope.");
+
+  server.registerTool(
+    "whoop_daily_summary",
+    {
+      title: "WHOOP Daily Summary",
+      description: `Build a privacy-conscious daily performance summary from WHOOP recovery, sleep, cycle and workout data.
+
+This workflow tool fetches recent WHOOP v2 records, computes a defensive baseline, and returns readiness, sleep, load, diagnostic signals and concrete action candidates. It does not provide medical advice and does not store data locally.`,
+      inputSchema: DailySummaryInputSchema.shape,
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true }
+    },
+    async (params) => {
+      try {
+        const summary = await buildDailySummary(client(), params);
+        return makeResponse(summary, params.response_format, formatSummaryMarkdown(summary));
+      } catch (error) {
+        return makeError((error as Error).message);
+      }
+    }
+  );
+
+  server.registerTool(
+    "whoop_weekly_summary",
+    {
+      title: "WHOOP Weekly Summary",
+      description: `Build a weekly WHOOP operating review with recovery, sleep, strain, workouts, bottlenecks, action candidates and next-week success metrics.
+
+This workflow tool compares a recent window against a prior window when available. It is intended for coaching and agent workflows, not medical diagnosis.`,
+      inputSchema: WeeklySummaryInputSchema.shape,
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true }
+    },
+    async (params) => {
+      try {
+        const summary = await buildWeeklySummary(client(), params);
+        return makeResponse(summary, params.response_format, formatSummaryMarkdown(summary));
+      } catch (error) {
+        return makeError((error as Error).message);
+      }
+    }
+  );
 
   registerGetByIdTool(server, "whoop_get_cycle", "WHOOP Cycle", (id) => `/v2/cycle/${id}`, "Get one WHOOP cycle by numeric cycle id. Requires read:cycles scope.");
   registerGetByIdTool(server, "whoop_get_sleep", "WHOOP Sleep", (id) => `/v2/activity/sleep/${id}`, "Get one WHOOP sleep activity by UUID. Requires read:sleep scope.");

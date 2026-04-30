@@ -36,7 +36,27 @@ export const ExchangeCodeInputSchema = z.object({
   response_format: ResponseFormatSchema
 }).strict();
 
+export const DailySummaryInputSchema = z.object({
+  days: z.number().int().min(7).max(30).default(10)
+    .describe("Lookback window used to build the daily baseline. Minimum 7, maximum 30."),
+  timezone: z.string().min(1).max(80).default("UTC")
+    .describe("IANA timezone used only for display, e.g. America/New_York."),
+  response_format: ResponseFormatSchema
+}).strict();
+
+export const WeeklySummaryInputSchema = z.object({
+  days: z.number().int().min(7).max(30).default(7)
+    .describe("Recent analysis window in days."),
+  compare_days: z.number().int().min(0).max(30).default(7)
+    .describe("Prior comparison window in days. Use 0 to disable comparison."),
+  timezone: z.string().min(1).max(80).default("UTC")
+    .describe("IANA timezone used only for display, e.g. America/New_York."),
+  response_format: ResponseFormatSchema
+}).strict();
+
 export type CollectionInput = z.infer<typeof CollectionInputSchema>;
 export type IdInput = z.infer<typeof IdInputSchema>;
 export type AuthUrlInput = z.infer<typeof AuthUrlInputSchema>;
 export type ExchangeCodeInput = z.infer<typeof ExchangeCodeInputSchema>;
+export type DailySummaryInput = z.infer<typeof DailySummaryInputSchema>;
+export type WeeklySummaryInput = z.infer<typeof WeeklySummaryInputSchema>;

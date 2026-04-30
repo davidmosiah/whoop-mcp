@@ -1,5 +1,7 @@
 # whoop-mcp-server
 
+[![CI](https://github.com/davidmosiah/whoop-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/davidmosiah/whoop-mcp/actions/workflows/ci.yml)
+
 Unofficial MCP server for connecting AI agents to the WHOOP API.
 
 > **Unofficial project:** this repository is not affiliated with, endorsed by, sponsored by, or supported by WHOOP, Inc. WHOOP is a trademark of its respective owner. Use this project only with your own WHOOP account and according to WHOOP's Developer Terms and API policies.
@@ -13,6 +15,7 @@ Unofficial MCP server for connecting AI agents to the WHOOP API.
 - Recovery scores, HRV, resting heart rate, SpO2, skin temperature
 - Sleep sessions, stages, performance, consistency, efficiency
 - Workouts, strain, heart-rate zones and sport metadata
+- Daily and weekly workflow summaries for agents
 
 The server runs over MCP `stdio`, so it works well as a local integration for agents such as Hermes, OpenClaw, Claude Desktop, Cursor, and other MCP clients.
 
@@ -130,6 +133,26 @@ Tools:
 - `whoop_get_cycle_sleep`
 - `whoop_get_cycle_recovery`
 
+### Workflow summaries
+
+These tools fetch the required WHOOP collections, compute defensive baselines, and return structured coaching context for agents. They are read-only and do not store data locally.
+
+- `whoop_daily_summary` - Latest recovery/sleep/load signals plus action candidates for the next 24 hours.
+- `whoop_weekly_summary` - Weekly scorecard, prior-window comparison, bottlenecks, action candidates and next-week success metrics.
+
+Daily summary inputs:
+
+- `days`: lookback window for baseline, default `10`, min `7`, max `30`
+- `timezone`: display timezone, default `UTC`
+- `response_format`: `markdown` or `json`
+
+Weekly summary inputs:
+
+- `days`: recent analysis window, default `7`
+- `compare_days`: prior comparison window, default `7`, use `0` to disable comparison
+- `timezone`: display timezone, default `UTC`
+- `response_format`: `markdown` or `json`
+
 ## Example prompts for agents
 
 ```text
@@ -138,6 +161,10 @@ Use the WHOOP MCP server to summarize my last 7 days of sleep and recovery. Comp
 
 ```text
 Fetch my latest recovery, latest sleep and workouts from the last 3 days. Give me a practical training recommendation for today based only on the data.
+```
+
+```text
+Call whoop_weekly_summary with response_format=json, then turn the bottlenecks and success metrics into a concrete training, sleep and focus plan for next week.
 ```
 
 ## Development
@@ -164,7 +191,6 @@ npx @modelcontextprotocol/inspector node dist/index.js
 ## Roadmap
 
 - SQLite cache for offline/local analytics
-- `whoop_daily_summary` and `whoop_weekly_summary` workflow tools
 - Optional HTTP transport
 - More structured output schemas
 - Safer redaction and audit logging helpers
