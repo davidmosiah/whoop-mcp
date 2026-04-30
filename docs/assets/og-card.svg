@@ -1,50 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
-  <defs>
-    <radialGradient id="g1" cx="78%" cy="14%" r="78%">
-      <stop offset="0" stop-color="#a8ff6a" stop-opacity=".48"/>
-      <stop offset=".42" stop-color="#82f6be" stop-opacity=".14"/>
-      <stop offset="1" stop-color="#04090a"/>
-    </radialGradient>
-    <radialGradient id="g2" cx="14%" cy="92%" r="60%">
-      <stop offset="0" stop-color="#74d7ff" stop-opacity=".30"/>
-      <stop offset="1" stop-color="#04090a" stop-opacity="0"/>
-    </radialGradient>
-    <linearGradient id="orb" x1="0" x2="1" y1="0" y2="1">
-      <stop stop-color="#e4ff4f"/>
-      <stop offset=".5" stop-color="#82f6be"/>
-      <stop offset="1" stop-color="#74d7ff"/>
-    </linearGradient>
-    <linearGradient id="line" x1="0" x2="1">
-      <stop offset="0" stop-color="#a8ff6a" stop-opacity="0"/>
-      <stop offset=".4" stop-color="#a8ff6a" stop-opacity=".9"/>
-      <stop offset=".6" stop-color="#82f6be" stop-opacity=".9"/>
-      <stop offset="1" stop-color="#74d7ff" stop-opacity="0"/>
-    </linearGradient>
-  </defs>
-
-  <rect width="1200" height="630" fill="#04090a"/>
-  <rect width="1200" height="630" fill="url(#g1)"/>
-  <rect width="1200" height="630" fill="url(#g2)"/>
-
-  <g opacity=".10" stroke="#a8ff6a" stroke-width="1">
-    <path d="M0 90h1200M0 180h1200M0 270h1200M0 360h1200M0 450h1200M0 540h1200"/>
-    <path d="M120 0v630M240 0v630M360 0v630M480 0v630M600 0v630M720 0v630M840 0v630M960 0v630M1080 0v630"/>
-  </g>
-
-  <!-- orbit -->
-  <circle cx="940" cy="330" r="180" fill="none" stroke="#a8ff6a" stroke-width="2" opacity=".35"/>
-  <circle cx="940" cy="330" r="130" fill="none" stroke="#74d7ff" stroke-width="2" stroke-dasharray="6 12" opacity=".4"/>
-  <circle cx="940" cy="330" r="86"  fill="url(#orb)" opacity=".95"/>
-  <circle cx="940" cy="330" r="86"  fill="none" stroke="#ffffff" stroke-width="1" opacity=".22"/>
-
-  <!-- heart-rate line -->
-  <path d="M70 470 L 280 470 L 310 470 L 330 430 L 350 510 L 370 390 L 390 540 L 410 470 L 700 470 L 740 470 L 760 440 L 780 500 L 800 410 L 820 530 L 840 470 L 1130 470"
-        fill="none" stroke="url(#line)" stroke-width="3" stroke-linecap="round"/>
-
-  <!-- text -->
-  <text x="80" y="170" fill="#e4ff4f" font-family="Menlo, monospace" font-size="22" letter-spacing="9">REEL 00 · OPENING CREDITS</text>
-  <text x="76" y="278" fill="#eff8ed" font-family="Arial Narrow, Impact, sans-serif" font-size="92" font-weight="800">YOUR BODY HAS</text>
-  <text x="76" y="358" fill="#eff8ed" font-family="Arial Narrow, Impact, sans-serif" font-size="92" font-weight="800">A SIGNAL.</text>
-  <text x="76" y="438" fill="#a8ff6a" font-family="Arial Narrow, Impact, sans-serif" font-size="68" font-weight="800">YOUR AGENT SHOULD HEAR IT.</text>
-  <text x="80" y="582" fill="#9dafaa" font-family="Georgia, serif" font-size="26">unofficial · open source · local-first · MCP native</text>
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#07110D"/>
+  <circle cx="1010" cy="90" r="310" fill="#CAFF5B" fill-opacity="0.16"/>
+  <circle cx="140" cy="590" r="340" fill="#75E6B0" fill-opacity="0.13"/>
+  <path d="M0 430C120 370 210 460 330 400C460 336 560 214 704 268C840 319 893 432 1032 380C1100 354 1145 314 1200 306" stroke="#CAFF5B" stroke-width="5" stroke-linecap="round" stroke-opacity="0.82"/>
+  <rect x="72" y="72" width="1056" height="486" rx="44" fill="#F6F1E0" fill-opacity="0.06" stroke="#F6F1E0" stroke-opacity="0.18"/>
+  <text x="116" y="150" fill="#CAFF5B" font-family="Menlo, monospace" font-size="28" font-weight="700" letter-spacing="4">WHOOP MCP · UNOFFICIAL</text>
+  <text x="116" y="280" fill="#F6F1E0" font-family="Georgia, serif" font-size="78" font-weight="700">Connect WHOOP</text>
+  <text x="116" y="372" fill="#F6F1E0" font-family="Georgia, serif" font-size="78" font-weight="700">to your AI assistant.</text>
+  <text x="116" y="456" fill="#D3CBB7" font-family="Avenir, Helvetica, sans-serif" font-size="34">Open source · local-first · read-only OAuth scopes</text>
+  <rect x="846" y="410" width="210" height="74" rx="37" fill="#CAFF5B"/>
+  <text x="894" y="458" fill="#102012" font-family="Avenir, Helvetica, sans-serif" font-size="28" font-weight="800">Get started</text>
 </svg>
