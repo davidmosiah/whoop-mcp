@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.1
+
+- Add `whoop-mcp-unofficial` as a binary alias so `npx -y whoop-mcp-unofficial setup` works directly.
+
 ## 0.1.0
 
 Initial public SOTA-oriented release candidate.
