@@ -12,7 +12,7 @@ mcp_servers:
     env:
       WHOOP_CLIENT_ID: your-client-id
       WHOOP_CLIENT_SECRET: your-client-secret
-      WHOOP_REDIRECT_URI: http://localhost:3000/callback
+      WHOOP_REDIRECT_URI: http://127.0.0.1:3000/callback
       WHOOP_TOKEN_PATH: /root/.whoop-mcp/tokens.json
       WHOOP_PRIVACY_MODE: structured
       WHOOP_CACHE: sqlite

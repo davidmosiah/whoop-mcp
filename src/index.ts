@@ -5,6 +5,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { SERVER_NAME, SERVER_VERSION } from "./constants.js";
+import { runCliCommand } from "./cli/commands.js";
 import { registerWhoopPrompts } from "./prompts/whoop-prompts.js";
 import { registerWhoopResources } from "./resources/whoop-resources.js";
 import { registerWhoopTools } from "./tools/whoop-tools.js";
@@ -69,10 +70,23 @@ async function runHttp(): Promise<void> {
 }
 
 const args = new Set(process.argv.slice(2));
-const transport = process.env.WHOOP_MCP_TRANSPORT ?? (args.has("--http") ? "http" : "stdio");
+let cliResult: number | undefined;
 
-if (transport === "http") {
-  await runHttp();
-} else {
-  await runStdio();
+try {
+  cliResult = await runCliCommand(process.argv.slice(2));
+} catch (error) {
+  console.error(`Error: ${(error as Error).message}`);
+  process.exitCode = 1;
+}
+
+if (cliResult !== undefined) {
+  process.exitCode = cliResult;
+} else if (process.exitCode === undefined) {
+  const transport = process.env.WHOOP_MCP_TRANSPORT ?? (args.has("--http") ? "http" : "stdio");
+
+  if (transport === "http") {
+    await runHttp();
+  } else {
+    await runStdio();
+  }
 }

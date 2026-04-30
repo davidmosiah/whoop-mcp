@@ -4,6 +4,7 @@ import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
 
 const expectedTools = [
   'whoop_cache_status',
+  'whoop_connection_status',
   'whoop_daily_summary',
   'whoop_exchange_code',
   'whoop_get_auth_url',
@@ -63,6 +64,14 @@ try {
   assert.equal(auditResult.structuredContent?.unofficial, true);
   assert.ok(auditResult.structuredContent?.secret_env_vars?.includes('WHOOP_CLIENT_SECRET'));
   assert.ok(!auditResult.structuredContent?.secret_env_vars?.includes('WHOOP_CLIENT_ID'));
+
+  const statusResult = await client.callTool({
+    name: 'whoop_connection_status',
+    arguments: { response_format: 'json' }
+  });
+  assert.equal(statusResult.structuredContent?.ok, false);
+  assert.ok(statusResult.structuredContent?.missing_env?.includes('WHOOP_CLIENT_ID'));
+  assert.ok(statusResult.structuredContent?.next_steps?.some((step) => step.includes('WHOOP_CLIENT_ID')));
 
   console.log(JSON.stringify({
     ok: true,

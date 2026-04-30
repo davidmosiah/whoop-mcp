@@ -5,6 +5,7 @@ import {
   CacheStatusOutputSchema,
   CollectionInputSchema,
   CollectionOutputSchema,
+  ConnectionStatusOutputSchema,
   DailySummaryInputSchema,
   EndpointDataOutputSchema,
   ExchangeCodeInputSchema,
@@ -18,6 +19,7 @@ import {
   WeeklySummaryInputSchema
 } from "../schemas/common.js";
 import { buildPrivacyAudit } from "../services/audit.js";
+import { buildConnectionStatus } from "../services/connection-status.js";
 import { getConfig } from "../services/config.js";
 import { bulletList, formatCollection, makeError, makeResponse } from "../services/format.js";
 import { applyPrivacy, resolvePrivacyMode } from "../services/privacy.js";
@@ -221,6 +223,29 @@ export function registerWhoopTools(server: McpServer): void {
   registerCollectionTool(server, "whoop_list_recoveries", "WHOOP Recoveries", "/v2/recovery", "List WHOOP recoveries sorted by related sleep start time descending. Requires read:recovery scope.");
   registerCollectionTool(server, "whoop_list_sleeps", "WHOOP Sleeps", "/v2/activity/sleep", "List WHOOP sleep activities. Supports start/end filters and WHOOP pagination. Requires read:sleep scope.");
   registerCollectionTool(server, "whoop_list_workouts", "WHOOP Workouts", "/v2/activity/workout", "List WHOOP workouts. Supports start/end filters and WHOOP pagination. Requires read:workout scope.");
+
+  server.registerTool(
+    "whoop_connection_status",
+    {
+      title: "WHOOP Connection Status",
+      description: "Check whether local WHOOP env vars, token file, Node version, privacy mode and cache are ready. Does not call WHOOP or expose secrets.",
+      inputSchema: ResponseOnlyInputSchema.shape,
+      outputSchema: ConnectionStatusOutputSchema.shape,
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }
+    },
+    async ({ response_format }) => {
+      const status = await buildConnectionStatus();
+      return makeResponse(status, response_format, bulletList("WHOOP Connection Status", {
+        ok: status.ok,
+        ready_for_whoop_api: status.ready_for_whoop_api,
+        missing_env: status.missing_env.join(", ") || "none",
+        token_path: status.token.path,
+        token_exists: status.token.exists,
+        privacy_mode: status.privacy_mode,
+        next_steps: status.next_steps.join(" | ")
+      }));
+    }
+  );
 
   server.registerTool(
     "whoop_cache_status",

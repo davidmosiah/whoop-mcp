@@ -20,6 +20,7 @@ Unofficial MCP server for connecting AI agents to the WHOOP API.
 - Optional SQLite read-through cache
 - Privacy modes for summary, structured or raw payloads
 - Structured MCP tool outputs and a privacy audit tool
+- Human-friendly `doctor` and `auth` CLI commands for setup without manual code copying
 
 The server runs over MCP `stdio`, so it works well as a local integration for agents such as Hermes, OpenClaw, Claude Desktop, Cursor, and other MCP clients.
 
@@ -45,8 +46,10 @@ Official WHOOP API docs: <https://developer.whoop.com/api/>
 After npm publication:
 
 ```bash
-npx -y @davidmosiah/whoop-mcp-server
+npx -y @davidmosiah/whoop-mcp-server doctor
 ```
+
+For MCP clients, use the package with no subcommand so it starts the MCP stdio server.
 
 ## Install from source
 
@@ -62,7 +65,7 @@ npm run build
 ```bash
 export WHOOP_CLIENT_ID="your-client-id"
 export WHOOP_CLIENT_SECRET="your-client-secret"
-export WHOOP_REDIRECT_URI="http://localhost:3000/callback"
+export WHOOP_REDIRECT_URI="http://127.0.0.1:3000/callback"
 
 # Optional
 export WHOOP_TOKEN_PATH="$HOME/.whoop-mcp/tokens.json"
@@ -78,6 +81,28 @@ Default scopes:
 read:recovery read:cycles read:workout read:sleep read:profile read:body_measurement
 ```
 
+## Human setup flow
+
+This is the recommended path for non-technical setup:
+
+```bash
+npx -y @davidmosiah/whoop-mcp-server doctor
+npx -y @davidmosiah/whoop-mcp-server auth
+npx -y @davidmosiah/whoop-mcp-server doctor
+```
+
+What these commands do:
+
+- `doctor` checks Node.js, required WHOOP env vars, redirect URI, token file, privacy mode and cache.
+- `auth` starts a temporary local callback server, opens the WHOOP authorization page, captures the OAuth code and saves tokens locally.
+- `doctor --json` returns the same setup state in machine-readable form.
+
+For automatic auth, configure the WHOOP Developer app redirect URI as:
+
+```text
+http://127.0.0.1:3000/callback
+```
+
 ## MCP client config
 
 Example local config:
@@ -91,7 +116,7 @@ Example local config:
       "env": {
         "WHOOP_CLIENT_ID": "your-client-id",
         "WHOOP_CLIENT_SECRET": "your-client-secret",
-        "WHOOP_REDIRECT_URI": "http://localhost:3000/callback",
+        "WHOOP_REDIRECT_URI": "http://127.0.0.1:3000/callback",
         "WHOOP_PRIVACY_MODE": "structured"
       }
     }
@@ -110,7 +135,7 @@ For npm/npx usage after publication:
       "env": {
         "WHOOP_CLIENT_ID": "your-client-id",
         "WHOOP_CLIENT_SECRET": "your-client-secret",
-        "WHOOP_REDIRECT_URI": "http://localhost:3000/callback",
+        "WHOOP_REDIRECT_URI": "http://127.0.0.1:3000/callback",
         "WHOOP_PRIVACY_MODE": "structured"
       }
     }
@@ -119,6 +144,14 @@ For npm/npx usage after publication:
 ```
 
 ## OAuth flow
+
+Recommended for humans:
+
+```bash
+npx -y @davidmosiah/whoop-mcp-server auth
+```
+
+Manual MCP-client flow:
 
 1. Ask your MCP client to call `whoop_get_auth_url`.
 2. Open the returned URL and authorize the app.
@@ -135,6 +168,7 @@ The exchange tool stores tokens locally and intentionally does not return token 
 - `whoop_get_auth_url` - Generate an OAuth authorization URL.
 - `whoop_exchange_code` - Exchange authorization code for local tokens.
 - `whoop_revoke_access` - Revoke WHOOP OAuth access and delete local tokens.
+- `whoop_connection_status` - Check env, token, Node, redirect, privacy and cache readiness without calling WHOOP.
 
 ### User
 

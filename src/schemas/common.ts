@@ -128,6 +128,36 @@ export const PrivacyAuditOutputSchema = z.object({
   notes: z.array(z.string())
 }).strict();
 
+export const ConnectionStatusOutputSchema = z.object({
+  ok: z.boolean(),
+  ready_for_whoop_api: z.boolean(),
+  node: z.object({
+    version: z.string(),
+    supported: z.boolean()
+  }).strict(),
+  privacy_mode: PrivacyModeValueSchema,
+  required_env: z.record(z.boolean()),
+  missing_env: z.array(z.string()),
+  redirect_uri: z.string().optional(),
+  automatic_auth_supported: z.boolean(),
+  token: z.object({
+    path: z.string(),
+    exists: z.boolean(),
+    readable: z.boolean(),
+    permissions: z.string().optional(),
+    secure_permissions: z.boolean().optional(),
+    expires_at: z.number().optional(),
+    expired: z.boolean().optional(),
+    has_refresh_token: z.boolean().optional(),
+    error: z.string().optional()
+  }).strict(),
+  cache: z.object({
+    enabled: z.boolean(),
+    path: z.string()
+  }).strict(),
+  next_steps: z.array(z.string())
+}).strict();
+
 export const SummaryOutputSchema = z.object({
   kind: z.enum(["daily_summary", "weekly_summary"]),
   generated_at: z.string()
