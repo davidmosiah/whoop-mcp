@@ -1,17 +1,21 @@
 import type { ResponseFormat, ToolResponse } from "../types.js";
+import { redactErrorMessage, redactSensitive } from "./redaction.js";
 
 export function makeResponse<T>(data: T, format: ResponseFormat, markdown: string): ToolResponse<T> {
+  const safeData = redactSensitive(data) as T;
+  const safeMarkdown = redactErrorMessage(markdown);
   return {
-    content: [{ type: "text", text: format === "json" ? JSON.stringify(data, null, 2) : markdown }],
-    structuredContent: data
+    content: [{ type: "text", text: format === "json" ? JSON.stringify(safeData, null, 2) : safeMarkdown }],
+    structuredContent: safeData
   };
 }
 
 export function makeError(message: string): ToolResponse<{ error: string }> {
+  const safeMessage = redactErrorMessage(message);
   return {
     isError: true,
-    content: [{ type: "text", text: `Error: ${message}` }],
-    structuredContent: { error: message }
+    content: [{ type: "text", text: `Error: ${safeMessage}` }],
+    structuredContent: { error: safeMessage }
   };
 }
 

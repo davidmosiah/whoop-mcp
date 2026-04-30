@@ -1,4 +1,5 @@
 export type ResponseFormat = "markdown" | "json";
+export type PrivacyMode = "summary" | "structured" | "raw";
 
 export interface WhoopTokenSet {
   access_token: string;
@@ -14,6 +15,9 @@ export interface WhoopConfig {
   redirectUri: string;
   scopes: string[];
   tokenPath: string;
+  privacyMode: PrivacyMode;
+  cacheEnabled: boolean;
+  cachePath: string;
 }
 
 export interface WhoopCollection<T = unknown> {

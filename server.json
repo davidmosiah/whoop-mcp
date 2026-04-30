@@ -1,0 +1,71 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.davidmosiah/whoop-mcp",
+  "description": "Privacy-first, unofficial WHOOP MCP server for AI health, sleep, recovery, and performance agents.",
+  "repository": {
+    "url": "https://github.com/davidmosiah/whoop-mcp",
+    "source": "github"
+  },
+  "version": "0.1.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@davidmosiah/whoop-mcp-server",
+      "version": "0.1.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "WHOOP_CLIENT_ID",
+          "description": "WHOOP OAuth client ID from the WHOOP Developer Dashboard.",
+          "isRequired": true,
+          "format": "string",
+          "isSecret": false
+        },
+        {
+          "name": "WHOOP_CLIENT_SECRET",
+          "description": "WHOOP OAuth client secret from the WHOOP Developer Dashboard.",
+          "isRequired": true,
+          "format": "string",
+          "isSecret": true
+        },
+        {
+          "name": "WHOOP_REDIRECT_URI",
+          "description": "Redirect URI configured in the WHOOP Developer Dashboard.",
+          "isRequired": true,
+          "format": "string",
+          "isSecret": false
+        },
+        {
+          "name": "WHOOP_TOKEN_PATH",
+          "description": "Optional local path for OAuth tokens. Defaults to ~/.whoop-mcp/tokens.json.",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": false
+        },
+        {
+          "name": "WHOOP_PRIVACY_MODE",
+          "description": "Optional payload mode: summary, structured, or raw. Defaults to structured.",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": false
+        },
+        {
+          "name": "WHOOP_CACHE",
+          "description": "Optional SQLite cache toggle. Set to true or sqlite to enable.",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": false
+        },
+        {
+          "name": "WHOOP_CACHE_PATH",
+          "description": "Optional local SQLite cache path. Defaults to ~/.whoop-mcp/cache.sqlite.",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": false
+        }
+      ]
+    }
+  ]
+}

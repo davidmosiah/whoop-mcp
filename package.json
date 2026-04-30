@@ -1,5 +1,5 @@
 {
-  "name": "whoop-mcp-server",
+  "name": "@davidmosiah/whoop-mcp-server",
   "version": "0.1.0",
   "description": "Unofficial MCP server for connecting AI agents to the WHOOP API.",
   "type": "module",
@@ -9,7 +9,12 @@
   "files": [
     "dist",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "SECURITY.md",
+    "CHANGELOG.md",
+    "server.json",
+    "docs",
+    "examples"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
@@ -17,8 +22,11 @@
     "start": "node dist/index.js",
     "dev": "tsx src/index.ts",
     "smoke": "node scripts/smoke-tools.mjs",
-    "test": "npm run typecheck && npm run build && npm run smoke && npm run test:summary",
-    "test:summary": "node scripts/summary-fixture-test.mjs"
+    "test": "npm run typecheck && npm run build && npm run smoke && npm run smoke:http && npm run test:summary && npm run test:privacy-cache",
+    "test:summary": "node scripts/summary-fixture-test.mjs",
+    "prepublishOnly": "npm test",
+    "smoke:http": "node scripts/smoke-http.mjs",
+    "test:privacy-cache": "node scripts/privacy-cache-test.mjs"
   },
   "keywords": [
     "mcp",
@@ -33,9 +41,15 @@
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.21.0",
+    "better-sqlite3": "^12.9.0",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
     "@types/node": "^22.10.2",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3"
@@ -50,5 +64,11 @@
   "bugs": {
     "url": "https://github.com/davidmosiah/whoop-mcp/issues"
   },
-  "homepage": "https://github.com/davidmosiah/whoop-mcp#readme"
+  "homepage": "https://github.com/davidmosiah/whoop-mcp#readme",
+  "mcpName": "io.github.davidmosiah/whoop-mcp",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "main": "dist/index.js"
 }

@@ -5,14 +5,17 @@ This server runs over MCP stdio. Add it to your agent's MCP configuration using 
 ```yaml
 mcp_servers:
   whoop:
-    command: node
+    command: npx
     args:
-      - /absolute/path/to/whoop-mcp/dist/index.js
+      - -y
+      - "@davidmosiah/whoop-mcp-server"
     env:
       WHOOP_CLIENT_ID: your-client-id
       WHOOP_CLIENT_SECRET: your-client-secret
       WHOOP_REDIRECT_URI: http://localhost:3000/callback
       WHOOP_TOKEN_PATH: /root/.whoop-mcp/tokens.json
+      WHOOP_PRIVACY_MODE: structured
+      WHOOP_CACHE: sqlite
 ```
 
 Recommended first run:

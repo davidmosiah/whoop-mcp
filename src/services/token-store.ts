@@ -34,6 +34,12 @@ export class TokenStore {
     await fs.chmod(this.tokenPath, 0o600).catch(() => undefined);
   }
 
+  async clear(): Promise<void> {
+    await fs.unlink(this.tokenPath).catch((error: NodeJS.ErrnoException) => {
+      if (error.code !== "ENOENT") throw error;
+    });
+  }
+
   async withLock<T>(fn: () => Promise<T>): Promise<T> {
     await fs.mkdir(dirname(this.lockPath), { recursive: true, mode: 0o700 });
     const start = Date.now();

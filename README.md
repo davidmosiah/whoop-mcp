@@ -16,6 +16,10 @@ Unofficial MCP server for connecting AI agents to the WHOOP API.
 - Sleep sessions, stages, performance, consistency, efficiency
 - Workouts, strain, heart-rate zones and sport metadata
 - Daily and weekly workflow summaries for agents
+- MCP resources and prompts for agent-native workflows
+- Optional SQLite read-through cache
+- Privacy modes for summary, structured or raw payloads
+- Structured MCP tool outputs and a privacy audit tool
 
 The server runs over MCP `stdio`, so it works well as a local integration for agents such as Hermes, OpenClaw, Claude Desktop, Cursor, and other MCP clients.
 
@@ -24,7 +28,8 @@ The server runs over MCP `stdio`, so it works well as a local integration for ag
 - OAuth tokens are stored locally, not returned to the agent.
 - Token file defaults to `~/.whoop-mcp/tokens.json` with `0600` permissions.
 - Refresh token rotation is protected with a lock file to reduce concurrent-agent refresh races.
-- Tools are read-only after OAuth setup.
+- Most tools are read-only after OAuth setup. `whoop_revoke_access` is intentionally destructive and removes access.
+- `WHOOP_PRIVACY_MODE` defaults to `structured`; full raw WHOOP payloads are opt-in.
 - This project does not provide medical advice. It exposes user-authorized data for analysis by your own tools/agents.
 
 ## Requirements
@@ -34,6 +39,14 @@ The server runs over MCP `stdio`, so it works well as a local integration for ag
 - OAuth redirect URI configured in the WHOOP Developer Dashboard
 
 Official WHOOP API docs: <https://developer.whoop.com/api/>
+
+## Install with npx
+
+After npm publication:
+
+```bash
+npx -y @davidmosiah/whoop-mcp-server
+```
 
 ## Install from source
 
@@ -54,6 +67,9 @@ export WHOOP_REDIRECT_URI="http://localhost:3000/callback"
 # Optional
 export WHOOP_TOKEN_PATH="$HOME/.whoop-mcp/tokens.json"
 export WHOOP_SCOPES="read:recovery read:cycles read:workout read:sleep read:profile read:body_measurement"
+export WHOOP_PRIVACY_MODE="structured" # summary | structured | raw
+export WHOOP_CACHE="sqlite"            # optional: true/sqlite/on
+export WHOOP_CACHE_PATH="$HOME/.whoop-mcp/cache.sqlite"
 ```
 
 Default scopes:
@@ -75,14 +91,32 @@ Example local config:
       "env": {
         "WHOOP_CLIENT_ID": "your-client-id",
         "WHOOP_CLIENT_SECRET": "your-client-secret",
-        "WHOOP_REDIRECT_URI": "http://localhost:3000/callback"
+        "WHOOP_REDIRECT_URI": "http://localhost:3000/callback",
+        "WHOOP_PRIVACY_MODE": "structured"
       }
     }
   }
 }
 ```
 
-If installed globally in the future, the command can be `whoop-mcp-server` instead of `node .../dist/index.js`.
+For npm/npx usage after publication:
+
+```json
+{
+  "mcpServers": {
+    "whoop": {
+      "command": "npx",
+      "args": ["-y", "@davidmosiah/whoop-mcp-server"],
+      "env": {
+        "WHOOP_CLIENT_ID": "your-client-id",
+        "WHOOP_CLIENT_SECRET": "your-client-secret",
+        "WHOOP_REDIRECT_URI": "http://localhost:3000/callback",
+        "WHOOP_PRIVACY_MODE": "structured"
+      }
+    }
+  }
+}
+```
 
 ## OAuth flow
 
@@ -100,11 +134,14 @@ The exchange tool stores tokens locally and intentionally does not return token 
 
 - `whoop_get_auth_url` - Generate an OAuth authorization URL.
 - `whoop_exchange_code` - Exchange authorization code for local tokens.
+- `whoop_revoke_access` - Revoke WHOOP OAuth access and delete local tokens.
 
 ### User
 
 - `whoop_get_profile` - Get basic profile.
 - `whoop_get_body_measurements` - Get height, weight and max heart rate.
+- `whoop_cache_status` - Show optional SQLite cache status.
+- `whoop_privacy_audit` - Show local privacy, cache, env-presence and redaction posture without revealing secrets.
 
 ### Collections
 
@@ -117,6 +154,7 @@ All collection tools support:
 - `all_pages`: fetch multiple pages
 - `max_pages`: cap for multi-page fetches
 - `response_format`: `markdown` or `json`
+- `privacy_mode`: optional override: `summary`, `structured`, or `raw`
 
 Tools:
 
@@ -139,6 +177,20 @@ These tools fetch the required WHOOP collections, compute defensive baselines, a
 
 - `whoop_daily_summary` - Latest recovery/sleep/load signals plus action candidates for the next 24 hours.
 - `whoop_weekly_summary` - Weekly scorecard, prior-window comparison, bottlenecks, action candidates and next-week success metrics.
+
+### Resources
+
+- `whoop://latest/recovery`
+- `whoop://latest/sleep`
+- `whoop://latest/cycle`
+- `whoop://summary/daily`
+- `whoop://summary/weekly`
+
+### Prompts
+
+- `daily_performance_coach`
+- `weekly_training_review`
+- `sleep_recovery_investigator`
 
 Daily summary inputs:
 
@@ -171,6 +223,7 @@ Call whoop_weekly_summary with response_format=json, then turn the bottlenecks a
 
 ```bash
 npm install
+npm test
 npm run typecheck
 npm run build
 ```
@@ -188,13 +241,17 @@ Test with MCP Inspector:
 npx @modelcontextprotocol/inspector node dist/index.js
 ```
 
+Optional local HTTP transport:
+
+```bash
+WHOOP_MCP_TRANSPORT=http WHOOP_MCP_PORT=3000 node dist/index.js
+curl http://127.0.0.1:3000/health
+```
+
 ## Roadmap
 
-- SQLite cache for offline/local analytics
-- Optional HTTP transport
-- More structured output schemas
-- Safer redaction and audit logging helpers
-- Example Hermes/OpenClaw setup guides
+- Public npm package publication
+- MCP Registry publication
 
 ## Disclaimer
 

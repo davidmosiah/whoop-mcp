@@ -2,6 +2,9 @@ import { z } from "zod";
 import { DEFAULT_LIMIT, DEFAULT_MAX_PAGES, MAX_PAGES, MAX_WHOOP_LIMIT } from "../constants.js";
 
 export const ResponseFormatSchema = z.enum(["markdown", "json"]).default("markdown");
+export const PrivacyModeValueSchema = z.enum(["summary", "structured", "raw"]);
+export const PrivacyModeSchema = PrivacyModeValueSchema.optional()
+  .describe("Optional per-call payload privacy override. Defaults to WHOOP_PRIVACY_MODE or structured. raw returns full WHOOP API payloads.");
 
 export const DateTimeSchema = z.string()
   .datetime({ offset: true })
@@ -17,11 +20,22 @@ export const CollectionInputSchema = z.object({
   all_pages: z.boolean().default(false).describe("Fetch multiple pages up to max_pages."),
   max_pages: z.number().int().min(1).max(MAX_PAGES).default(DEFAULT_MAX_PAGES)
     .describe("Maximum pages to fetch when all_pages is true."),
+  privacy_mode: PrivacyModeSchema,
   response_format: ResponseFormatSchema
 }).strict();
 
 export const IdInputSchema = z.object({
   id: z.union([z.string().min(1), z.number().int().positive()]).describe("WHOOP resource id."),
+  privacy_mode: PrivacyModeSchema,
+  response_format: ResponseFormatSchema
+}).strict();
+
+export const SimpleReadInputSchema = z.object({
+  privacy_mode: PrivacyModeSchema,
+  response_format: ResponseFormatSchema
+}).strict();
+
+export const ResponseOnlyInputSchema = z.object({
   response_format: ResponseFormatSchema
 }).strict();
 
@@ -54,8 +68,75 @@ export const WeeklySummaryInputSchema = z.object({
   response_format: ResponseFormatSchema
 }).strict();
 
+export const AuthUrlOutputSchema = z.object({
+  auth_url: z.string(),
+  redirect_uri: z.string(),
+  scopes: z.array(z.string()),
+  next_step: z.string()
+}).strict();
+
+export const ExchangeCodeOutputSchema = z.object({
+  ok: z.boolean(),
+  token_path: z.string(),
+  scope: z.string().optional(),
+  expires_at: z.number().optional(),
+  note: z.string()
+}).strict();
+
+export const EndpointDataOutputSchema = z.object({
+  endpoint: z.string(),
+  privacy_mode: PrivacyModeValueSchema,
+  data: z.unknown()
+}).strict();
+
+export const CollectionOutputSchema = z.object({
+  endpoint: z.string(),
+  privacy_mode: PrivacyModeValueSchema,
+  count: z.number().int().nonnegative(),
+  records: z.array(z.unknown()),
+  next_token: z.string().optional(),
+  has_more: z.boolean(),
+  pages_fetched: z.number().int().nonnegative()
+}).strict();
+
+export const CacheStatusOutputSchema = z.object({
+  enabled: z.boolean(),
+  path: z.string(),
+  entries: z.number().int().nonnegative(),
+  newest_cached_at: z.string().optional()
+}).strict();
+
+export const RevokeAccessOutputSchema = z.object({
+  ok: z.boolean(),
+  token_path: z.string(),
+  local_tokens_cleared: z.boolean(),
+  note: z.string()
+}).strict();
+
+export const PrivacyAuditOutputSchema = z.object({
+  project: z.string(),
+  unofficial: z.boolean(),
+  privacy_mode_default: PrivacyModeValueSchema,
+  raw_payloads_opt_in: z.boolean(),
+  cache_enabled: z.boolean(),
+  cache_path: z.string(),
+  token_path: z.string(),
+  stdout_safe: z.boolean(),
+  secret_env_vars: z.array(z.string()),
+  required_env_present: z.record(z.boolean()),
+  redacted_key_patterns: z.array(z.string()),
+  notes: z.array(z.string())
+}).strict();
+
+export const SummaryOutputSchema = z.object({
+  kind: z.enum(["daily_summary", "weekly_summary"]),
+  generated_at: z.string()
+}).passthrough();
+
 export type CollectionInput = z.infer<typeof CollectionInputSchema>;
 export type IdInput = z.infer<typeof IdInputSchema>;
+export type SimpleReadInput = z.infer<typeof SimpleReadInputSchema>;
+export type ResponseOnlyInput = z.infer<typeof ResponseOnlyInputSchema>;
 export type AuthUrlInput = z.infer<typeof AuthUrlInputSchema>;
 export type ExchangeCodeInput = z.infer<typeof ExchangeCodeInputSchema>;
 export type DailySummaryInput = z.infer<typeof DailySummaryInputSchema>;

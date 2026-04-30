@@ -1,7 +1,9 @@
+import assert from 'node:assert/strict';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 
-const expected = [
+const expectedTools = [
+  'whoop_cache_status',
   'whoop_daily_summary',
   'whoop_exchange_code',
   'whoop_get_auth_url',
@@ -16,7 +18,23 @@ const expected = [
   'whoop_list_recoveries',
   'whoop_list_sleeps',
   'whoop_list_workouts',
+  'whoop_privacy_audit',
+  'whoop_revoke_access',
   'whoop_weekly_summary'
+];
+
+const expectedResources = [
+  'whoop://latest/cycle',
+  'whoop://latest/recovery',
+  'whoop://latest/sleep',
+  'whoop://summary/daily',
+  'whoop://summary/weekly'
+];
+
+const expectedPrompts = [
+  'daily_performance_coach',
+  'sleep_recovery_investigator',
+  'weekly_training_review'
 ];
 
 const client = new Client({ name: 'whoop-mcp-smoke-test', version: '0.0.0' });
@@ -24,12 +42,34 @@ const transport = new StdioClientTransport({ command: 'node', args: ['dist/index
 await client.connect(transport);
 try {
   const tools = await client.listTools();
-  const names = tools.tools.map((tool) => tool.name).sort();
-  const missing = expected.filter((name) => !names.includes(name));
-  if (missing.length) {
-    throw new Error(`Missing expected tools: ${missing.join(', ')}`);
-  }
-  console.log(JSON.stringify({ ok: true, count: names.length, names }, null, 2));
+  const toolNames = tools.tools.map((tool) => tool.name).sort();
+  assert.deepEqual(toolNames, expectedTools.sort());
+
+  const resources = await client.listResources();
+  const resourceUris = resources.resources.map((resource) => resource.uri).sort();
+  assert.deepEqual(resourceUris, expectedResources.sort());
+
+  const prompts = await client.listPrompts();
+  const promptNames = prompts.prompts.map((prompt) => prompt.name).sort();
+  assert.deepEqual(promptNames, expectedPrompts.sort());
+
+  const prompt = await client.getPrompt({ name: 'daily_performance_coach', arguments: { timezone: 'UTC' } });
+  assert.ok(prompt.messages[0]?.content?.type === 'text');
+
+  const auditResult = await client.callTool({
+    name: 'whoop_privacy_audit',
+    arguments: { response_format: 'json' }
+  });
+  assert.equal(auditResult.structuredContent?.unofficial, true);
+  assert.ok(auditResult.structuredContent?.secret_env_vars?.includes('WHOOP_CLIENT_SECRET'));
+  assert.ok(!auditResult.structuredContent?.secret_env_vars?.includes('WHOOP_CLIENT_ID'));
+
+  console.log(JSON.stringify({
+    ok: true,
+    tools: toolNames.length,
+    resources: resourceUris.length,
+    prompts: promptNames.length
+  }, null, 2));
 } finally {
   await client.close();
 }

@@ -1,6 +1,8 @@
 import { URL, URLSearchParams } from "node:url";
 import { DEFAULT_LIMIT, MAX_WHOOP_LIMIT, WHOOP_API_BASE_URL, WHOOP_AUTH_URL, WHOOP_TOKEN_URL } from "../constants.js";
 import type { WhoopCollection, WhoopConfig, WhoopTokenSet } from "../types.js";
+import { disabledCacheStatus, WhoopCache, type CacheStatus } from "./cache.js";
+import { redactErrorMessage } from "./redaction.js";
 import { TokenStore } from "./token-store.js";
 
 export interface ListParams {
@@ -14,6 +16,7 @@ export interface ListParams {
 
 export class WhoopClient {
   private readonly tokenStore: TokenStore;
+  private cache?: WhoopCache;
 
   constructor(private readonly config: WhoopConfig) {
     this.tokenStore = new TokenStore(config.tokenPath);
@@ -47,6 +50,21 @@ export class WhoopClient {
 
   async get(path: string, params?: Record<string, string | number | boolean | undefined>): Promise<unknown> {
     return this.request("GET", path, undefined, params);
+  }
+
+  async delete(path: string): Promise<unknown> {
+    return this.request("DELETE", path);
+  }
+
+  async revokeAccess(): Promise<{ ok: true; token_path: string; local_tokens_cleared: boolean }> {
+    await this.delete("/v2/user/access");
+    await this.tokenStore.withLock(async () => this.tokenStore.clear());
+    return { ok: true, token_path: this.config.tokenPath, local_tokens_cleared: true };
+  }
+
+  cacheStatus(): CacheStatus {
+    if (!this.config.cacheEnabled) return disabledCacheStatus(this.config.cachePath);
+    return this.getCache().status();
   }
 
   async list(path: string, params: ListParams = {}): Promise<{ records: unknown[]; next_token?: string; pages_fetched: number }> {
@@ -86,7 +104,8 @@ export class WhoopClient {
 
   private async request(method: "GET" | "DELETE", path: string, body?: unknown, params?: Record<string, string | number | boolean | undefined>): Promise<unknown> {
     const token = await this.getValidToken();
-    const response = await this.fetchWithRetry(this.buildUrl(path, params), {
+    const url = this.buildUrl(path, params);
+    const response = await this.fetchWithRetry(url, {
       method,
       headers: {
         Authorization: `Bearer ${token.access_token}`,
@@ -98,7 +117,7 @@ export class WhoopClient {
 
     if (response.status === 401) {
       const refreshed = await this.refreshToken(true);
-      const retry = await this.fetchWithRetry(this.buildUrl(path, params), {
+      const retry = await this.fetchWithRetry(url, {
         method,
         headers: {
           Authorization: `Bearer ${refreshed.access_token}`,
@@ -107,10 +126,10 @@ export class WhoopClient {
         },
         body: body ? JSON.stringify(body) : undefined
       });
-      return this.parseResponse(retry);
+      return this.parseAndCache(method, url, retry);
     }
 
-    return this.parseResponse(response);
+    return this.parseAndCache(method, url, response);
   }
 
   private buildUrl(path: string, params?: Record<string, string | number | boolean | undefined>): string {
@@ -181,9 +200,30 @@ export class WhoopClient {
     const payload = text ? safeJson(text) : null;
     if (!response.ok) {
       const details = payload && typeof payload === "object" ? JSON.stringify(payload) : text;
-      throw new Error(`WHOOP API HTTP ${response.status}: ${details || response.statusText}`);
+      throw new Error(`WHOOP API HTTP ${response.status}: ${redactErrorMessage(details || response.statusText)}`);
     }
     return payload ?? {};
+  }
+
+  private async parseAndCache(method: "GET" | "DELETE", url: string, response: Response): Promise<unknown> {
+    try {
+      const payload = await this.parseResponse(response);
+      if (this.config.cacheEnabled && method === "GET") {
+        this.getCache().set(method, url, payload);
+      }
+      return payload;
+    } catch (error) {
+      if (this.config.cacheEnabled && method === "GET") {
+        const cached = this.getCache().get(method, url);
+        if (cached !== undefined) return cached;
+      }
+      throw error;
+    }
+  }
+
+  private getCache(): WhoopCache {
+    this.cache ??= new WhoopCache(this.config.cachePath);
+    return this.cache;
   }
 
   private async fetchWithRetry(url: string, init: RequestInit): Promise<Response> {

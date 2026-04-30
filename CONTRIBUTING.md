@@ -10,6 +10,7 @@ npm run typecheck
 npm run build
 npm run smoke
 npm run test:summary
+npm run test:privacy-cache
 ```
 
 ## Design rules
@@ -27,4 +28,5 @@ npm run test:summary
 - `npm run build` passes.
 - `npm run smoke` passes.
 - `npm run test:summary` passes when summary logic changes.
+- `npm run test:privacy-cache` passes when privacy/cache logic changes.
 - README/tools docs are updated when behavior changes.

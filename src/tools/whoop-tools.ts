@@ -1,15 +1,26 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { z } from "zod";
 import {
   AuthUrlInputSchema,
+  AuthUrlOutputSchema,
+  CacheStatusOutputSchema,
   CollectionInputSchema,
+  CollectionOutputSchema,
   DailySummaryInputSchema,
+  EndpointDataOutputSchema,
   ExchangeCodeInputSchema,
+  ExchangeCodeOutputSchema,
   IdInputSchema,
+  PrivacyAuditOutputSchema,
+  RevokeAccessOutputSchema,
+  ResponseOnlyInputSchema,
+  SimpleReadInputSchema,
+  SummaryOutputSchema,
   WeeklySummaryInputSchema
 } from "../schemas/common.js";
+import { buildPrivacyAudit } from "../services/audit.js";
 import { getConfig } from "../services/config.js";
 import { bulletList, formatCollection, makeError, makeResponse } from "../services/format.js";
+import { applyPrivacy, resolvePrivacyMode } from "../services/privacy.js";
 import { buildDailySummary, buildWeeklySummary, formatSummaryMarkdown } from "../services/summary.js";
 import { WhoopClient } from "../services/whoop-client.js";
 
@@ -24,6 +35,7 @@ function registerCollectionTool(server: McpServer, name: string, title: string, 
       title,
       description,
       inputSchema: CollectionInputSchema.shape,
+      outputSchema: CollectionOutputSchema.shape,
       annotations: {
         readOnlyHint: true,
         destructiveHint: false,
@@ -33,11 +45,15 @@ function registerCollectionTool(server: McpServer, name: string, title: string, 
     },
     async (params) => {
       try {
-        const result = await client().list(endpoint, params);
+        const config = getConfig();
+        const privacyMode = resolvePrivacyMode(config, params.privacy_mode);
+        const result = await new WhoopClient(config).list(endpoint, params);
+        const records = applyPrivacy(endpoint, { records: result.records }, privacyMode) as { records: unknown[] };
         const output = {
           endpoint,
-          count: result.records.length,
-          records: result.records,
+          privacy_mode: privacyMode,
+          count: records.records.length,
+          records: records.records,
           next_token: result.next_token,
           has_more: Boolean(result.next_token),
           pages_fetched: result.pages_fetched
@@ -45,9 +61,10 @@ function registerCollectionTool(server: McpServer, name: string, title: string, 
         return makeResponse(
           output,
           params.response_format,
-          formatCollection(title, result.records, {
+          formatCollection(title, records.records, {
             endpoint,
-            count: result.records.length,
+            privacy_mode: privacyMode,
+            count: records.records.length,
             has_more: Boolean(result.next_token),
             next_token: result.next_token ?? "none",
             pages_fetched: result.pages_fetched
@@ -67,6 +84,7 @@ function registerGetByIdTool(server: McpServer, name: string, title: string, end
       title,
       description,
       inputSchema: IdInputSchema.shape,
+      outputSchema: EndpointDataOutputSchema.shape,
       annotations: {
         readOnlyHint: true,
         destructiveHint: false,
@@ -76,12 +94,14 @@ function registerGetByIdTool(server: McpServer, name: string, title: string, end
     },
     async (params) => {
       try {
+        const config = getConfig();
+        const privacyMode = resolvePrivacyMode(config, params.privacy_mode);
         const endpoint = endpointBuilder(params.id);
-        const data = await client().get(endpoint);
+        const data = applyPrivacy(endpoint, await new WhoopClient(config).get(endpoint), privacyMode);
         return makeResponse(
-          { endpoint, data },
+          { endpoint, privacy_mode: privacyMode, data },
           params.response_format,
-          bulletList(title, { endpoint, data: JSON.stringify(data) })
+          bulletList(title, { endpoint, privacy_mode: privacyMode, data: JSON.stringify(data) })
         );
       } catch (error) {
         return makeError((error as Error).message);
@@ -97,6 +117,7 @@ export function registerWhoopTools(server: McpServer): void {
       title: "Get WHOOP OAuth URL",
       description: "Generate a WHOOP OAuth authorization URL. This does not read or modify WHOOP data. Use this first when no local token exists.",
       inputSchema: AuthUrlInputSchema.shape,
+      outputSchema: AuthUrlOutputSchema.shape,
       annotations: {
         readOnlyHint: true,
         destructiveHint: false,
@@ -127,6 +148,7 @@ export function registerWhoopTools(server: McpServer): void {
       title: "Exchange WHOOP OAuth Code",
       description: "Exchange a WHOOP OAuth authorization code for local tokens. Tokens are stored locally with 0600 permissions and are never returned by this tool.",
       inputSchema: ExchangeCodeInputSchema.shape,
+      outputSchema: ExchangeCodeOutputSchema.shape,
       annotations: {
         readOnlyHint: false,
         destructiveHint: false,
@@ -156,13 +178,17 @@ export function registerWhoopTools(server: McpServer): void {
     {
       title: "Get WHOOP Profile",
       description: "Get the authenticated user's basic WHOOP profile. Requires read:profile scope.",
-      inputSchema: { response_format: z.enum(["markdown", "json"]).default("markdown") },
+      inputSchema: SimpleReadInputSchema.shape,
+      outputSchema: EndpointDataOutputSchema.shape,
       annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true }
     },
-    async ({ response_format }) => {
+    async ({ response_format, privacy_mode }) => {
       try {
-        const data = await client().get("/v2/user/profile/basic");
-        return makeResponse({ endpoint: "/v2/user/profile/basic", data }, response_format, bulletList("WHOOP Profile", data as Record<string, unknown>));
+        const config = getConfig();
+        const endpoint = "/v2/user/profile/basic";
+        const privacyMode = resolvePrivacyMode(config, privacy_mode);
+        const data = applyPrivacy(endpoint, await new WhoopClient(config).get(endpoint), privacyMode);
+        return makeResponse({ endpoint, privacy_mode: privacyMode, data }, response_format, bulletList("WHOOP Profile", data as Record<string, unknown>));
       } catch (error) {
         return makeError((error as Error).message);
       }
@@ -174,13 +200,17 @@ export function registerWhoopTools(server: McpServer): void {
     {
       title: "Get WHOOP Body Measurements",
       description: "Get the authenticated user's WHOOP body measurements. Requires read:body_measurement scope.",
-      inputSchema: { response_format: z.enum(["markdown", "json"]).default("markdown") },
+      inputSchema: SimpleReadInputSchema.shape,
+      outputSchema: EndpointDataOutputSchema.shape,
       annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true }
     },
-    async ({ response_format }) => {
+    async ({ response_format, privacy_mode }) => {
       try {
-        const data = await client().get("/v2/user/measurement/body");
-        return makeResponse({ endpoint: "/v2/user/measurement/body", data }, response_format, bulletList("WHOOP Body Measurements", data as Record<string, unknown>));
+        const config = getConfig();
+        const endpoint = "/v2/user/measurement/body";
+        const privacyMode = resolvePrivacyMode(config, privacy_mode);
+        const data = applyPrivacy(endpoint, await new WhoopClient(config).get(endpoint), privacyMode);
+        return makeResponse({ endpoint, privacy_mode: privacyMode, data }, response_format, bulletList("WHOOP Body Measurements", data as Record<string, unknown>));
       } catch (error) {
         return makeError((error as Error).message);
       }
@@ -193,6 +223,63 @@ export function registerWhoopTools(server: McpServer): void {
   registerCollectionTool(server, "whoop_list_workouts", "WHOOP Workouts", "/v2/activity/workout", "List WHOOP workouts. Supports start/end filters and WHOOP pagination. Requires read:workout scope.");
 
   server.registerTool(
+    "whoop_cache_status",
+    {
+      title: "WHOOP Cache Status",
+      description: "Show optional local SQLite cache status. Enable with WHOOP_CACHE=sqlite or WHOOP_CACHE=true.",
+      inputSchema: ResponseOnlyInputSchema.shape,
+      outputSchema: CacheStatusOutputSchema.shape,
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }
+    },
+    async ({ response_format }) => {
+      try {
+        const status = client().cacheStatus();
+        return makeResponse(status, response_format, bulletList("WHOOP Cache Status", status));
+      } catch (error) {
+        return makeError((error as Error).message);
+      }
+    }
+  );
+
+  server.registerTool(
+    "whoop_privacy_audit",
+    {
+      title: "WHOOP Privacy Audit",
+      description: "Return the local privacy, cache, token-path, env-presence and redaction posture without revealing secret values.",
+      inputSchema: ResponseOnlyInputSchema.shape,
+      outputSchema: PrivacyAuditOutputSchema.shape,
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }
+    },
+    async ({ response_format }) => {
+      const audit = buildPrivacyAudit();
+      return makeResponse(audit, response_format, bulletList("WHOOP Privacy Audit", audit));
+    }
+  );
+
+  server.registerTool(
+    "whoop_revoke_access",
+    {
+      title: "Revoke WHOOP OAuth Access",
+      description: "Revoke the current WHOOP OAuth access grant and delete the local token file. Use only when the user explicitly wants to disconnect WHOOP.",
+      inputSchema: ResponseOnlyInputSchema.shape,
+      outputSchema: RevokeAccessOutputSchema.shape,
+      annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true }
+    },
+    async ({ response_format }) => {
+      try {
+        const result = await client().revokeAccess();
+        const output = {
+          ...result,
+          note: "WHOOP access was revoked and local tokens were removed. Re-authorize with whoop_get_auth_url before future API calls."
+        };
+        return makeResponse(output, response_format, bulletList("WHOOP Access Revoked", output));
+      } catch (error) {
+        return makeError((error as Error).message);
+      }
+    }
+  );
+
+  server.registerTool(
     "whoop_daily_summary",
     {
       title: "WHOOP Daily Summary",
@@ -200,6 +287,7 @@ export function registerWhoopTools(server: McpServer): void {
 
 This workflow tool fetches recent WHOOP v2 records, computes a defensive baseline, and returns readiness, sleep, load, diagnostic signals and concrete action candidates. It does not provide medical advice and does not store data locally.`,
       inputSchema: DailySummaryInputSchema.shape,
+      outputSchema: SummaryOutputSchema,
       annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true }
     },
     async (params) => {
@@ -220,6 +308,7 @@ This workflow tool fetches recent WHOOP v2 records, computes a defensive baselin
 
 This workflow tool compares a recent window against a prior window when available. It is intended for coaching and agent workflows, not medical diagnosis.`,
       inputSchema: WeeklySummaryInputSchema.shape,
+      outputSchema: SummaryOutputSchema,
       annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true }
     },
     async (params) => {
