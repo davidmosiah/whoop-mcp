@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://whoopmcp.vercel.app/sitemap.xml
+Host: https://whoopmcp.vercel.app

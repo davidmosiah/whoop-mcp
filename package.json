@@ -1,6 +1,6 @@
 {
   "name": "whoop-mcp-unofficial",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Unofficial MCP server for connecting AI agents to the WHOOP API.",
   "type": "module",
   "bin": {
@@ -15,8 +15,11 @@
     "CHANGELOG.md",
     "server.json",
     "docs/.nojekyll",
+    "docs/.well-known",
     "docs/assets",
     "docs/*.md",
+    "docs/*.txt",
+    "docs/*.xml",
     "docs/index.html",
     "examples"
   ],

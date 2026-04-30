@@ -1,0 +1,4 @@
+Contact: https://github.com/davidmosiah/whoop-mcp/security/advisories/new
+Policy: https://github.com/davidmosiah/whoop-mcp/blob/main/SECURITY.md
+Preferred-Languages: en, pt-BR
+Canonical: https://whoopmcp.vercel.app/.well-known/security.txt

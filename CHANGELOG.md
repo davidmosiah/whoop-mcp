@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.4
+
+- Add SEO/GEO production metadata: JSON-LD, robots.txt, sitemap.xml, llms.txt, security.txt and PNG social preview.
+- Include SEO/GEO static docs in npm package files while continuing to exclude local Vercel metadata.
+
 ## 0.1.3
 
 - Set `https://whoopmcp.vercel.app/` as the primary project URL in README/package metadata while keeping GitHub Pages as a mirror.

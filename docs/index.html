@@ -4,17 +4,113 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>WHOOP MCP Unofficial - Local-first WHOOP data for AI agents</title>
-  <meta name="description" content="A serious, beginner-friendly, unofficial MCP bridge that lets Claude, Cursor, Windsurf, Hermes and other AI agents understand your WHOOP recovery, sleep, strain and workouts. Local-first, read-only and open source.">
+  <meta name="description" content="Unofficial local-first WHOOP MCP server for AI agents. Connect recovery, sleep, strain and workout data through read-only OAuth.">
+  <meta name="author" content="David Mosiah">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="keywords" content="WHOOP MCP, WHOOP API, Model Context Protocol, AI agents, Claude Desktop, Cursor, Hermes, OpenClaw, wearable data, recovery, sleep, strain">
   <meta name="theme-color" content="#050806">
   <meta property="og:title" content="WHOOP MCP Unofficial">
   <meta property="og:description" content="Turn your WHOOP signal into better decisions with your AI assistant. Unofficial, open source, local-first.">
   <meta property="og:type" content="website">
+  <meta property="og:site_name" content="WHOOP MCP Unofficial">
   <meta property="og:url" content="https://whoopmcp.vercel.app/">
-  <meta property="og:image" content="https://whoopmcp.vercel.app/assets/og-card.svg">
+  <meta property="og:image" content="https://whoopmcp.vercel.app/assets/og-card.png">
+  <meta property="og:image:secure_url" content="https://whoopmcp.vercel.app/assets/og-card.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="WHOOP MCP Unofficial - turn your body signal into AI-ready decisions">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="WHOOP MCP Unofficial">
+  <meta name="twitter:description" content="Local-first, read-only WHOOP data for AI agents through the official OAuth API.">
+  <meta name="twitter:image" content="https://whoopmcp.vercel.app/assets/og-card.png">
+  <meta name="twitter:image:alt" content="WHOOP MCP Unofficial - turn your body signal into AI-ready decisions">
   <link rel="canonical" href="https://whoopmcp.vercel.app/">
+  <link rel="alternate" href="https://davidmosiah.github.io/whoop-mcp/">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml">
   <link rel="stylesheet" href="assets/site.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://whoopmcp.vercel.app/#website",
+        "url": "https://whoopmcp.vercel.app/",
+        "name": "WHOOP MCP Unofficial",
+        "description": "Unofficial local-first WHOOP MCP server for AI agents.",
+        "publisher": {
+          "@id": "https://github.com/davidmosiah#person"
+        }
+      },
+      {
+        "@type": "Person",
+        "@id": "https://github.com/davidmosiah#person",
+        "name": "David Mosiah",
+        "url": "https://github.com/davidmosiah"
+      },
+      {
+        "@type": "SoftwareSourceCode",
+        "@id": "https://github.com/davidmosiah/whoop-mcp#source",
+        "name": "WHOOP MCP Unofficial",
+        "codeRepository": "https://github.com/davidmosiah/whoop-mcp",
+        "url": "https://whoopmcp.vercel.app/",
+        "programmingLanguage": "TypeScript",
+        "runtimePlatform": "Node.js",
+        "license": "https://github.com/davidmosiah/whoop-mcp/blob/main/LICENSE",
+        "applicationCategory": "DeveloperApplication",
+        "description": "Unofficial MCP server that connects AI agents to user-authorized WHOOP recovery, sleep, strain and workout data through the official OAuth API.",
+        "author": {
+          "@id": "https://github.com/davidmosiah#person"
+        },
+        "isAccessibleForFree": true,
+        "sameAs": [
+          "https://www.npmjs.com/package/whoop-mcp-unofficial",
+          "https://davidmosiah.github.io/whoop-mcp/"
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://whoopmcp.vercel.app/#faq-schema",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Does WHOOP MCP fetch raw sensor data?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. In this project, raw means the full JSON returned by supported WHOOP API endpoints. It does not mean continuous heart-rate samples, accelerometer data or raw device telemetry."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What should an agent call first?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Agents should start with whoop_capabilities, then whoop_connection_status, then whoop_daily_summary or whoop_weekly_summary."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Where do WHOOP secrets live?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "WHOOP credentials and OAuth tokens stay on the user's machine under ~/.whoop-mcp/. MCP tools intentionally do not return OAuth token values."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is WHOOP MCP medical advice?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. It provides recovery, sleep, training and performance context for user-owned agent workflows. It is not diagnosis, treatment or emergency monitoring."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
