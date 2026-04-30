@@ -18,22 +18,22 @@
       "environmentVariables": [
         {
           "name": "WHOOP_CLIENT_ID",
-          "description": "WHOOP OAuth client ID from the WHOOP Developer Dashboard.",
-          "isRequired": true,
+          "description": "WHOOP OAuth client ID. Optional when configured with whoop-mcp-server setup.",
+          "isRequired": false,
           "format": "string",
           "isSecret": false
         },
         {
           "name": "WHOOP_CLIENT_SECRET",
-          "description": "WHOOP OAuth client secret from the WHOOP Developer Dashboard.",
-          "isRequired": true,
+          "description": "WHOOP OAuth client secret. Prefer whoop-mcp-server setup so this secret is stored in ~/.whoop-mcp/config.json instead of MCP client config.",
+          "isRequired": false,
           "format": "string",
           "isSecret": true
         },
         {
           "name": "WHOOP_REDIRECT_URI",
-          "description": "Redirect URI configured in the WHOOP Developer Dashboard.",
-          "isRequired": true,
+          "description": "Redirect URI configured in the WHOOP Developer Dashboard. Optional when configured with whoop-mcp-server setup.",
+          "isRequired": false,
           "format": "string",
           "isSecret": false
         },

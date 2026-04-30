@@ -28,7 +28,7 @@ export async function runAuthCommand(args: string[]): Promise<number> {
   const json = args.includes("--json");
   const config = getConfig();
   const redirect = parseLocalRedirectUri(config.redirectUri);
-  const state = randomBytes(16).toString("hex");
+  const state = randomBytes(4).toString("hex");
   const client = new WhoopClient(config);
   const authUrl = client.authUrl(state);
   const timeoutMs = Number(process.env.WHOOP_AUTH_TIMEOUT_MS ?? 300_000);

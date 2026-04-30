@@ -9,20 +9,13 @@ mcp_servers:
     args:
       - -y
       - "@davidmosiah/whoop-mcp-server"
-    env:
-      WHOOP_CLIENT_ID: your-client-id
-      WHOOP_CLIENT_SECRET: your-client-secret
-      WHOOP_REDIRECT_URI: http://127.0.0.1:3000/callback
-      WHOOP_TOKEN_PATH: /root/.whoop-mcp/tokens.json
-      WHOOP_PRIVACY_MODE: structured
-      WHOOP_CACHE: sqlite
 ```
 
 Recommended first run:
 
-1. Ask the agent to call `whoop_get_auth_url`.
-2. Open the returned URL and authorize WHOOP.
-3. Give the returned code/full redirect URL to `whoop_exchange_code`.
+1. Run `whoop-mcp-server setup --client hermes`.
+2. Run `whoop-mcp-server auth`.
+3. Ask Hermes to call `whoop_connection_status`.
 4. Call `whoop_daily_summary` or `whoop_weekly_summary`.
 
-Keep `WHOOP_CLIENT_SECRET` and `WHOOP_TOKEN_PATH` out of prompts, logs and public repos.
+Keep `WHOOP_CLIENT_SECRET` and `WHOOP_TOKEN_PATH` out of prompts, logs and public repos. `setup` stores secrets in the local WHOOP MCP config instead of this agent config.

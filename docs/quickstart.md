@@ -30,21 +30,34 @@ npm run build
 node dist/index.js doctor
 ```
 
-## 3. Configure env
+## 3. Run setup
+
+This is the recommended path. It stores secrets in `~/.whoop-mcp/config.json` with `0600` permissions and creates a client config/snippet without embedding your WHOOP secret.
 
 ```bash
-export WHOOP_CLIENT_ID="your-client-id"
-export WHOOP_CLIENT_SECRET="your-client-secret"
-export WHOOP_REDIRECT_URI="http://127.0.0.1:3000/callback"
+npx -y @davidmosiah/whoop-mcp-server setup
 ```
 
-Optional:
+You can also run it non-interactively:
 
 ```bash
-export WHOOP_PRIVACY_MODE="structured" # summary | structured | raw
-export WHOOP_CACHE="sqlite"
-export WHOOP_CACHE_PATH="$HOME/.whoop-mcp/cache.sqlite"
-export WHOOP_TOKEN_PATH="$HOME/.whoop-mcp/tokens.json"
+npx -y @davidmosiah/whoop-mcp-server setup \
+  --client generic \
+  --client-id "your-client-id" \
+  --client-secret "your-client-secret" \
+  --redirect-uri "http://127.0.0.1:3000/callback"
+```
+
+Prefer interactive setup on shared machines so your client secret is not stored in shell history.
+
+Optional flags:
+
+```bash
+--privacy-mode structured # summary | structured | raw
+--cache sqlite
+--token-path "$HOME/.whoop-mcp/tokens.json"
+--cache-path "$HOME/.whoop-mcp/cache.sqlite"
+--client claude # generic | claude | cursor | windsurf | hermes | openclaw
 ```
 
 ## 4. Check setup
@@ -78,13 +91,7 @@ Use the package without a subcommand:
   "mcpServers": {
     "whoop": {
       "command": "npx",
-      "args": ["-y", "@davidmosiah/whoop-mcp-server"],
-      "env": {
-        "WHOOP_CLIENT_ID": "your-client-id",
-        "WHOOP_CLIENT_SECRET": "your-client-secret",
-        "WHOOP_REDIRECT_URI": "http://127.0.0.1:3000/callback",
-        "WHOOP_PRIVACY_MODE": "structured"
-      }
+      "args": ["-y", "@davidmosiah/whoop-mcp-server"]
     }
   }
 }

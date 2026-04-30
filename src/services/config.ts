@@ -2,6 +2,7 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 import { DEFAULT_SCOPES } from "../constants.js";
 import type { PrivacyMode, WhoopConfig } from "../types.js";
+import { loadConfigSources } from "./local-config.js";
 
 function env(name: string): string | undefined {
   const value = process.env[name];
@@ -9,14 +10,16 @@ function env(name: string): string | undefined {
 }
 
 export function getConfig(): WhoopConfig {
-  const clientId = env("WHOOP_CLIENT_ID");
-  const clientSecret = env("WHOOP_CLIENT_SECRET");
-  const redirectUri = env("WHOOP_REDIRECT_URI");
-  const tokenPath = env("WHOOP_TOKEN_PATH") ?? join(homedir(), ".whoop-mcp", "tokens.json");
-  const cachePath = env("WHOOP_CACHE_PATH") ?? join(homedir(), ".whoop-mcp", "cache.sqlite");
-  const scopes = (env("WHOOP_SCOPES")?.split(/[ ,]+/).filter(Boolean)) ?? DEFAULT_SCOPES;
-  const privacyMode = parsePrivacyMode(env("WHOOP_PRIVACY_MODE"));
-  const cacheEnabled = parseBool(env("WHOOP_CACHE"), false);
+  const sources = loadConfigSources(process.env, homedir());
+  const value = (name: keyof typeof sources.values) => env(name) ?? sources.values[name];
+  const clientId = value("WHOOP_CLIENT_ID");
+  const clientSecret = value("WHOOP_CLIENT_SECRET");
+  const redirectUri = value("WHOOP_REDIRECT_URI");
+  const tokenPath = value("WHOOP_TOKEN_PATH") ?? join(homedir(), ".whoop-mcp", "tokens.json");
+  const cachePath = value("WHOOP_CACHE_PATH") ?? join(homedir(), ".whoop-mcp", "cache.sqlite");
+  const scopes = (value("WHOOP_SCOPES")?.split(/[ ,]+/).filter(Boolean)) ?? DEFAULT_SCOPES;
+  const privacyMode = parsePrivacyMode(value("WHOOP_PRIVACY_MODE"));
+  const cacheEnabled = parseBool(value("WHOOP_CACHE"), false);
 
   const missing = [
     ["WHOOP_CLIENT_ID", clientId],

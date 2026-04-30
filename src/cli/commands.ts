@@ -1,10 +1,12 @@
 import { buildConnectionStatus } from "../services/connection-status.js";
 import { SERVER_VERSION } from "../constants.js";
 import { runAuthCommand } from "./auth.js";
+import { runSetupCommand } from "./setup.js";
 
 export async function runCliCommand(args: string[]): Promise<number | undefined> {
   const [command, ...rest] = args;
   if (!command || command === "--http") return undefined;
+  if (command === "setup") return runSetupCommand(rest);
   if (command === "doctor" || command === "status") return runDoctor(rest);
   if (command === "auth") return runAuthCommand(rest);
   if (command === "version" || command === "--version" || command === "-v") {
@@ -42,6 +44,7 @@ function printDoctor(status: Awaited<ReturnType<typeof buildConnectionStatus>>):
   console.log("Checks:");
   console.log(`- Node.js >=20: ${status.node.supported ? "ok" : `needs update (${status.node.version})`}`);
   console.log(`- WHOOP env vars: ${status.missing_env.length === 0 ? "ok" : `missing ${status.missing_env.join(", ")}`}`);
+  console.log(`- Local config: ${status.config.exists ? `${status.config.source} at ${status.config.path}` : "missing"}`);
   console.log(`- Automatic auth redirect: ${status.automatic_auth_supported ? "ok" : "not configured for local callback"}`);
   console.log(`- Token file: ${status.token.exists ? status.token.path : "missing"}`);
   if (status.token.exists) {
@@ -61,6 +64,7 @@ function printHelp(): void {
 Usage:
   whoop-mcp-server                 Start MCP stdio server
   whoop-mcp-server --http          Start local HTTP MCP server
+  whoop-mcp-server setup           Guided setup, local config, and MCP client config
   whoop-mcp-server doctor          Check setup and next steps
   whoop-mcp-server doctor --json   Print setup status as JSON
   whoop-mcp-server auth            Authorize WHOOP with local browser callback

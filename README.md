@@ -86,16 +86,18 @@ read:recovery read:cycles read:workout read:sleep read:profile read:body_measure
 This is the recommended path for non-technical setup:
 
 ```bash
-npx -y @davidmosiah/whoop-mcp-server doctor
+npx -y @davidmosiah/whoop-mcp-server setup
 npx -y @davidmosiah/whoop-mcp-server auth
 npx -y @davidmosiah/whoop-mcp-server doctor
 ```
 
 What these commands do:
 
+- `setup` asks for WHOOP credentials, writes local config, and creates a client config/snippet.
 - `doctor` checks Node.js, required WHOOP env vars, redirect URI, token file, privacy mode and cache.
 - `auth` starts a temporary local callback server, opens the WHOOP authorization page, captures the OAuth code and saves tokens locally.
 - `doctor --json` returns the same setup state in machine-readable form.
+- Secrets are stored in `~/.whoop-mcp/config.json` with `0600` permissions, so MCP client configs do not need to contain your WHOOP secret.
 
 For automatic auth, configure the WHOOP Developer app redirect URI as:
 
@@ -112,13 +114,7 @@ Example local config:
   "mcpServers": {
     "whoop": {
       "command": "node",
-      "args": ["/absolute/path/to/whoop-mcp/dist/index.js"],
-      "env": {
-        "WHOOP_CLIENT_ID": "your-client-id",
-        "WHOOP_CLIENT_SECRET": "your-client-secret",
-        "WHOOP_REDIRECT_URI": "http://127.0.0.1:3000/callback",
-        "WHOOP_PRIVACY_MODE": "structured"
-      }
+      "args": ["/absolute/path/to/whoop-mcp/dist/index.js"]
     }
   }
 }
@@ -131,17 +127,13 @@ For npm/npx usage after publication:
   "mcpServers": {
     "whoop": {
       "command": "npx",
-      "args": ["-y", "@davidmosiah/whoop-mcp-server"],
-      "env": {
-        "WHOOP_CLIENT_ID": "your-client-id",
-        "WHOOP_CLIENT_SECRET": "your-client-secret",
-        "WHOOP_REDIRECT_URI": "http://127.0.0.1:3000/callback",
-        "WHOOP_PRIVACY_MODE": "structured"
-      }
+      "args": ["-y", "@davidmosiah/whoop-mcp-server"]
     }
   }
 }
 ```
+
+If you do not run `setup`, you can still provide `WHOOP_CLIENT_ID`, `WHOOP_CLIENT_SECRET` and `WHOOP_REDIRECT_URI` through your MCP client env block. Prefer `setup` for less secret sprawl.
 
 ## OAuth flow
 

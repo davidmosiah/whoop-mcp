@@ -62,6 +62,7 @@ try {
     arguments: { response_format: 'json' }
   });
   assert.equal(auditResult.structuredContent?.unofficial, true);
+  assert.ok(['env', 'local_config', 'mixed', 'missing'].includes(auditResult.structuredContent?.config_source));
   assert.ok(auditResult.structuredContent?.secret_env_vars?.includes('WHOOP_CLIENT_SECRET'));
   assert.ok(!auditResult.structuredContent?.secret_env_vars?.includes('WHOOP_CLIENT_ID'));
 

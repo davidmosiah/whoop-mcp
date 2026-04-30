@@ -20,6 +20,14 @@ Modes:
 
 ## Token storage
 
+Setup config is stored locally at:
+
+```text
+~/.whoop-mcp/config.json
+```
+
+It contains the WHOOP OAuth client values used by the local MCP server and is written with `0600` permissions.
+
 OAuth tokens are stored locally at `WHOOP_TOKEN_PATH`, defaulting to:
 
 ```text

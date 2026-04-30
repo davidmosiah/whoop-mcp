@@ -2,6 +2,7 @@ import { promises as fs } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import type { PrivacyMode, WhoopTokenSet } from "../types.js";
+import { loadConfigSources } from "./local-config.js";
 
 type Env = Record<string, string | undefined>;
 
@@ -23,6 +24,13 @@ export interface ConnectionStatus extends Record<string, unknown> {
   missing_env: string[];
   redirect_uri?: string;
   automatic_auth_supported: boolean;
+  config: {
+    source: "env" | "local_config" | "mixed" | "missing";
+    path: string;
+    exists: boolean;
+    secure_permissions?: boolean;
+    error?: string;
+  };
   token: {
     path: string;
     exists: boolean;
@@ -46,11 +54,13 @@ const REQUIRED_ENV = ["WHOOP_CLIENT_ID", "WHOOP_CLIENT_SECRET", "WHOOP_REDIRECT_
 export async function buildConnectionStatus(options: ConnectionStatusOptions = {}): Promise<ConnectionStatus> {
   const env = options.env ?? process.env;
   const homeDir = options.homeDir ?? homedir();
+  const sources = loadConfigSources(env, homeDir);
+  const value = (name: keyof typeof sources.values) => sources.values[name];
   const nowSeconds = Math.floor((options.nowMs ?? Date.now()) / 1000);
-  const tokenPath = cleanEnv(env, "WHOOP_TOKEN_PATH") ?? join(homeDir, ".whoop-mcp", "tokens.json");
-  const cachePath = cleanEnv(env, "WHOOP_CACHE_PATH") ?? join(homeDir, ".whoop-mcp", "cache.sqlite");
-  const redirectUri = cleanEnv(env, "WHOOP_REDIRECT_URI");
-  const requiredEnv = Object.fromEntries(REQUIRED_ENV.map((name) => [name, Boolean(cleanEnv(env, name))]));
+  const tokenPath = value("WHOOP_TOKEN_PATH") ?? join(homeDir, ".whoop-mcp", "tokens.json");
+  const cachePath = value("WHOOP_CACHE_PATH") ?? join(homeDir, ".whoop-mcp", "cache.sqlite");
+  const redirectUri = value("WHOOP_REDIRECT_URI");
+  const requiredEnv = Object.fromEntries(REQUIRED_ENV.map((name) => [name, Boolean(value(name as keyof typeof sources.values))]));
   const missingEnv = REQUIRED_ENV.filter((name) => !requiredEnv[name]);
   const token = await inspectToken(tokenPath, nowSeconds);
   const nodeSupported = Number(process.versions.node.split(".")[0] ?? 0) >= 20;
@@ -66,23 +76,25 @@ export async function buildConnectionStatus(options: ConnectionStatusOptions = {
       version: process.versions.node,
       supported: nodeSupported
     },
-    privacy_mode: parsePrivacyMode(cleanEnv(env, "WHOOP_PRIVACY_MODE")),
+    privacy_mode: parsePrivacyMode(value("WHOOP_PRIVACY_MODE")),
     required_env: requiredEnv,
     missing_env: missingEnv,
     redirect_uri: redirectUri,
     automatic_auth_supported: automaticAuthSupported,
+    config: {
+      source: sources.source,
+      path: sources.local.path,
+      exists: sources.local.exists,
+      secure_permissions: sources.local.secure_permissions,
+      error: sources.local.error
+    },
     token,
     cache: {
-      enabled: parseBool(cleanEnv(env, "WHOOP_CACHE")),
+      enabled: parseBool(value("WHOOP_CACHE")),
       path: cachePath
     },
     next_steps: buildNextSteps({ missingEnv, token, nodeSupported, automaticAuthSupported, redirectUri })
   };
-}
-
-function cleanEnv(env: Env, name: string): string | undefined {
-  const value = env[name];
-  return value && value.trim() ? value.trim() : undefined;
 }
 
 function parsePrivacyMode(value: string | undefined): PrivacyMode {
