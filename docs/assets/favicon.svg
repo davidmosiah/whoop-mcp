@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="WHOOP MCP unofficial mark">
+  <rect width="64" height="64" rx="18" fill="#07100d"/>
+  <circle cx="32" cy="32" r="23" fill="none" stroke="#a8ff6a" stroke-width="3" opacity=".85"/>
+  <path d="M31 14c9 8 17 11 17 20 0 9-7 16-16 16s-16-7-16-16c0-9 8-12 15-20Z" fill="#e4ff4f"/>
+  <circle cx="25" cy="30" r="3" fill="#07100d"/>
+  <circle cx="39" cy="30" r="3" fill="#07100d"/>
+</svg>

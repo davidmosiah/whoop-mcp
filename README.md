@@ -4,6 +4,8 @@
 
 Unofficial MCP server for connecting AI agents to the WHOOP API.
 
+Website: <https://davidmosiah.github.io/whoop-mcp/>
+
 > **Unofficial project:** this repository is not affiliated with, endorsed by, sponsored by, or supported by WHOOP, Inc. WHOOP is a trademark of its respective owner. Use this project only with your own WHOOP account and according to WHOOP's Developer Terms and API policies.
 
 ## What it does
