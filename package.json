@@ -1,6 +1,6 @@
 {
   "name": "whoop-mcp-unofficial",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Unofficial MCP server for connecting AI agents to the WHOOP API.",
   "type": "module",
   "bin": {
@@ -14,7 +14,10 @@
     "SECURITY.md",
     "CHANGELOG.md",
     "server.json",
-    "docs",
+    "docs/.nojekyll",
+    "docs/assets",
+    "docs/*.md",
+    "docs/index.html",
     "examples"
   ],
   "scripts": {
@@ -66,7 +69,7 @@
   "bugs": {
     "url": "https://github.com/davidmosiah/whoop-mcp/issues"
   },
-  "homepage": "https://github.com/davidmosiah/whoop-mcp#readme",
+  "homepage": "https://whoopmcp.vercel.app/",
   "mcpName": "io.github.davidmosiah/whoop-mcp",
   "publishConfig": {
     "access": "public",

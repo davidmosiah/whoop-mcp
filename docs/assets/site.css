@@ -202,7 +202,7 @@ main,
 
 .hero {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.82fr);
+  grid-template-columns: minmax(0, 0.98fr) minmax(380px, 0.9fr);
   gap: clamp(2.5rem, 6vw, 6rem);
   align-items: center;
   min-height: calc(100vh - 5rem);
@@ -232,9 +232,9 @@ h2 {
 }
 
 h1 {
-  max-width: 12.4ch;
+  max-width: 9.3ch;
   margin-bottom: 1.35rem;
-  font-size: clamp(3.45rem, 8vw, 7.4rem);
+  font-size: clamp(4.1rem, 9.6vw, 8.8rem);
   line-height: 0.89;
 }
 
@@ -270,6 +270,28 @@ p {
   margin-top: 2rem;
 }
 
+.hero-command {
+  display: inline-grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: center;
+  width: min(100%, 44rem);
+  margin-top: 1rem;
+  padding: 0.68rem;
+  border: 1px solid rgba(202, 255, 91, 0.28);
+  border-radius: 999px;
+  background: rgba(3, 5, 4, 0.72);
+  box-shadow: inset 0 0 26px rgba(202, 255, 91, 0.04);
+}
+
+.hero-command code {
+  padding-left: 0.75rem;
+  overflow: hidden;
+  color: #eaffdf;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .button {
   display: inline-flex;
   align-items: center;
@@ -302,7 +324,7 @@ p {
 
 .hero-proof {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 0.72rem;
   max-width: 48rem;
   margin: 1.5rem 0 0;
@@ -379,6 +401,55 @@ p {
   color: var(--text-soft);
 }
 
+.launch-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.85rem;
+  margin: 0 0 clamp(3.5rem, 8vw, 6.5rem);
+}
+
+.launch-strip a {
+  position: relative;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  color: var(--text);
+  text-decoration: none;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(202, 255, 91, 0.12), transparent 10rem),
+    rgba(246, 241, 224, 0.052);
+  overflow: hidden;
+  transition: transform 180ms ease, border-color 180ms ease;
+}
+
+.launch-strip a:hover {
+  transform: translateY(-2px);
+  border-color: var(--line-strong);
+}
+
+.launch-strip span,
+.launch-strip strong {
+  display: block;
+}
+
+.launch-strip span {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.launch-strip strong {
+  margin-top: 0.35rem;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 1rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .notice strong {
   color: var(--amber);
   white-space: nowrap;
@@ -390,6 +461,7 @@ p {
 .privacy-section,
 .agent-section,
 .faq-section,
+.architecture-section,
 .community-section,
 .closing {
   margin: clamp(4.5rem, 10vw, 8.5rem) 0;
@@ -528,6 +600,115 @@ p {
   flex-wrap: wrap;
   justify-content: flex-end;
   gap: 0.8rem;
+}
+
+.architecture-section {
+  display: grid;
+  grid-template-columns: minmax(0, 0.75fr) minmax(0, 1.25fr);
+  gap: clamp(1.5rem, 5vw, 4rem);
+  align-items: center;
+}
+
+.architecture-points {
+  display: grid;
+  gap: 0.8rem;
+  margin-top: 1.5rem;
+}
+
+.architecture-points article {
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(246, 241, 224, 0.05);
+}
+
+.architecture-points strong,
+.architecture-points span {
+  display: block;
+}
+
+.architecture-points strong {
+  color: var(--acid);
+}
+
+.architecture-points span {
+  margin-top: 0.35rem;
+  color: var(--text-soft);
+  line-height: 1.55;
+}
+
+.architecture-visual {
+  margin: 0;
+  border: 1px solid rgba(246, 241, 224, 0.16);
+  border-radius: var(--radius-xl);
+  background: linear-gradient(180deg, rgba(246, 241, 224, 0.08), rgba(246, 241, 224, 0.035));
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.architecture-visual img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.path-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.path-card {
+  position: relative;
+  min-height: 100%;
+  padding: 1.35rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(135deg, rgba(246, 241, 224, 0.1), rgba(246, 241, 224, 0.035)),
+    var(--panel);
+  overflow: hidden;
+}
+
+.path-card::before {
+  content: "";
+  position: absolute;
+  inset: auto 1.25rem 0;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--acid), transparent);
+  opacity: 0.75;
+}
+
+.path-card span {
+  display: inline-flex;
+  margin-bottom: 0.9rem;
+  color: var(--acid);
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.path-card p {
+  margin-bottom: 0;
+}
+
+.path-card a {
+  display: inline-flex;
+  margin-top: 1rem;
+  color: var(--acid);
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.agent-path {
+  border-color: rgba(141, 216, 255, 0.28);
+  background:
+    radial-gradient(circle at 100% 0%, rgba(141, 216, 255, 0.14), transparent 13rem),
+    var(--panel);
 }
 
 .setup-flow {
@@ -770,7 +951,8 @@ pre {
 @media (max-width: 1040px) {
   .hero,
   .privacy-section,
-  .agent-panel {
+  .agent-panel,
+  .architecture-section {
     grid-template-columns: 1fr;
   }
 
@@ -798,6 +980,8 @@ pre {
   .story-grid,
   .hero-proof,
   .faq-grid,
+  .launch-strip,
+  .path-grid,
   .community-card,
   .closing {
     grid-template-columns: 1fr;
@@ -832,6 +1016,15 @@ pre {
     flex-direction: column;
   }
 
+  .hero-command {
+    grid-template-columns: 1fr;
+    border-radius: 22px;
+  }
+
+  .hero-command button {
+    justify-self: stretch;
+  }
+
   .prompt-grid,
   .privacy-grid,
   .faq-grid {
@@ -843,8 +1036,10 @@ pre {
   }
 
   .cinema-card,
+  .architecture-visual,
   .setup-card,
     .story-card,
+    .path-card,
     .prompt-card,
     .privacy-grid article,
     .faq-item,

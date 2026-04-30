@@ -1,0 +1,70 @@
+<svg width="1280" height="720" viewBox="0 0 1280 720" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">WHOOP MCP local-first architecture</title>
+  <desc id="desc">A cinematic architecture diagram showing WHOOP OAuth data flowing through a local MCP server into AI agents and practical decisions.</desc>
+  <defs>
+    <radialGradient id="glowA" cx="24%" cy="42%" r="48%">
+      <stop stop-color="#CAFF5B" stop-opacity="0.34"/>
+      <stop offset="0.52" stop-color="#75E6B0" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#050806" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowB" cx="76%" cy="48%" r="44%">
+      <stop stop-color="#8DD8FF" stop-opacity="0.22"/>
+      <stop offset="0.6" stop-color="#75E6B0" stop-opacity="0.08"/>
+      <stop offset="1" stop-color="#050806" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="card" x1="0" x2="1" y1="0" y2="1">
+      <stop stop-color="#F7F0DC" stop-opacity="0.15"/>
+      <stop offset="1" stop-color="#F7F0DC" stop-opacity="0.045"/>
+    </linearGradient>
+    <linearGradient id="wire" x1="0" x2="1">
+      <stop stop-color="#CAFF5B"/>
+      <stop offset="0.5" stop-color="#75E6B0"/>
+      <stop offset="1" stop-color="#8DD8FF"/>
+    </linearGradient>
+    <filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="16" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="1280" height="720" rx="44" fill="#050806"/>
+  <rect width="1280" height="720" fill="url(#glowA)"/>
+  <rect width="1280" height="720" fill="url(#glowB)"/>
+  <g opacity="0.12" stroke="#F7F0DC">
+    <path d="M70 120H1210M70 240H1210M70 360H1210M70 480H1210M70 600H1210"/>
+    <path d="M160 70V650M320 70V650M480 70V650M640 70V650M800 70V650M960 70V650M1120 70V650"/>
+  </g>
+  <path d="M238 359C352 282 429 274 550 359C671 444 756 443 880 358C1003 274 1086 282 1148 357" stroke="url(#wire)" stroke-width="5" stroke-linecap="round" filter="url(#soft)"/>
+  <path d="M238 359C352 282 429 274 550 359C671 444 756 443 880 358C1003 274 1086 282 1148 357" stroke="url(#wire)" stroke-width="2" stroke-linecap="round"/>
+
+  <g font-family="Avenir, Avenir Next, Helvetica, sans-serif">
+    <rect x="74" y="136" width="260" height="250" rx="30" fill="url(#card)" stroke="#F7F0DC" stroke-opacity="0.18"/>
+    <circle cx="204" cy="230" r="62" fill="#CAFF5B" fill-opacity="0.16" stroke="#CAFF5B" stroke-opacity="0.45"/>
+    <circle cx="204" cy="230" r="28" fill="#CAFF5B"/>
+    <text x="104" y="330" fill="#CAFF5B" font-size="17" font-weight="900" letter-spacing="2">WHOOP OAUTH</text>
+    <text x="104" y="356" fill="#D8CFBA" font-size="18">official API boundary</text>
+
+    <rect x="390" y="92" width="500" height="536" rx="38" fill="#020403" fill-opacity="0.72" stroke="#F7F0DC" stroke-opacity="0.2"/>
+    <rect x="422" y="126" width="436" height="96" rx="22" fill="#CAFF5B"/>
+    <text x="452" y="166" fill="#102012" font-size="17" font-weight="900" letter-spacing="2">LOCAL MCP SERVER</text>
+    <text x="452" y="196" fill="#102012" font-size="30" font-weight="900">whoop-mcp-unofficial</text>
+
+    <rect x="422" y="260" width="198" height="116" rx="22" fill="url(#card)" stroke="#F7F0DC" stroke-opacity="0.15"/>
+    <text x="448" y="300" fill="#978F7F" font-size="15" font-weight="900" letter-spacing="2">TOOLS</text>
+    <text x="448" y="348" fill="#F7F0DC" font-size="44" font-weight="900">20</text>
+
+    <rect x="660" y="260" width="198" height="116" rx="22" fill="url(#card)" stroke="#F7F0DC" stroke-opacity="0.15"/>
+    <text x="686" y="300" fill="#978F7F" font-size="15" font-weight="900" letter-spacing="2">RESOURCES</text>
+    <text x="686" y="348" fill="#F7F0DC" font-size="44" font-weight="900">6</text>
+
+    <rect x="422" y="410" width="436" height="142" rx="26" fill="url(#card)" stroke="#F7F0DC" stroke-opacity="0.15"/>
+    <text x="452" y="452" fill="#75E6B0" font-size="16" font-weight="900" letter-spacing="2">PRIVACY MODES</text>
+    <text x="452" y="494" fill="#F7F0DC" font-size="28" font-weight="900">summary · structured · raw API JSON</text>
+    <text x="452" y="526" fill="#D8CFBA" font-size="18">tokens stay local, raw sensor streams are not exposed</text>
+
+    <rect x="946" y="136" width="260" height="250" rx="30" fill="url(#card)" stroke="#F7F0DC" stroke-opacity="0.18"/>
+    <text x="976" y="190" fill="#8DD8FF" font-size="17" font-weight="900" letter-spacing="2">AI CLIENTS</text>
+    <text x="976" y="232" fill="#F7F0DC" font-size="28" font-weight="900">Claude · Cursor</text>
+    <text x="976" y="268" fill="#F7F0DC" font-size="28" font-weight="900">Hermes · OpenClaw</text>
+    <text x="976" y="330" fill="#D8CFBA" font-size="18">daily plans, training choices, sleep reviews</text>
+  </g>
+</svg>

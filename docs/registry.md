@@ -14,6 +14,12 @@ npm package identifier:
 whoop-mcp-unofficial
 ```
 
+Primary website:
+
+```text
+https://whoopmcp.vercel.app/
+```
+
 Publishing requires npm and MCP Registry authentication:
 
 ```bash

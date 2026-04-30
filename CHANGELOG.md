@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.3
+
+- Set `https://whoopmcp.vercel.app/` as the primary project URL in README/package metadata while keeping GitHub Pages as a mirror.
+- Refine the landing page hero, install path, project links and architecture section for a clearer first-time user experience.
+- Add a new high-fidelity SVG architecture visual and refresh the hero illustration.
+- Tighten npm package file inclusion so local Vercel metadata cannot ship in package tarballs.
+
 ## 0.1.2
 
 - Add `whoop_capabilities` and `whoop://capabilities` so agents can discover supported data, unsupported raw sensor streams, privacy modes and recommended tool order without calling WHOOP.

@@ -3,15 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>WHOOP MCP Unofficial - Turn WHOOP data into AI-ready decisions</title>
-  <meta name="description" content="A cinematic, beginner-friendly, unofficial MCP bridge that lets Claude, Cursor, Windsurf, Hermes and other AI agents understand your WHOOP recovery, sleep, strain and workouts. Local-first, read-only and open source.">
+  <title>WHOOP MCP Unofficial - Local-first WHOOP data for AI agents</title>
+  <meta name="description" content="A serious, beginner-friendly, unofficial MCP bridge that lets Claude, Cursor, Windsurf, Hermes and other AI agents understand your WHOOP recovery, sleep, strain and workouts. Local-first, read-only and open source.">
   <meta name="theme-color" content="#050806">
   <meta property="og:title" content="WHOOP MCP Unofficial">
   <meta property="og:description" content="Turn your WHOOP signal into better decisions with your AI assistant. Unofficial, open source, local-first.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://davidmosiah.github.io/whoop-mcp/">
-  <meta property="og:image" content="https://davidmosiah.github.io/whoop-mcp/assets/og-card.svg">
+  <meta property="og:url" content="https://whoopmcp.vercel.app/">
+  <meta property="og:image" content="https://whoopmcp.vercel.app/assets/og-card.svg">
   <meta name="twitter:card" content="summary_large_image">
+  <link rel="canonical" href="https://whoopmcp.vercel.app/">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="assets/site.css">
 </head>
@@ -32,9 +33,9 @@
     <nav class="nav" aria-label="Primary navigation">
       <a href="#why">Why it matters</a>
       <a href="#data">Data</a>
+      <a href="#architecture">Architecture</a>
       <a href="#faq">FAQ</a>
       <a href="#setup">Setup</a>
-      <a href="#use">Prompts</a>
       <a href="#privacy">Privacy</a>
       <a class="nav-pill" href="https://github.com/davidmosiah/whoop-mcp">GitHub</a>
     </nav>
@@ -43,19 +44,24 @@
   <main id="main">
     <section class="hero" id="top">
       <div class="hero-copy" data-reveal>
-        <p class="eyebrow">Open source · local-first · unofficial</p>
-        <h1>Your body is already sending the signal. Let your AI act on it.</h1>
+        <p class="eyebrow">whoopmcp.vercel.app · open source · unofficial</p>
+        <h1>Give your AI a body signal.</h1>
         <p class="hero-text">
-          WHOOP MCP connects your WHOOP recovery, sleep, strain and workouts to Claude, Cursor, Windsurf, Hermes, OpenClaw and other MCP-aware assistants. Instead of another dashboard, you get better decisions: train, recover, focus, sleep, repeat.
+          WHOOP MCP is a local-first bridge that lets MCP-aware assistants understand your WHOOP recovery, sleep, strain and workouts. Not another dashboard: a safer way for your agent to reason about training, recovery, focus and sleep.
         </p>
         <div class="hero-actions">
-          <a class="button primary" href="#setup">Install the bridge</a>
-          <a class="button secondary" href="#why">See the flow</a>
+          <a class="button primary" href="#setup">Install in 3 commands</a>
+          <a class="button secondary" href="#agents">Give this to your agent</a>
+        </div>
+        <div class="hero-command" data-reveal>
+          <code>npx -y whoop-mcp-unofficial setup</code>
+          <button type="button" data-copy="npx -y whoop-mcp-unofficial setup&#10;npx -y whoop-mcp-unofficial auth&#10;npx -y whoop-mcp-unofficial doctor">Copy install flow</button>
         </div>
         <ul class="hero-proof" aria-label="Project highlights">
-          <li><strong>Read-only</strong><span>WHOOP OAuth scopes</span></li>
-          <li><strong>Local</strong><span>tokens stay on your machine</span></li>
-          <li><strong>Agent-ready</strong><span>daily and weekly context</span></li>
+          <li><strong>20 tools</strong><span>agent-discoverable WHOOP actions</span></li>
+          <li><strong>6 resources</strong><span>latest signal and summaries</span></li>
+          <li><strong>0 write scopes</strong><span>read-only WHOOP OAuth</span></li>
+          <li><strong>Local tokens</strong><span>kept under ~/.whoop-mcp</span></li>
         </ul>
       </div>
 
@@ -67,6 +73,13 @@
     <section class="notice" aria-label="Unofficial project notice" data-reveal>
       <strong>Unofficial.</strong>
       <span>This project is not affiliated with, endorsed by, or sponsored by WHOOP, Inc. Use it only with your own WHOOP account and the official WHOOP OAuth flow.</span>
+    </section>
+
+    <section class="launch-strip" aria-label="Project links" data-reveal>
+      <a href="https://whoopmcp.vercel.app"><span>Primary site</span><strong>whoopmcp.vercel.app</strong></a>
+      <a href="https://github.com/davidmosiah/whoop-mcp"><span>Source</span><strong>GitHub repo</strong></a>
+      <a href="https://www.npmjs.com/package/whoop-mcp-unofficial"><span>Install</span><strong>npm package</strong></a>
+      <a href="https://davidmosiah.github.io/whoop-mcp/"><span>Mirror</span><strong>GitHub Pages</strong></a>
     </section>
 
     <section class="story-section" id="why">
@@ -119,6 +132,31 @@
       </div>
     </section>
 
+    <section class="architecture-section" id="architecture">
+      <div class="architecture-copy" data-reveal>
+        <p class="eyebrow">Local-first architecture</p>
+        <h2>Designed for trust before scale.</h2>
+        <p class="section-lede">Your agent gets useful context, not your secrets. WHOOP OAuth stays inside the official API boundary, tokens stay local, and the MCP exposes clear tools/resources instead of vague scraped data.</p>
+        <div class="architecture-points">
+          <article>
+            <strong>Official API boundary</strong>
+            <span>No private WHOOP endpoints or misleading raw sensor claims.</span>
+          </article>
+          <article>
+            <strong>Agent-readable contracts</strong>
+            <span><code>whoop_capabilities</code> explains tools, limits and privacy modes.</span>
+          </article>
+          <article>
+            <strong>Action-oriented summaries</strong>
+            <span>Daily and weekly workflows turn records into practical next moves.</span>
+          </article>
+        </div>
+      </div>
+      <figure class="architecture-visual" data-reveal>
+        <img src="assets/signal-architecture.svg" alt="Architecture diagram showing WHOOP OAuth flowing through a local MCP server into AI clients">
+      </figure>
+    </section>
+
     <section class="faq-section" id="faq">
       <div class="section-head" data-reveal>
         <p class="eyebrow">Questions people ask first</p>
@@ -154,6 +192,20 @@
         <p class="eyebrow">Guided setup</p>
         <h2>Install it without becoming a developer.</h2>
         <p class="section-lede">The workflow is intentionally calm: create a WHOOP app, run three commands, add one MCP server to your AI client.</p>
+      </div>
+
+      <div class="path-grid">
+        <article class="path-card" data-reveal>
+          <span>Path A</span>
+          <h3>I am a human</h3>
+          <p>Create a WHOOP Developer app, paste the credentials into setup, authorize once in the browser, then use the MCP config.</p>
+        </article>
+        <article class="path-card agent-path" data-reveal>
+          <span>Path B</span>
+          <h3>I want my agent to help</h3>
+          <p>Copy the delegation prompt below. It tells your assistant exactly what to install, what not to expose, and how to verify safely.</p>
+          <a href="#agents">Jump to agent prompt</a>
+        </article>
       </div>
 
       <div class="setup-flow">

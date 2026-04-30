@@ -70,3 +70,17 @@ Open an issue with one of the templates:
 - bug report
 
 Good first contributions include client setup examples, docs improvements, more summary fixtures and safer onboarding copy.
+
+## What is the main project URL?
+
+The primary website is:
+
+```text
+https://whoopmcp.vercel.app/
+```
+
+The GitHub Pages mirror remains available at:
+
+```text
+https://davidmosiah.github.io/whoop-mcp/
+```
