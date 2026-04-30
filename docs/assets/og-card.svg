@@ -1,13 +1,29 @@
 <svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="1200" height="630" fill="#07110D"/>
-  <circle cx="1010" cy="90" r="310" fill="#CAFF5B" fill-opacity="0.16"/>
-  <circle cx="140" cy="590" r="340" fill="#75E6B0" fill-opacity="0.13"/>
-  <path d="M0 430C120 370 210 460 330 400C460 336 560 214 704 268C840 319 893 432 1032 380C1100 354 1145 314 1200 306" stroke="#CAFF5B" stroke-width="5" stroke-linecap="round" stroke-opacity="0.82"/>
-  <rect x="72" y="72" width="1056" height="486" rx="44" fill="#F6F1E0" fill-opacity="0.06" stroke="#F6F1E0" stroke-opacity="0.18"/>
-  <text x="116" y="150" fill="#CAFF5B" font-family="Menlo, monospace" font-size="28" font-weight="700" letter-spacing="4">WHOOP MCP · UNOFFICIAL</text>
-  <text x="116" y="280" fill="#F6F1E0" font-family="Georgia, serif" font-size="78" font-weight="700">Connect WHOOP</text>
-  <text x="116" y="372" fill="#F6F1E0" font-family="Georgia, serif" font-size="78" font-weight="700">to your AI assistant.</text>
-  <text x="116" y="456" fill="#D3CBB7" font-family="Avenir, Helvetica, sans-serif" font-size="34">Open source · local-first · read-only OAuth scopes</text>
-  <rect x="846" y="410" width="210" height="74" rx="37" fill="#CAFF5B"/>
-  <text x="894" y="458" fill="#102012" font-family="Avenir, Helvetica, sans-serif" font-size="28" font-weight="800">Get started</text>
+  <defs>
+    <radialGradient id="g" cx="74%" cy="25%" r="72%">
+      <stop stop-color="#CAFF5B" stop-opacity="0.32"/>
+      <stop offset="0.45" stop-color="#75E6B0" stop-opacity="0.11"/>
+      <stop offset="1" stop-color="#050806" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="wave" x1="0" x2="1">
+      <stop stop-color="#CAFF5B" stop-opacity="0"/>
+      <stop offset="0.32" stop-color="#CAFF5B"/>
+      <stop offset="0.64" stop-color="#75E6B0"/>
+      <stop offset="1" stop-color="#8DD8FF" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="#050806"/>
+  <rect width="1200" height="630" fill="url(#g)"/>
+  <g opacity="0.12" stroke="#F6F1E0">
+    <path d="M0 110H1200M0 220H1200M0 330H1200M0 440H1200M0 550H1200"/>
+    <path d="M150 0V630M300 0V630M450 0V630M600 0V630M750 0V630M900 0V630M1050 0V630"/>
+  </g>
+  <rect x="72" y="72" width="1056" height="486" rx="46" fill="#F6F1E0" fill-opacity="0.065" stroke="#F6F1E0" stroke-opacity="0.18"/>
+  <path d="M72 430H250L282 380L320 500L360 300L402 532L448 430H644L684 382L720 492L766 336L812 512L858 430H1128" stroke="url(#wave)" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="940" cy="318" r="124" fill="#CAFF5B" fill-opacity="0.12" stroke="#CAFF5B" stroke-opacity="0.35"/>
+  <circle cx="940" cy="318" r="72" fill="#CAFF5B"/>
+  <text x="116" y="152" fill="#CAFF5B" font-family="Menlo, monospace" font-size="26" font-weight="800" letter-spacing="4">WHOOP MCP · UNOFFICIAL</text>
+  <text x="116" y="270" fill="#F6F1E0" font-family="Georgia, serif" font-size="76" font-weight="700">Turn your body signal</text>
+  <text x="116" y="356" fill="#F6F1E0" font-family="Georgia, serif" font-size="76" font-weight="700">into AI-ready decisions.</text>
+  <text x="116" y="502" fill="#D3CBB7" font-family="Avenir, Helvetica, sans-serif" font-size="31">Open source · local-first · read-only WHOOP OAuth</text>
 </svg>
