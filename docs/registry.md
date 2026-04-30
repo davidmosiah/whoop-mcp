@@ -11,7 +11,7 @@ io.github.davidmosiah/whoop-mcp
 npm package identifier:
 
 ```text
-@davidmosiah/whoop-mcp-server
+@davidbatista/whoop-mcp-server
 ```
 
 Publishing requires npm and MCP Registry authentication:

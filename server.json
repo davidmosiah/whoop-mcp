@@ -10,7 +10,7 @@
   "packages": [
     {
       "registryType": "npm",
-      "identifier": "@davidmosiah/whoop-mcp-server",
+      "identifier": "@davidbatista/whoop-mcp-server",
       "version": "0.1.0",
       "transport": {
         "type": "stdio"

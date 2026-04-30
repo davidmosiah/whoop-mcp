@@ -17,7 +17,7 @@ This lets `whoop-mcp-server auth` capture the OAuth callback automatically.
 From npm after package publication:
 
 ```bash
-npx -y @davidmosiah/whoop-mcp-server doctor
+npx -y @davidbatista/whoop-mcp-server doctor
 ```
 
 From source:
@@ -35,13 +35,13 @@ node dist/index.js doctor
 This is the recommended path. It stores secrets in `~/.whoop-mcp/config.json` with `0600` permissions and creates a client config/snippet without embedding your WHOOP secret.
 
 ```bash
-npx -y @davidmosiah/whoop-mcp-server setup
+npx -y @davidbatista/whoop-mcp-server setup
 ```
 
 You can also run it non-interactively:
 
 ```bash
-npx -y @davidmosiah/whoop-mcp-server setup \
+npx -y @davidbatista/whoop-mcp-server setup \
   --client generic \
   --client-id "your-client-id" \
   --client-secret "your-client-secret" \
@@ -63,7 +63,7 @@ Optional flags:
 ## 4. Check setup
 
 ```bash
-npx -y @davidmosiah/whoop-mcp-server doctor
+npx -y @davidbatista/whoop-mcp-server doctor
 ```
 
 The doctor command checks env vars, redirect URI, token path, token permissions, privacy mode and cache.
@@ -71,7 +71,7 @@ The doctor command checks env vars, redirect URI, token path, token permissions,
 ## 5. Authorize WHOOP
 
 ```bash
-npx -y @davidmosiah/whoop-mcp-server auth
+npx -y @davidbatista/whoop-mcp-server auth
 ```
 
 This opens the browser, waits for WHOOP to redirect to the local callback, exchanges the code and stores tokens locally.
@@ -79,7 +79,7 @@ This opens the browser, waits for WHOOP to redirect to the local callback, excha
 If a browser cannot be opened automatically:
 
 ```bash
-npx -y @davidmosiah/whoop-mcp-server auth --no-open
+npx -y @davidbatista/whoop-mcp-server auth --no-open
 ```
 
 ## 6. Add to your MCP client
@@ -91,7 +91,7 @@ Use the package without a subcommand:
   "mcpServers": {
     "whoop": {
       "command": "npx",
-      "args": ["-y", "@davidmosiah/whoop-mcp-server"]
+      "args": ["-y", "@davidbatista/whoop-mcp-server"]
     }
   }
 }

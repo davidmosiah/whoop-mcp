@@ -201,7 +201,7 @@ function mcpConfigSnippet() {
     mcpServers: {
       whoop: {
         command: "npx",
-        args: ["-y", "@davidmosiah/whoop-mcp-server"]
+        args: ["-y", "@davidbatista/whoop-mcp-server"]
       }
     }
   };
