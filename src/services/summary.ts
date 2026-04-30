@@ -197,16 +197,16 @@ function workoutSport(record: UnknownRecord): string | undefined {
 
 function workoutHighZoneMinutes(record: UnknownRecord): number | undefined {
   const score = nested(record, ["score"]);
-  const z4 = firstNumber(score, [["zone_duration", "zone_four_milli"], ["zone_four_milli"], ["zone_four"]]);
-  const z5 = firstNumber(score, [["zone_duration", "zone_five_milli"], ["zone_five_milli"], ["zone_five"]]);
+  const z4 = firstNumber(score, [["zone_durations", "zone_four_milli"], ["zone_duration", "zone_four_milli"], ["zone_four_milli"], ["zone_four"]]);
+  const z5 = firstNumber(score, [["zone_durations", "zone_five_milli"], ["zone_duration", "zone_five_milli"], ["zone_five_milli"], ["zone_five"]]);
   const total = sum([z4, z5]);
   return total ? total / MIN_MS : undefined;
 }
 
 function workoutAerobicMinutes(record: UnknownRecord): number | undefined {
   const score = nested(record, ["score"]);
-  const z2 = firstNumber(score, [["zone_duration", "zone_two_milli"], ["zone_two_milli"], ["zone_two"]]);
-  const z3 = firstNumber(score, [["zone_duration", "zone_three_milli"], ["zone_three_milli"], ["zone_three"]]);
+  const z2 = firstNumber(score, [["zone_durations", "zone_two_milli"], ["zone_duration", "zone_two_milli"], ["zone_two_milli"], ["zone_two"]]);
+  const z3 = firstNumber(score, [["zone_durations", "zone_three_milli"], ["zone_duration", "zone_three_milli"], ["zone_three_milli"], ["zone_three"]]);
   const total = sum([z2, z3]);
   return total ? total / MIN_MS : undefined;
 }
