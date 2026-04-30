@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>WHOOP MCP Unofficial | Agent-ready health data</title>
-  <meta name="description" content="An unofficial, privacy-first MCP server that lets AI agents connect to your WHOOP data through local OAuth, structured tools, summaries, prompts, and resources.">
-  <meta name="theme-color" content="#08110f">
+  <title>WHOOP MCP Unofficial — The bridge between your body and your agents</title>
+  <meta name="description" content="An open-source MCP bridge that lets Claude, Cursor, Windsurf, Hermes and any MCP-aware agent read your WHOOP recovery, sleep, strain and workout signals — locally, with OAuth tokens that never leave your machine.">
+  <meta name="theme-color" content="#07100d">
   <meta property="og:title" content="WHOOP MCP Unofficial">
-  <meta property="og:description" content="Connect MCP-compatible agents to WHOOP data with a local-first, privacy-aware open source server.">
+  <meta property="og:description" content="The open-source bridge between your body and your AI agents. Three commands. Local-first. No token sprawl.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://davidmosiah.github.io/whoop-mcp/">
   <meta property="og:image" content="https://davidmosiah.github.io/whoop-mcp/assets/og-card.svg">
@@ -17,6 +17,11 @@
 </head>
 <body>
   <div class="grain" aria-hidden="true"></div>
+  <div class="aurora" aria-hidden="true">
+    <span class="aurora-blob aurora-1"></span>
+    <span class="aurora-blob aurora-2"></span>
+    <span class="aurora-blob aurora-3"></span>
+  </div>
   <a class="skip-link" href="#main">Skip to content</a>
 
   <header class="site-header" data-reveal>
@@ -24,135 +29,645 @@
       <span class="brand-mark" aria-hidden="true">
         <span></span>
       </span>
-      <span>
+      <span class="brand-text">
         <strong>WHOOP MCP</strong>
-        <small>unofficial</small>
+        <small>unofficial · open source</small>
       </span>
     </a>
     <nav class="nav" aria-label="Primary navigation">
-      <a href="#install">Install</a>
-      <a href="#agents">Agents</a>
-      <a href="#security">Security</a>
-      <a href="https://github.com/davidmosiah/whoop-mcp">GitHub</a>
+      <a href="#whoop-app">01 · WHOOP app</a>
+      <a href="#install">02 · Install</a>
+      <a href="#connect">03 · Connect</a>
+      <a href="#agents">For agents</a>
+      <a href="https://github.com/davidmosiah/whoop-mcp" class="nav-cta">GitHub ↗</a>
     </nav>
   </header>
 
   <main id="main">
+
+    <!-- ============== HERO ============== -->
     <section class="hero" id="top">
-      <div class="hero-copy" data-reveal>
-        <p class="eyebrow">Open source MCP server for personal health agents</p>
-        <h1>Your WHOOP data, finally agent-ready.</h1>
-        <p class="hero-text">
-          A local-first, unofficial MCP bridge that lets Claude, Cursor, Hermes,
-          OpenClaw and other agents read your WHOOP recovery, sleep, strain and workout context
-          without putting tokens in prompts.
-        </p>
-        <div class="hero-actions" aria-label="Project links">
-          <a class="button primary" href="#install">Start in 3 commands</a>
-          <a class="button ghost" href="https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.davidmosiah/whoop-mcp">View MCP Registry</a>
-        </div>
-        <div class="badges" aria-label="Project facts">
-          <span>npm: whoop-mcp-unofficial</span>
-          <span>MCP Registry: 0.1.1</span>
-          <span>MIT licensed</span>
-        </div>
-      </div>
-
-      <div class="hero-panel" data-reveal>
-        <div class="orbit" aria-hidden="true">
+      <div class="hero-stage" aria-hidden="true">
+        <div class="ring ring-1"></div>
+        <div class="ring ring-2"></div>
+        <div class="ring ring-3"></div>
+        <div class="orbit-system">
           <span class="orbit-core"></span>
-          <span class="orbit-dot dot-a"></span>
-          <span class="orbit-dot dot-b"></span>
-          <span class="orbit-dot dot-c"></span>
+          <span class="orbit-pulse"></span>
+          <span class="orbit-pulse orbit-pulse-2"></span>
         </div>
-        <div class="signal-card recovery-card">
-          <span>Recovery</span>
-          <strong>structured</strong>
-          <small>HRV, RHR, SpO2, temperature</small>
+        <svg class="hr-line" viewBox="0 0 1200 240" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="hrGrad" x1="0" x2="1">
+              <stop offset="0" stop-color="#a8ff6a" stop-opacity="0"/>
+              <stop offset="0.4" stop-color="#a8ff6a" stop-opacity="0.85"/>
+              <stop offset="0.6" stop-color="#82f6be" stop-opacity="0.85"/>
+              <stop offset="1" stop-color="#74d7ff" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M0 120 L 220 120 L 260 120 L 280 80 L 300 160 L 320 40 L 340 200 L 360 120 L 580 120 L 620 120 L 640 90 L 660 150 L 680 60 L 700 180 L 720 120 L 940 120 L 980 120 L 1000 100 L 1020 140 L 1040 70 L 1060 170 L 1080 120 L 1200 120"
+                fill="none" stroke="url(#hrGrad)" stroke-width="2" stroke-linecap="round" />
+        </svg>
+        <div class="signal-card recovery-card" data-reveal>
+          <span class="signal-label">Recovery</span>
+          <strong>72%</strong>
+          <small>HRV · RHR · SpO₂ · skin temp</small>
         </div>
-        <div class="signal-card sleep-card">
-          <span>Sleep</span>
-          <strong>summary</strong>
-          <small>stages, consistency, performance</small>
+        <div class="signal-card sleep-card" data-reveal>
+          <span class="signal-label">Sleep</span>
+          <strong>87%</strong>
+          <small>stages · consistency · efficiency</small>
         </div>
-        <div class="signal-card agent-card">
-          <span>Agent</span>
-          <strong>actions</strong>
-          <small>daily and weekly coaching context</small>
+        <div class="signal-card strain-card" data-reveal>
+          <span class="signal-label">Strain</span>
+          <strong>14.6</strong>
+          <small>HR zones · day load · recovery cost</small>
         </div>
       </div>
-    </section>
 
-    <section class="strip" aria-label="Project disclaimer" data-reveal>
-      <strong>Unofficial project.</strong>
-      <span>This is not affiliated with, endorsed by, sponsored by, or supported by WHOOP, Inc. Use it only with your own account and in line with WHOOP API policies.</span>
-    </section>
-
-    <section class="section split" id="install">
-      <div data-reveal>
-        <p class="eyebrow">Plug-and-play setup</p>
-        <h2>Built for people who do not want to hand-edit JSON.</h2>
-        <p>
-          The setup flow stores credentials locally, creates MCP client snippets, checks readiness,
-          and handles OAuth through a temporary local callback server.
+      <div class="hero-copy">
+        <p class="reel-label" data-reveal>
+          <span class="reel-dot"></span>
+          Reel 00 — Opening credits
         </p>
-      </div>
-      <div class="terminal" data-reveal>
-        <div class="terminal-top">
-          <span></span><span></span><span></span>
-          <button class="copy-button" type="button" data-copy="npx -y whoop-mcp-unofficial setup&#10;npx -y whoop-mcp-unofficial auth&#10;npx -y whoop-mcp-unofficial doctor">Copy</button>
+        <h1 data-reveal>
+          Your body has a signal.<br>
+          Your agent should hear it.
+        </h1>
+        <p class="hero-text" data-reveal>
+          An open-source MCP bridge that hands your WHOOP signal —
+          recovery, sleep, strain, workouts — directly to
+          Claude, Cursor, Windsurf, Hermes and any MCP-aware agent.
+          Tokens stay on your machine. Three commands and you're talking biology with your AI.
+        </p>
+        <div class="hero-actions" data-reveal>
+          <a class="button primary" href="#whoop-app">
+            <span>Begin the install</span>
+            <span class="button-arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="button ghost" href="#agents">I'm an AI agent</a>
         </div>
-        <pre><code>npx -y whoop-mcp-unofficial setup
-npx -y whoop-mcp-unofficial auth
-npx -y whoop-mcp-unofficial doctor</code></pre>
+        <div class="badges" aria-label="Project facts" data-reveal>
+          <span><em>npm</em> whoop-mcp-unofficial</span>
+          <span><em>registry</em> 0.1.1</span>
+          <span><em>license</em> MIT</span>
+          <span><em>runtime</em> Node 20+</span>
+        </div>
       </div>
     </section>
 
-    <section class="section workflow" aria-label="Setup workflow">
-      <article data-reveal>
-        <span class="step">01</span>
-        <h3>Create a WHOOP app</h3>
-        <p>Use the WHOOP Developer Dashboard and set the redirect URI to <code>http://127.0.0.1:3000/callback</code>.</p>
+    <!-- ============== MARQUEE ============== -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span>Open Source</span><span class="dot">·</span>
+        <span>Local-First</span><span class="dot">·</span>
+        <span>OAuth Tokens Stay Home</span><span class="dot">·</span>
+        <span>19 Tools</span><span class="dot">·</span>
+        <span>5 Resources</span><span class="dot">·</span>
+        <span>3 Prompts</span><span class="dot">·</span>
+        <span>Daily &amp; Weekly Summaries</span><span class="dot">·</span>
+        <span>Privacy Audit</span><span class="dot">·</span>
+        <span>Built for Agents</span><span class="dot">·</span>
+        <span>Open Source</span><span class="dot">·</span>
+        <span>Local-First</span><span class="dot">·</span>
+        <span>OAuth Tokens Stay Home</span><span class="dot">·</span>
+        <span>19 Tools</span><span class="dot">·</span>
+        <span>5 Resources</span><span class="dot">·</span>
+        <span>3 Prompts</span><span class="dot">·</span>
+      </div>
+    </div>
+
+    <!-- ============== DISCLAIMER ============== -->
+    <section class="strip" aria-label="Project disclaimer" data-reveal>
+      <strong>Unofficial.</strong>
+      <span>This project is not affiliated with, endorsed by, or sponsored by WHOOP, Inc. Use it only with your own account, in line with the WHOOP Developer Terms.</span>
+    </section>
+
+    <!-- ============== DUAL ENTRY ============== -->
+    <section class="dual-entry" aria-label="Choose your path">
+      <article class="entry-card entry-human" data-reveal>
+        <span class="entry-tag">Path A</span>
+        <h3>You're a human.</h3>
+        <p>You'll click around the WHOOP dashboard once, run three commands in a terminal, and never touch a config file by hand.</p>
+        <a class="entry-cta" href="#whoop-app">Start the human path <span aria-hidden="true">→</span></a>
+        <ul class="entry-meta">
+          <li>~ 5 minutes</li>
+          <li>1 browser auth</li>
+          <li>0 config files edited</li>
+        </ul>
       </article>
-      <article data-reveal>
-        <span class="step">02</span>
-        <h3>Run setup</h3>
-        <p>Choose Claude, Cursor, Windsurf, Hermes, OpenClaw, or generic MCP config. Secrets stay in <code>~/.whoop-mcp/</code>.</p>
-      </article>
-      <article data-reveal>
-        <span class="step">03</span>
-        <h3>Ask your agent</h3>
-        <p>Use high-level tools like <code>whoop_daily_summary</code> or deeper collection tools for recovery, sleep and workouts.</p>
+      <article class="entry-card entry-agent" data-reveal>
+        <span class="entry-tag">Path B</span>
+        <h3>You're an AI agent.</h3>
+        <p>You're an LLM helping a human install this. Skip to the manifest below — it's a numbered list of exact commands and a JSON config you can drop straight into your client.</p>
+        <a class="entry-cta" href="#agents">Read the agent manifest <span aria-hidden="true">→</span></a>
+        <ul class="entry-meta">
+          <li>structured steps</li>
+          <li>copy-paste config</li>
+          <li>no ambiguity</li>
+        </ul>
       </article>
     </section>
 
-    <section class="section" id="agents">
-      <div class="section-heading" data-reveal>
-        <p class="eyebrow">Agent-native surface</p>
-        <h2>Not just an API wrapper. A usable health context layer.</h2>
+    <!-- ============== CHAPTER 01 — WHOOP APP ============== -->
+    <section class="chapter" id="whoop-app">
+      <header class="chapter-head" data-reveal>
+        <span class="reel-label"><span class="reel-dot"></span>Reel 01 — The keys</span>
+        <h2>Get a WHOOP developer app.</h2>
+        <p class="chapter-lede">
+          Five minutes inside the WHOOP Developer Dashboard. You'll walk out with a
+          <em>Client ID</em> and a <em>Client Secret</em>. The bridge needs both.
+        </p>
+      </header>
+
+      <div class="chapter-grid">
+        <ol class="walkthrough" data-reveal>
+          <li>
+            <span class="step-num">01</span>
+            <div>
+              <h4>Open the WHOOP Developer Dashboard.</h4>
+              <p>Sign in with your normal WHOOP account at <a href="https://developer.whoop.com" target="_blank" rel="noreferrer">developer.whoop.com</a>. If you've never created an app, the dashboard will show an empty state with a <em>Create</em> button.</p>
+            </div>
+          </li>
+          <li>
+            <span class="step-num">02</span>
+            <div>
+              <h4>Create a new app.</h4>
+              <p>Name it anything — <code>My MCP Bridge</code>, <code>Claude Coach</code>, your call. The name only shows up in your own dashboard.</p>
+            </div>
+          </li>
+          <li>
+            <span class="step-num">03</span>
+            <div>
+              <h4>Set the redirect URI <em>exactly</em>.</h4>
+              <p>Use this string, character for character. Anything else and the auth step in Reel 02 will not capture the callback.</p>
+              <div class="inline-code">
+                <code>http://127.0.0.1:3000/callback</code>
+                <button class="copy-button" type="button" data-copy="http://127.0.0.1:3000/callback">Copy</button>
+              </div>
+            </div>
+          </li>
+          <li>
+            <span class="step-num">04</span>
+            <div>
+              <h4>Pick the read scopes.</h4>
+              <p>The bridge is read-only. Tick every <code>read:</code> scope below. No <code>write:</code> scopes, ever.</p>
+              <div class="inline-code">
+                <code>read:recovery read:cycles read:workout read:sleep read:profile read:body_measurement</code>
+                <button class="copy-button" type="button" data-copy="read:recovery read:cycles read:workout read:sleep read:profile read:body_measurement">Copy</button>
+              </div>
+            </div>
+          </li>
+          <li>
+            <span class="step-num">05</span>
+            <div>
+              <h4>Copy the Client ID and Client Secret.</h4>
+              <p>WHOOP shows the secret <em>once</em>. Paste both somewhere safe for the next two minutes — Reel 02 will ask for them and store them locally with <code>0600</code> permissions.</p>
+            </div>
+          </li>
+        </ol>
+
+        <aside class="form-mock" data-reveal aria-label="Illustration of the WHOOP developer form">
+          <div class="form-mock-window">
+            <div class="form-mock-bar">
+              <span></span><span></span><span></span>
+              <em>developer.whoop.com / new app</em>
+            </div>
+            <div class="form-mock-body">
+              <label>
+                <span>App name</span>
+                <div class="mock-input">My MCP Bridge<span class="caret"></span></div>
+              </label>
+              <label>
+                <span>Redirect URI <em class="required">use exactly this</em></span>
+                <div class="mock-input is-highlight">http://127.0.0.1:3000/callback</div>
+              </label>
+              <fieldset>
+                <legend>Scopes</legend>
+                <ul>
+                  <li><span class="check"></span>read:recovery</li>
+                  <li><span class="check"></span>read:cycles</li>
+                  <li><span class="check"></span>read:workout</li>
+                  <li><span class="check"></span>read:sleep</li>
+                  <li><span class="check"></span>read:profile</li>
+                  <li><span class="check"></span>read:body_measurement</li>
+                </ul>
+              </fieldset>
+              <div class="mock-buttons">
+                <span class="mock-btn-ghost">Cancel</span>
+                <span class="mock-btn-primary">Create app</span>
+              </div>
+              <div class="mock-result">
+                <strong>After save</strong>
+                <p>Client ID <code>cli_•••••••</code> · Client Secret <code>sec_••••••••••</code></p>
+              </div>
+            </div>
+          </div>
+          <p class="form-mock-caption">A stylised render of the form. The real one looks similar.</p>
+        </aside>
       </div>
-      <div class="feature-grid">
-        <article class="feature-card wide" data-reveal>
-          <h3>Daily and weekly digests</h3>
-          <p>Workflow tools turn raw WHOOP collections into structured coaching context: recovery bottlenecks, sleep signals, load balance and next actions.</p>
+    </section>
+
+    <!-- ============== CHAPTER 02 — INSTALL ============== -->
+    <section class="chapter chapter-install" id="install">
+      <header class="chapter-head" data-reveal>
+        <span class="reel-label"><span class="reel-dot"></span>Reel 02 — The bridge</span>
+        <h2>Three commands. One bridge.</h2>
+        <p class="chapter-lede">
+          The CLI walks you through credentials, writes a tiny encrypted-permission config to
+          <code>~/.whoop-mcp/</code>, then runs OAuth in your browser. You never touch JSON.
+        </p>
+      </header>
+
+      <div class="install-grid">
+        <article class="cmd-card" data-reveal>
+          <header>
+            <span class="cmd-step">01</span>
+            <h4>Setup</h4>
+          </header>
+          <p>Asks for your WHOOP <em>Client ID</em> and <em>Secret</em>, picks your MCP client, writes the config.</p>
+          <div class="terminal compact">
+            <div class="terminal-top">
+              <span></span><span></span><span></span>
+              <button class="copy-button" type="button" data-copy="npx -y whoop-mcp-unofficial setup">Copy</button>
+            </div>
+            <pre><code><span class="prompt">$</span> npx -y whoop-mcp-unofficial setup</code></pre>
+          </div>
         </article>
-        <article class="feature-card" data-reveal>
-          <h3>19 tools</h3>
-          <p>Profile, body measurements, cycles, recoveries, sleeps, workouts, summaries, auth and privacy audit.</p>
+
+        <article class="cmd-card" data-reveal>
+          <header>
+            <span class="cmd-step">02</span>
+            <h4>Auth</h4>
+          </header>
+          <p>Opens your browser, you click <em>Authorize</em> on WHOOP, the bridge captures the code on <code>127.0.0.1</code>.</p>
+          <div class="terminal compact">
+            <div class="terminal-top">
+              <span></span><span></span><span></span>
+              <button class="copy-button" type="button" data-copy="npx -y whoop-mcp-unofficial auth">Copy</button>
+            </div>
+            <pre><code><span class="prompt">$</span> npx -y whoop-mcp-unofficial auth</code></pre>
+          </div>
         </article>
-        <article class="feature-card" data-reveal>
-          <h3>5 resources</h3>
-          <p>Latest recovery, latest sleep, latest cycle, daily summary and weekly summary as MCP resources.</p>
+
+        <article class="cmd-card" data-reveal>
+          <header>
+            <span class="cmd-step">03</span>
+            <h4>Doctor</h4>
+          </header>
+          <p>Verifies env, redirect URI, token file, permissions, privacy mode and cache. Green means go.</p>
+          <div class="terminal compact">
+            <div class="terminal-top">
+              <span></span><span></span><span></span>
+              <button class="copy-button" type="button" data-copy="npx -y whoop-mcp-unofficial doctor">Copy</button>
+            </div>
+            <pre><code><span class="prompt">$</span> npx -y whoop-mcp-unofficial doctor</code></pre>
+          </div>
         </article>
-        <article class="feature-card" data-reveal>
-          <h3>3 prompts</h3>
-          <p>Ready-made prompts for daily performance coaching, weekly training review and sleep/recovery investigation.</p>
+      </div>
+
+      <div class="install-all" data-reveal>
+        <p class="install-all-label">Or run all three back-to-back:</p>
+        <div class="terminal">
+          <div class="terminal-top">
+            <span></span><span></span><span></span>
+            <button class="copy-button" type="button" data-copy="npx -y whoop-mcp-unofficial setup&#10;npx -y whoop-mcp-unofficial auth&#10;npx -y whoop-mcp-unofficial doctor">Copy all</button>
+          </div>
+<pre><code><span class="prompt">$</span> npx -y whoop-mcp-unofficial setup
+<span class="prompt">$</span> npx -y whoop-mcp-unofficial auth
+<span class="prompt">$</span> npx -y whoop-mcp-unofficial doctor</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== CHAPTER 03 — CONNECT ============== -->
+    <section class="chapter" id="connect">
+      <header class="chapter-head" data-reveal>
+        <span class="reel-label"><span class="reel-dot"></span>Reel 03 — The wire</span>
+        <h2>Wire it into your agent.</h2>
+        <p class="chapter-lede">
+          Pick your client. Drop the snippet into its MCP config. Restart. Your agent now has hands on your physiology.
+        </p>
+      </header>
+
+      <div class="tabs" data-reveal>
+        <div class="tabs-nav" role="tablist">
+          <button class="tab-button is-active" data-tab="claude" role="tab">Claude Desktop</button>
+          <button class="tab-button" data-tab="cursor" role="tab">Cursor</button>
+          <button class="tab-button" data-tab="windsurf" role="tab">Windsurf</button>
+          <button class="tab-button" data-tab="hermes" role="tab">Hermes</button>
+          <button class="tab-button" data-tab="openclaw" role="tab">OpenClaw</button>
+          <button class="tab-button" data-tab="generic" role="tab">Generic MCP</button>
+        </div>
+
+        <div class="tab-panels">
+          <div class="tab-panel is-active" data-tab="claude">
+            <p class="tab-meta">File · <code>~/Library/Application Support/Claude/claude_desktop_config.json</code> on macOS</p>
+            <div class="terminal">
+              <div class="terminal-top">
+                <span></span><span></span><span></span>
+                <button class="copy-button" type="button" data-copy='{
+  "mcpServers": {
+    "whoop": {
+      "command": "npx",
+      "args": ["-y", "whoop-mcp-unofficial"]
+    }
+  }
+}'>Copy config</button>
+              </div>
+<pre><code>{
+  "mcpServers": {
+    "whoop": {
+      "command": "npx",
+      "args": ["-y", "whoop-mcp-unofficial"]
+    }
+  }
+}</code></pre>
+            </div>
+            <p class="tab-tip">Restart Claude Desktop. You'll see <em>whoop</em> appear in the MCP servers list.</p>
+          </div>
+
+          <div class="tab-panel" data-tab="cursor">
+            <p class="tab-meta">Settings → Features → MCP → Add new MCP server</p>
+            <div class="terminal">
+              <div class="terminal-top">
+                <span></span><span></span><span></span>
+                <button class="copy-button" type="button" data-copy='{
+  "mcpServers": {
+    "whoop": {
+      "command": "npx",
+      "args": ["-y", "whoop-mcp-unofficial"]
+    }
+  }
+}'>Copy config</button>
+              </div>
+<pre><code>{
+  "mcpServers": {
+    "whoop": {
+      "command": "npx",
+      "args": ["-y", "whoop-mcp-unofficial"]
+    }
+  }
+}</code></pre>
+            </div>
+            <p class="tab-tip">Reload the Cursor window. Cursor will surface the WHOOP tools to the model on demand.</p>
+          </div>
+
+          <div class="tab-panel" data-tab="windsurf">
+            <p class="tab-meta">Settings → Cascade → MCP servers</p>
+            <div class="terminal">
+              <div class="terminal-top">
+                <span></span><span></span><span></span>
+                <button class="copy-button" type="button" data-copy='{
+  "mcpServers": {
+    "whoop": {
+      "command": "npx",
+      "args": ["-y", "whoop-mcp-unofficial"]
+    }
+  }
+}'>Copy config</button>
+              </div>
+<pre><code>{
+  "mcpServers": {
+    "whoop": {
+      "command": "npx",
+      "args": ["-y", "whoop-mcp-unofficial"]
+    }
+  }
+}</code></pre>
+            </div>
+            <p class="tab-tip">Cascade auto-detects new servers on restart.</p>
+          </div>
+
+          <div class="tab-panel" data-tab="hermes">
+            <p class="tab-meta">Hermes MCP config file</p>
+            <div class="terminal">
+              <div class="terminal-top">
+                <span></span><span></span><span></span>
+                <button class="copy-button" type="button" data-copy='{
+  "mcpServers": {
+    "whoop": {
+      "command": "npx",
+      "args": ["-y", "whoop-mcp-unofficial"]
+    }
+  }
+}'>Copy config</button>
+              </div>
+<pre><code>{
+  "mcpServers": {
+    "whoop": {
+      "command": "npx",
+      "args": ["-y", "whoop-mcp-unofficial"]
+    }
+  }
+}</code></pre>
+            </div>
+            <p class="tab-tip">Hermes shares the same MCP config shape — drop in and restart.</p>
+          </div>
+
+          <div class="tab-panel" data-tab="openclaw">
+            <p class="tab-meta">OpenClaw <code>mcp.json</code></p>
+            <div class="terminal">
+              <div class="terminal-top">
+                <span></span><span></span><span></span>
+                <button class="copy-button" type="button" data-copy='{
+  "mcpServers": {
+    "whoop": {
+      "command": "npx",
+      "args": ["-y", "whoop-mcp-unofficial"]
+    }
+  }
+}'>Copy config</button>
+              </div>
+<pre><code>{
+  "mcpServers": {
+    "whoop": {
+      "command": "npx",
+      "args": ["-y", "whoop-mcp-unofficial"]
+    }
+  }
+}</code></pre>
+            </div>
+            <p class="tab-tip">Same canonical MCP shape across most clients.</p>
+          </div>
+
+          <div class="tab-panel" data-tab="generic">
+            <p class="tab-meta">Anything that speaks the MCP <code>stdio</code> protocol</p>
+            <div class="terminal">
+              <div class="terminal-top">
+                <span></span><span></span><span></span>
+                <button class="copy-button" type="button" data-copy='{
+  "mcpServers": {
+    "whoop": {
+      "command": "npx",
+      "args": ["-y", "whoop-mcp-unofficial"]
+    }
+  }
+}'>Copy config</button>
+              </div>
+<pre><code>{
+  "mcpServers": {
+    "whoop": {
+      "command": "npx",
+      "args": ["-y", "whoop-mcp-unofficial"]
+    }
+  }
+}</code></pre>
+            </div>
+            <p class="tab-tip">If your client expects a different shape, run <code>whoop-mcp-unofficial setup --client generic</code> and it will print the right snippet for you.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== CHAPTER 04 — FIRST CONVERSATION ============== -->
+    <section class="chapter" id="conversation">
+      <header class="chapter-head" data-reveal>
+        <span class="reel-label"><span class="reel-dot"></span>Reel 04 — First conversation</span>
+        <h2>Now ask your agent something only your body knows.</h2>
+        <p class="chapter-lede">
+          Paste any of these into your MCP-aware agent. They use the high-level workflow tools so the model gets coaching context, not raw firehose payloads.
+        </p>
+      </header>
+
+      <div class="prompt-grid">
+        <article class="prompt-card" data-reveal>
+          <span class="prompt-tag">Daily</span>
+          <p class="prompt-body">"Use the WHOOP MCP server. Pull my last 7 days of recovery, sleep and strain. Tell me where my body is trending and what one thing I should change tomorrow. No medical advice."</p>
+          <button class="copy-button outline" type="button" data-copy='Use the WHOOP MCP server. Pull my last 7 days of recovery, sleep and strain. Tell me where my body is trending and what one thing I should change tomorrow. No medical advice.'>Copy prompt</button>
         </article>
-        <article class="feature-card wide accent" data-reveal>
-          <h3>MCP config</h3>
-          <div class="code-block">
-            <button class="copy-button" type="button" data-copy='{&#10;  "mcpServers": {&#10;    "whoop": {&#10;      "command": "npx",&#10;      "args": ["-y", "whoop-mcp-unofficial"]&#10;    }&#10;  }&#10;}'>Copy</button>
-            <pre><code>{
+
+        <article class="prompt-card" data-reveal>
+          <span class="prompt-tag">Training</span>
+          <p class="prompt-body">"Read my latest WHOOP recovery, latest sleep, and the workouts from the last 3 days through MCP. Recommend a training intensity for today and explain the call using the data."</p>
+          <button class="copy-button outline" type="button" data-copy='Read my latest WHOOP recovery, latest sleep, and the workouts from the last 3 days through MCP. Recommend a training intensity for today and explain the call using the data.'>Copy prompt</button>
+        </article>
+
+        <article class="prompt-card" data-reveal>
+          <span class="prompt-tag">Weekly</span>
+          <p class="prompt-body">"Call whoop_weekly_summary with response_format=json. Turn the bottlenecks and success metrics into a concrete training, sleep and focus plan for next week. Keep it tactical."</p>
+          <button class="copy-button outline" type="button" data-copy='Call whoop_weekly_summary with response_format=json. Turn the bottlenecks and success metrics into a concrete training, sleep and focus plan for next week. Keep it tactical.'>Copy prompt</button>
+        </article>
+
+        <article class="prompt-card" data-reveal>
+          <span class="prompt-tag">Diagnostic</span>
+          <p class="prompt-body">"Use the sleep_recovery_investigator prompt. Look at the last 14 days and find the strongest signal explaining why my recovery dropped. Show the numbers."</p>
+          <button class="copy-button outline" type="button" data-copy='Use the sleep_recovery_investigator prompt. Look at the last 14 days and find the strongest signal explaining why my recovery dropped. Show the numbers.'>Copy prompt</button>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============== CHAPTER 05 — TOOLBELT ============== -->
+    <section class="chapter chapter-toolbelt">
+      <header class="chapter-head" data-reveal>
+        <span class="reel-label"><span class="reel-dot"></span>Reel 05 — The surface</span>
+        <h2>Not an API wrapper. A health context layer.</h2>
+        <p class="chapter-lede">
+          Most MCP servers expose endpoints. This one exposes <em>workflows</em>. Your agent gets the small surface that matters — daily, weekly, signals, action candidates — instead of 40 raw routes.
+        </p>
+      </header>
+
+      <div class="toolbelt-grid">
+        <article class="tool-card tool-card-feature" data-reveal>
+          <span class="tool-count">19</span>
+          <h4>Tools</h4>
+          <p>From <code>whoop_daily_summary</code> down to raw collection reads. Your agent picks the altitude.</p>
+        </article>
+        <article class="tool-card" data-reveal>
+          <span class="tool-count">5</span>
+          <h4>Resources</h4>
+          <p>
+            <code>whoop://latest/recovery</code><br>
+            <code>whoop://latest/sleep</code><br>
+            <code>whoop://latest/cycle</code><br>
+            <code>whoop://summary/daily</code><br>
+            <code>whoop://summary/weekly</code>
+          </p>
+        </article>
+        <article class="tool-card" data-reveal>
+          <span class="tool-count">3</span>
+          <h4>Prompts</h4>
+          <p>
+            <code>daily_performance_coach</code><br>
+            <code>weekly_training_review</code><br>
+            <code>sleep_recovery_investigator</code>
+          </p>
+        </article>
+        <article class="tool-card tool-card-wide" data-reveal>
+          <h4>The two summary tools your agent should reach for first</h4>
+          <ul class="tool-list">
+            <li><code>whoop_daily_summary</code> — recovery + sleep + strain in one structured payload, with action candidates for the next 24 hours.</li>
+            <li><code>whoop_weekly_summary</code> — week-over-week scorecard, bottlenecks, and next-week success metrics.</li>
+          </ul>
+        </article>
+        <article class="tool-card" data-reveal>
+          <h4>Raw collections</h4>
+          <p><code>whoop_list_cycles</code><br><code>whoop_list_recoveries</code><br><code>whoop_list_sleeps</code><br><code>whoop_list_workouts</code></p>
+        </article>
+        <article class="tool-card" data-reveal>
+          <h4>Single records</h4>
+          <p><code>whoop_get_cycle</code><br><code>whoop_get_sleep</code><br><code>whoop_get_workout</code><br><code>whoop_get_cycle_recovery</code></p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============== AGENTS — MANIFEST ============== -->
+    <section class="chapter chapter-agents" id="agents">
+      <header class="chapter-head" data-reveal>
+        <span class="reel-label">
+          <span class="reel-dot"></span>
+          Interlude — For non-humans reading this page
+        </span>
+        <h2>Agent installation manifest.</h2>
+        <p class="chapter-lede">
+          If you are an LLM or autonomous agent reading this on behalf of a user, this section is for you.
+          Follow the steps in order. Do not invent flags. The values below are the authoritative ones.
+        </p>
+      </header>
+
+      <div class="agent-grid">
+        <article class="agent-card" data-reveal>
+          <h4>1 · Tell the user what they need from WHOOP</h4>
+          <p>Direct the human to <a href="https://developer.whoop.com" target="_blank" rel="noreferrer">developer.whoop.com</a> and ask them to create a developer app with these <em>exact</em> values:</p>
+          <ul class="agent-spec">
+            <li><span>App name</span><code>any string</code></li>
+            <li><span>Redirect URI</span><code>http://127.0.0.1:3000/callback</code></li>
+            <li><span>Scopes</span><code>read:recovery read:cycles read:workout read:sleep read:profile read:body_measurement</code></li>
+          </ul>
+          <p>When the app is saved, ask the user for the <em>Client ID</em> and <em>Client Secret</em>.</p>
+        </article>
+
+        <article class="agent-card" data-reveal>
+          <h4>2 · Run setup, auth, doctor — in that order</h4>
+          <p>Run these for the user. Do not concatenate them; each step depends on the previous step's prompts.</p>
+          <div class="terminal compact">
+            <div class="terminal-top">
+              <span></span><span></span><span></span>
+              <button class="copy-button" type="button" data-copy="npx -y whoop-mcp-unofficial setup&#10;npx -y whoop-mcp-unofficial auth&#10;npx -y whoop-mcp-unofficial doctor">Copy</button>
+            </div>
+<pre><code><span class="prompt">$</span> npx -y whoop-mcp-unofficial setup
+<span class="prompt">$</span> npx -y whoop-mcp-unofficial auth
+<span class="prompt">$</span> npx -y whoop-mcp-unofficial doctor</code></pre>
+          </div>
+          <p><code>auth</code> opens a browser tab and waits for a redirect on <code>127.0.0.1:3000</code>. The user must click <em>Authorize</em> in WHOOP. <strong>You will not see the tokens.</strong> They are written to <code>~/.whoop-mcp/tokens.json</code> with <code>0600</code> permissions.</p>
+        </article>
+
+        <article class="agent-card" data-reveal>
+          <h4>3 · Add the MCP server to your client config</h4>
+          <p>The config block is identical across Claude Desktop, Cursor, Windsurf, Hermes, OpenClaw and the generic MCP shape. Drop this in and restart the client:</p>
+          <div class="terminal compact">
+            <div class="terminal-top">
+              <span></span><span></span><span></span>
+              <button class="copy-button" type="button" data-copy='{
+  "mcpServers": {
+    "whoop": {
+      "command": "npx",
+      "args": ["-y", "whoop-mcp-unofficial"]
+    }
+  }
+}'>Copy config</button>
+            </div>
+<pre><code>{
   "mcpServers": {
     "whoop": {
       "command": "npx",
@@ -162,53 +677,115 @@ npx -y whoop-mcp-unofficial doctor</code></pre>
 }</code></pre>
           </div>
         </article>
+
+        <article class="agent-card agent-card-wide" data-reveal>
+          <h4>4 · How to call the bridge once it's wired</h4>
+          <ul class="agent-spec dense">
+            <li><span>Need a daily read</span><code>whoop_daily_summary</code></li>
+            <li><span>Need a weekly read</span><code>whoop_weekly_summary</code></li>
+            <li><span>Need raw collections</span><code>whoop_list_recoveries / whoop_list_sleeps / whoop_list_workouts / whoop_list_cycles</code></li>
+            <li><span>Need a specific record</span><code>whoop_get_sleep / whoop_get_workout / whoop_get_cycle</code></li>
+            <li><span>Need to verify state without an API call</span><code>whoop_connection_status</code></li>
+            <li><span>Need privacy posture</span><code>whoop_privacy_audit</code></li>
+          </ul>
+          <p class="agent-note"><strong>Important.</strong> Default <code>privacy_mode</code> is <code>structured</code>. Do not request <code>raw</code> unless the user explicitly asks. Do not echo OAuth tokens; you cannot read them and you should not try.</p>
+        </article>
+
+        <article class="agent-card agent-card-wide accent" data-reveal>
+          <h4>5 · A prompt the user can paste into <em>any</em> MCP-aware agent</h4>
+          <p>If a human wants to delegate the whole install, they can hand this prompt to their AI assistant. It is self-contained.</p>
+          <div class="terminal">
+            <div class="terminal-top">
+              <span></span><span></span><span></span>
+              <button class="copy-button" type="button" data-copy="Install the unofficial WHOOP MCP server for me. Repository: https://github.com/davidmosiah/whoop-mcp. Steps: (1) Tell me what to fill into developer.whoop.com (redirect URI must be http://127.0.0.1:3000/callback, scopes are all read scopes). (2) Once I give you the Client ID and Secret, run npx -y whoop-mcp-unofficial setup, then auth, then doctor in a terminal. (3) Add the MCP server config to my MCP client. (4) Verify by calling whoop_connection_status. Keep tokens local; do not print them. Do not request privacy_mode=raw.">Copy delegation prompt</button>
+            </div>
+<pre><code>Install the unofficial WHOOP MCP server for me.
+Repository: https://github.com/davidmosiah/whoop-mcp.
+
+Steps:
+ 1. Tell me what to fill into developer.whoop.com
+    — redirect URI must be http://127.0.0.1:3000/callback
+    — scopes are all read scopes.
+ 2. Once I give you the Client ID and Secret, run
+    npx -y whoop-mcp-unofficial setup
+    then auth, then doctor — in a terminal.
+ 3. Add the MCP server config to my MCP client.
+ 4. Verify by calling whoop_connection_status.
+
+Keep tokens local. Do not print them.
+Do not request privacy_mode=raw.</code></pre>
+          </div>
+        </article>
       </div>
     </section>
 
-    <section class="section security" id="security">
-      <div class="section-heading" data-reveal>
-        <p class="eyebrow">Privacy model</p>
-        <h2>Designed for sensitive physiological data.</h2>
-      </div>
-      <div class="security-rail" data-reveal>
-        <div>
-          <span class="metric">0600</span>
-          <p>Local token and config file permissions by default.</p>
-        </div>
-        <div>
-          <span class="metric">local</span>
-          <p>OAuth tokens stay on your machine and are not returned to the agent.</p>
-        </div>
-        <div>
-          <span class="metric">raw opt-in</span>
-          <p>Structured mode is default; full raw WHOOP payloads require explicit opt-in.</p>
-        </div>
-        <div>
-          <span class="metric">audit</span>
-          <p><code>whoop_privacy_audit</code> reports posture without revealing secrets.</p>
-        </div>
+    <!-- ============== PRIVACY DOSSIER ============== -->
+    <section class="chapter" id="security">
+      <header class="chapter-head" data-reveal>
+        <span class="reel-label"><span class="reel-dot"></span>Reel 06 — The contract</span>
+        <h2>Privacy dossier.</h2>
+        <p class="chapter-lede">
+          Health data deserves a tighter contract than "it's encrypted in transit." Here's exactly what stays where.
+        </p>
+      </header>
+
+      <div class="dossier-rail">
+        <article class="dossier-card" data-reveal>
+          <span class="dossier-metric">0600</span>
+          <h4>Local file mode</h4>
+          <p>Token and config files default to user-only read/write permissions. No process-shared secrets.</p>
+        </article>
+        <article class="dossier-card" data-reveal>
+          <span class="dossier-metric">local</span>
+          <h4>OAuth tokens</h4>
+          <p>Tokens live in <code>~/.whoop-mcp/tokens.json</code>. They never enter prompts. The agent never sees them.</p>
+        </article>
+        <article class="dossier-card" data-reveal>
+          <span class="dossier-metric">opt-in</span>
+          <h4>Raw payloads</h4>
+          <p><em>Structured</em> mode is the default. Full raw WHOOP payloads require explicit opt-in.</p>
+        </article>
+        <article class="dossier-card" data-reveal>
+          <span class="dossier-metric">audit</span>
+          <h4>Self-report</h4>
+          <p><code>whoop_privacy_audit</code> reports posture without revealing any secret values.</p>
+        </article>
       </div>
     </section>
 
-    <section class="section community">
-      <div class="community-card" data-reveal>
-        <p class="eyebrow">Community contribution</p>
+    <!-- ============== CTA ============== -->
+    <section class="closing">
+      <div class="closing-card" data-reveal>
+        <p class="reel-label"><span class="reel-dot"></span>Closing credits</p>
         <h2>Make health agents more useful, safely.</h2>
         <p>
-          This project is meant to help builders experiment with personal health agents while keeping the trust boundary clear:
-          official WHOOP OAuth, local credentials, open source code, and an explicit unofficial disclaimer.
+          This project exists to help builders experiment with personal health agents while keeping the trust boundary clear:
+          official WHOOP OAuth, local credentials, open-source code, an explicit unofficial disclaimer, and zero token leakage to model context.
         </p>
         <div class="hero-actions">
-          <a class="button primary" href="https://github.com/davidmosiah/whoop-mcp">Star or fork on GitHub</a>
-          <a class="button ghost" href="https://www.npmjs.com/package/whoop-mcp-unofficial">Open npm package</a>
+          <a class="button primary" href="https://github.com/davidmosiah/whoop-mcp">
+            <span>Star or fork on GitHub</span>
+            <span class="button-arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="button ghost" href="https://www.npmjs.com/package/whoop-mcp-unofficial">Open the npm package</a>
+          <a class="button ghost" href="https://registry.modelcontextprotocol.io/v0.1/servers?search=io.github.davidmosiah/whoop-mcp">View MCP Registry</a>
         </div>
       </div>
     </section>
   </main>
 
   <footer class="footer">
-    <span>Built by <a href="https://github.com/davidmosiah">David Mosiah</a>.</span>
-    <span>WHOOP is a trademark of its respective owner. This project provides data access only, not medical advice.</span>
+    <div class="footer-row">
+      <span class="footer-brand">
+        <span class="brand-mark small" aria-hidden="true"><span></span></span>
+        WHOOP MCP <em>unofficial</em>
+      </span>
+      <span>Built by <a href="https://github.com/davidmosiah">David Mosiah</a> · MIT licensed.</span>
+    </div>
+    <p class="footer-fineprint">
+      WHOOP is a trademark of its respective owner. This project is not affiliated with, endorsed by, or sponsored by WHOOP, Inc.
+      It provides authorized data access only — not medical advice, not diagnosis, not treatment.
+    </p>
   </footer>
 
   <script src="assets/site.js" defer></script>
