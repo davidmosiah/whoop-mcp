@@ -16,9 +16,4 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
-      - run: npm run typecheck
-      - run: npm run build
-      - run: npm run smoke
-      - run: npm run smoke:http
-      - run: npm run test:summary
-      - run: npm run test:privacy-cache
+      - run: npm test
