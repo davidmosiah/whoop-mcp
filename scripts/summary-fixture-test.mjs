@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { buildDailySummary, buildWeeklySummary } from '../dist/services/summary.js';
+import { buildWellnessContext } from '../dist/services/context.js';
 
 const minute = 60 * 1000;
 const hour = 60 * minute;
@@ -101,5 +102,13 @@ assert.equal(weekly.kind, 'weekly_summary');
 assert.equal(weekly.scorecard.current.high_zone_minutes, 15);
 assert.equal(weekly.scorecard.current.aerobic_minutes, 50);
 assert.ok(weekly.diagnostic.action_candidates.length >= 3);
+
+const context = await buildWellnessContext(fakeClient, { days: 10, timezone: 'UTC' });
+assert.equal(context.source, 'whoop');
+assert.equal(context.recovery_score, 82);
+assert.equal(context.sleep_score, 86);
+assert.equal(context.strain_score, 11.5);
+assert.equal(context.recent_training_load, 'normal');
+assert.ok(context.telegram_summary.includes('WHOOP'));
 
 console.log(JSON.stringify({ ok: true, daily: daily.kind, weekly: weekly.kind }, null, 2));

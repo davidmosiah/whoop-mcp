@@ -8,6 +8,7 @@ export const HERMES_DIRECT_TOOLS = [
   "mcp_whoop_whoop_connection_status",
   "mcp_whoop_whoop_daily_summary",
   "mcp_whoop_whoop_weekly_summary",
+  "mcp_whoop_whoop_wellness_context",
   "mcp_whoop_whoop_list_recoveries",
   "mcp_whoop_whoop_list_sleeps",
   "mcp_whoop_whoop_list_cycles"
@@ -32,6 +33,7 @@ const STANDARD_TOOLS = [
   "whoop_get_cycle_recovery",
   "whoop_daily_summary",
   "whoop_weekly_summary",
+  "whoop_wellness_context",
   "whoop_privacy_audit",
   "whoop_cache_status",
   "whoop_revoke_access"
@@ -71,7 +73,7 @@ export function buildAgentManifest(client: AgentClientName = "generic") {
       token_storage: "~/.whoop-mcp/tokens.json with 0600 permissions",
       secret_storage: "~/.whoop-mcp/config.json or WHOOP_* environment variables; never print secrets"
     },
-    recommended_first_calls: ["whoop_connection_status", "whoop_daily_summary", "whoop_weekly_summary"],
+    recommended_first_calls: ["whoop_connection_status", "whoop_wellness_context", "whoop_daily_summary", "whoop_weekly_summary"],
     standard_tools: STANDARD_TOOLS,
     resources: RESOURCES,
     hermes: {
@@ -92,6 +94,7 @@ export function buildAgentManifest(client: AgentClientName = "generic") {
       "Treat WHOOP health data as sensitive. Do not expose raw payloads unless the user asks for raw mode.",
       "Raw mode means upstream WHOOP API JSON, not continuous sensor streams or Bluetooth data.",
       "For Hermes, do not restart the gateway for normal WHOOP data access; reload MCP instead.",
+      "Use whoop_wellness_context as the normalized handoff to exercise recommendation tools.",
       "Do not provide medical diagnosis or treatment instructions. Frame outputs as recovery, sleep and training context."
     ],
     troubleshooting: [
@@ -140,7 +143,7 @@ ${manifest.agent_rules.map((rule) => `- ${rule}`).join("\n")}
 }
 
 export function hermesConfigSnippet(): string {
-  return `mcp_servers:\n  whoop:\n    command: npx\n    args:\n      - -y\n      - ${PINNED_NPM_PACKAGE}`;
+  return `mcp_servers:\n  whoop:\n    command: npx\n    args:\n      - -y\n      - ${PINNED_NPM_PACKAGE}\n    timeout: 120\n    connect_timeout: 60\n    sampling:\n      enabled: false`;
 }
 
 export function hermesSkillMarkdown(): string {

@@ -20,7 +20,9 @@ import {
   ResponseOnlyInputSchema,
   SimpleReadInputSchema,
   SummaryOutputSchema,
-  WeeklySummaryInputSchema
+  WeeklySummaryInputSchema,
+  WellnessContextInputSchema,
+  WellnessContextOutputSchema
 } from "../schemas/common.js";
 import { buildAgentManifest, formatAgentManifestMarkdown } from "../services/agent-manifest.js";
 import { buildPrivacyAudit } from "../services/audit.js";
@@ -30,6 +32,7 @@ import { getConfig } from "../services/config.js";
 import { bulletList, formatCollection, makeError, makeResponse } from "../services/format.js";
 import { applyPrivacy, resolvePrivacyMode } from "../services/privacy.js";
 import { buildDailySummary, buildWeeklySummary, formatSummaryMarkdown } from "../services/summary.js";
+import { buildWellnessContext, formatWellnessContextMarkdown } from "../services/context.js";
 import { WhoopClient } from "../services/whoop-client.js";
 
 function client(): WhoopClient {
@@ -395,6 +398,25 @@ This workflow tool compares a recent window against a prior window when availabl
       try {
         const summary = await buildWeeklySummary(client(), params);
         return makeResponse(summary, params.response_format, formatSummaryMarkdown(summary));
+      } catch (error) {
+        return makeError((error as Error).message);
+      }
+    }
+  );
+
+  server.registerTool(
+    "whoop_wellness_context",
+    {
+      title: "WHOOP Wellness Context",
+      description: "Normalize WHOOP recovery, sleep, strain and recent workout load into the shared wellness_context shape for exercise recommendation engines and Telegram agents.",
+      inputSchema: WellnessContextInputSchema.shape,
+      outputSchema: WellnessContextOutputSchema.shape,
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true }
+    },
+    async (params) => {
+      try {
+        const context = await buildWellnessContext(client(), params);
+        return makeResponse(context, params.response_format, formatWellnessContextMarkdown(context));
       } catch (error) {
         return makeError((error as Error).message);
       }

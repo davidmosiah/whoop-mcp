@@ -53,7 +53,7 @@ export function buildCapabilities() {
       {
         name: "Recovery",
         examples: ["recovery score", "HRV", "resting heart rate", "SpO2", "skin temperature"],
-        tools: ["whoop_list_recoveries", "whoop_get_cycle_recovery", "whoop_daily_summary", "whoop_weekly_summary"]
+        tools: ["whoop_list_recoveries", "whoop_get_cycle_recovery", "whoop_daily_summary", "whoop_weekly_summary", "whoop_wellness_context"]
       },
       {
         name: "Cycles and strain",
@@ -76,6 +76,7 @@ export function buildCapabilities() {
       "Call whoop_connection_status before calling WHOOP data tools.",
       "If setup is incomplete, guide the user through setup, auth, and doctor.",
       "Use whoop_daily_summary or whoop_weekly_summary before lower-level collection tools.",
+      "Use whoop_wellness_context when handing recovery/sleep/strain context to Exercise Catalog or Telegram workout flows.",
       "Use privacy_mode=raw only when the user explicitly asks for full upstream payloads.",
       "Avoid medical diagnosis; frame outputs as performance, recovery, sleep, and training context."
     ],

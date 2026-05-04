@@ -1,4 +1,7 @@
 import assert from 'node:assert/strict';
+import { mkdtempSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 
@@ -23,7 +26,8 @@ const expectedTools = [
   'whoop_list_workouts',
   'whoop_privacy_audit',
   'whoop_revoke_access',
-  'whoop_weekly_summary'
+  'whoop_weekly_summary',
+  'whoop_wellness_context'
 ];
 
 const expectedResources = [
@@ -43,7 +47,20 @@ const expectedPrompts = [
 ];
 
 const client = new Client({ name: 'whoop-mcp-smoke-test', version: '0.0.0' });
-const transport = new StdioClientTransport({ command: 'node', args: ['dist/index.js'] });
+const homeDir = mkdtempSync(join(tmpdir(), 'whoop-mcp-smoke-'));
+const transport = new StdioClientTransport({
+  command: 'node',
+  args: ['dist/index.js'],
+  env: {
+    ...process.env,
+    HOME: homeDir,
+    WHOOP_CLIENT_ID: '',
+    WHOOP_CLIENT_SECRET: '',
+    WHOOP_REDIRECT_URI: '',
+    WHOOP_TOKEN_PATH: join(homeDir, '.whoop-mcp', 'tokens.json'),
+    WHOOP_CACHE_PATH: join(homeDir, '.whoop-mcp', 'cache.sqlite')
+  }
+});
 await client.connect(transport);
 try {
   const tools = await client.listTools();
