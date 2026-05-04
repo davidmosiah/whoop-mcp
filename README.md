@@ -1,6 +1,6 @@
 # whoop-mcp-server
 
-[![MCP Compatible](https://img.shields.io/badge/MCP-compatible-7C3AED?style=flat-square&logo=anthropic&logoColor=white)](https://modelcontextprotocol.io) [![License: MIT](https://img.shields.io/badge/license-MIT-green?style=flat-square)](https://opensource.org/licenses/MIT) [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/) [![Provider: WHOOP](https://img.shields.io/badge/data-WHOOP-FF0026?style=flat-square)](https://whoop.com)
+[![MCP Compatible](https://img.shields.io/badge/MCP-compatible-7C3AED?style=flat-square&logo=anthropic&logoColor=white)](https://modelcontextprotocol.io) [![License: MIT](https://img.shields.io/badge/license-MIT-green?style=flat-square)](https://opensource.org/licenses/MIT) [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/) [![Provider: WHOOP](https://img.shields.io/badge/data-WHOOP-FF0026?style=flat-square)](https://whoop.com) [![npm version](https://img.shields.io/npm/v/whoop-mcp-unofficial?style=flat-square&color=cb3837&logo=npm)](https://www.npmjs.com/package/whoop-mcp-unofficial)
 
 
 [![CI](https://github.com/davidmosiah/whoop-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/davidmosiah/whoop-mcp/actions/workflows/ci.yml)
