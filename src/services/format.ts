@@ -29,7 +29,12 @@ export function bulletList(title: string, fields: Record<string, unknown>): stri
 }
 
 export function formatCollection(title: string, records: unknown[], meta: Record<string, unknown>): string {
-  const lines = [`# ${title}`, "", ...Object.entries(meta).map(([k, v]) => `- **${k}**: ${String(v)}`), ""];
+  const lines = [`# ${title}`, ""];
+  for (const [key, value] of Object.entries(meta)) {
+    if (key === "records" || value === undefined || value === null) continue;
+    lines.push(`- **${key}**: ${formatScalar(value)}`);
+  }
+  lines.push("");
   const preview = records.slice(0, 8);
   for (const [index, record] of preview.entries()) {
     if (record && typeof record === "object") {
@@ -50,4 +55,10 @@ export function formatCollection(title: string, records: unknown[], meta: Record
   }
   if (records.length > preview.length) lines.push(`... ${records.length - preview.length} more records omitted from markdown preview.`);
   return lines.join("\n");
+}
+
+function formatScalar(value: unknown): string {
+  if (Array.isArray(value)) return value.map((item) => formatScalar(item)).join(", ");
+  if (value && typeof value === "object") return JSON.stringify(value);
+  return String(value);
 }
