@@ -58,9 +58,9 @@
     "@types/better-sqlite3": "^7.6.13",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
-    "@types/node": "^22.10.2",
+    "@types/node": "^25.6.0",
     "tsx": "^4.20.6",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.3"
   },
   "engines": {
     "node": ">=20"
