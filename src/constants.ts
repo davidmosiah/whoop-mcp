@@ -1,5 +1,7 @@
 export const SERVER_NAME = "whoop-mcp-server";
 export const SERVER_VERSION = "0.1.4";
+export const NPM_PACKAGE_NAME = "whoop-mcp-unofficial";
+export const PINNED_NPM_PACKAGE = `${NPM_PACKAGE_NAME}@${SERVER_VERSION}`;
 
 export const WHOOP_API_BASE_URL = "https://api.prod.whoop.com/developer";
 export const WHOOP_AUTH_URL = "https://api.prod.whoop.com/oauth/oauth2/auth";

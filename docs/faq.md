@@ -46,9 +46,10 @@ The `setup` command stores local config, `auth` opens the WHOOP OAuth flow, and 
 
 Agents should call:
 
-1. `whoop_capabilities`
-2. `whoop_connection_status`
-3. `whoop_daily_summary` or `whoop_weekly_summary`
+1. `whoop_agent_manifest` when installing, configuring or running inside Hermes/OpenClaw-style agents.
+2. `whoop_capabilities`
+3. `whoop_connection_status`
+4. `whoop_daily_summary` or `whoop_weekly_summary`
 
 Agents should use lower-level collection tools only when they need detailed records.
 

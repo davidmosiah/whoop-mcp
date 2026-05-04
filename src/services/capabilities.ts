@@ -72,12 +72,21 @@ export function buildCapabilities() {
       }
     ],
     recommended_agent_flow: [
+      "Call whoop_agent_manifest when installing or operating inside a server agent such as Hermes.",
       "Call whoop_connection_status before calling WHOOP data tools.",
       "If setup is incomplete, guide the user through setup, auth, and doctor.",
       "Use whoop_daily_summary or whoop_weekly_summary before lower-level collection tools.",
       "Use privacy_mode=raw only when the user explicitly asks for full upstream payloads.",
       "Avoid medical diagnosis; frame outputs as performance, recovery, sleep, and training context."
     ],
+    client_aliases: {
+      hermes: {
+        tool_prefix: "mcp_whoop_",
+        direct_tools: ["mcp_whoop_whoop_agent_manifest", "mcp_whoop_whoop_connection_status", "mcp_whoop_whoop_daily_summary", "mcp_whoop_whoop_weekly_summary"],
+        reload_command: "/reload-mcp or hermes mcp test whoop",
+        gateway_restart_required_for_data_access: false
+      }
+    },
     contribution_paths: [
       "Improve setup UX for less technical users.",
       "Add examples for more MCP clients.",

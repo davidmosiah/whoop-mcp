@@ -1,4 +1,5 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { buildAgentManifest, formatAgentManifestMarkdown } from "../services/agent-manifest.js";
 import { buildCapabilities } from "../services/capabilities.js";
 import { getConfig } from "../services/config.js";
 import { applyPrivacy, resolvePrivacyMode } from "../services/privacy.js";
@@ -15,6 +16,16 @@ function jsonResource(uri: URL, data: unknown) {
   };
 }
 
+function textResource(uri: URL, text: string) {
+  return {
+    contents: [{
+      uri: uri.toString(),
+      mimeType: "text/markdown",
+      text
+    }]
+  };
+}
+
 async function latestCollectionResource(uri: URL, endpoint: string) {
   const config = getConfig();
   const privacyMode = resolvePrivacyMode(config);
@@ -24,6 +35,17 @@ async function latestCollectionResource(uri: URL, endpoint: string) {
 }
 
 export function registerWhoopResources(server: McpServer): void {
+  server.registerResource(
+    "whoop_agent_manifest",
+    "whoop://agent-manifest",
+    {
+      title: "WHOOP Agent Manifest",
+      description: "Machine-readable install and operating instructions for AI agents.",
+      mimeType: "text/markdown"
+    },
+    async (uri) => textResource(uri, formatAgentManifestMarkdown(buildAgentManifest("generic")))
+  );
+
   server.registerResource(
     "whoop_capabilities_resource",
     "whoop://capabilities",

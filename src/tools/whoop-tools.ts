@@ -1,11 +1,14 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import {
+  AgentManifestInputSchema,
+  AgentManifestOutputSchema,
   AuthUrlInputSchema,
   AuthUrlOutputSchema,
   CacheStatusOutputSchema,
   CapabilitiesOutputSchema,
   CollectionInputSchema,
   CollectionOutputSchema,
+  ConnectionStatusInputSchema,
   ConnectionStatusOutputSchema,
   DailySummaryInputSchema,
   EndpointDataOutputSchema,
@@ -19,6 +22,7 @@ import {
   SummaryOutputSchema,
   WeeklySummaryInputSchema
 } from "../schemas/common.js";
+import { buildAgentManifest, formatAgentManifestMarkdown } from "../services/agent-manifest.js";
 import { buildPrivacyAudit } from "../services/audit.js";
 import { buildCapabilities } from "../services/capabilities.js";
 import { buildConnectionStatus } from "../services/connection-status.js";
@@ -144,6 +148,26 @@ export function registerWhoopTools(server: McpServer): void {
   );
 
   server.registerTool(
+    "whoop_agent_manifest",
+    {
+      title: "WHOOP Agent Manifest",
+      description: "Machine-readable install, runtime and client guidance for AI agents operating the WHOOP MCP. Does not read WHOOP or expose secrets.",
+      inputSchema: AgentManifestInputSchema.shape,
+      outputSchema: AgentManifestOutputSchema.shape,
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: false
+      }
+    },
+    async ({ client: targetClient, response_format }) => {
+      const manifest = buildAgentManifest(targetClient);
+      return makeResponse(manifest, response_format, formatAgentManifestMarkdown(manifest));
+    }
+  );
+
+  server.registerTool(
     "whoop_get_auth_url",
     {
       title: "Get WHOOP OAuth URL",
@@ -259,15 +283,16 @@ export function registerWhoopTools(server: McpServer): void {
     {
       title: "WHOOP Connection Status",
       description: "Check whether local WHOOP env vars, token file, Node version, privacy mode and cache are ready. Does not call WHOOP or expose secrets.",
-      inputSchema: ResponseOnlyInputSchema.shape,
+      inputSchema: ConnectionStatusInputSchema.shape,
       outputSchema: ConnectionStatusOutputSchema.shape,
       annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }
     },
-    async ({ response_format }) => {
-      const status = await buildConnectionStatus();
+    async ({ client: targetClient, response_format }) => {
+      const status = await buildConnectionStatus({ client: targetClient });
       return makeResponse(status, response_format, bulletList("WHOOP Connection Status", {
         ok: status.ok,
         ready_for_whoop_api: status.ready_for_whoop_api,
+        client: status.client,
         missing_env: status.missing_env.join(", ") || "none",
         token_path: status.token.path,
         token_exists: status.token.exists,

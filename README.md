@@ -30,6 +30,7 @@ Built by [David Mosiah](https://github.com/davidmosiah) for people building prac
 - Workouts, strain, heart-rate zones and sport metadata
 - Daily and weekly workflow summaries for agents
 - MCP resources and prompts for agent-native workflows
+- Agent manifest for delegated setup and Hermes/OpenClaw-style operations
 - Optional SQLite read-through cache
 - Privacy modes for summary, structured or raw WHOOP API payloads
 - Structured MCP tool outputs and a privacy audit tool
@@ -128,7 +129,9 @@ npx -y whoop-mcp-unofficial doctor
 What these commands do:
 
 - `setup` asks for WHOOP credentials, writes local config, and creates a client config/snippet.
+- `setup --client hermes` writes `~/.hermes/config.yaml`, installs a local WHOOP MCP skill, and pins the npm package version.
 - `doctor` checks Node.js, required WHOOP env vars, redirect URI, token file, privacy mode and cache.
+- `doctor --client hermes` also checks Hermes config, package pinning and skill installation.
 - `auth` starts a temporary local callback server, opens the WHOOP authorization page, captures the OAuth code and saves tokens locally.
 - `doctor --json` returns the same setup state in machine-readable form.
 - Secrets are stored in `~/.whoop-mcp/config.json` with `0600` permissions, so MCP client configs do not need to contain your WHOOP secret.
@@ -191,6 +194,7 @@ The exchange tool stores tokens locally and intentionally does not return token 
 
 ### Auth/setup
 
+- `whoop_agent_manifest` - Return machine-readable install, runtime and client guidance for AI agents.
 - `whoop_get_auth_url` - Generate an OAuth authorization URL.
 - `whoop_exchange_code` - Exchange authorization code for local tokens.
 - `whoop_revoke_access` - Revoke WHOOP OAuth access and delete local tokens.
@@ -241,6 +245,7 @@ These tools fetch the required WHOOP collections, compute defensive baselines, a
 
 ### Resources
 
+- `whoop://agent-manifest`
 - `whoop://capabilities`
 - `whoop://latest/recovery`
 - `whoop://latest/sleep`
@@ -268,6 +273,10 @@ Weekly summary inputs:
 - `response_format`: `markdown` or `json`
 
 ## Example prompts for agents
+
+```text
+Call whoop_agent_manifest with client=hermes and response_format=json. Use the returned rules to install or verify the WHOOP MCP without asking me to paste OAuth tokens, refresh tokens, client secrets or raw health exports into chat.
+```
 
 ```text
 Use the WHOOP MCP server to summarize my last 7 days of sleep and recovery. Compare HRV, RHR, sleep performance, consistency and strain. Do not provide medical advice.

@@ -1,5 +1,6 @@
 import { buildConnectionStatus } from "../services/connection-status.js";
 import { SERVER_VERSION } from "../constants.js";
+import { parseAgentClientName } from "../services/agent-manifest.js";
 import { runAuthCommand } from "./auth.js";
 import { runSetupCommand } from "./setup.js";
 
@@ -26,20 +27,37 @@ export async function runCliCommand(args: string[]): Promise<number | undefined>
 }
 
 async function runDoctor(args: string[]): Promise<number> {
-  const json = args.includes("--json");
-  const strict = args.includes("--strict");
-  const status = await buildConnectionStatus();
-  if (json) {
+  const options = parseDoctorOptions(args);
+  const status = await buildConnectionStatus({ client: options.client });
+  if (options.json) {
     console.log(JSON.stringify(status, null, 2));
   } else {
     printDoctor(status);
   }
-  return strict && !status.ok ? 1 : 0;
+  return options.strict && !status.ok ? 1 : 0;
+}
+
+function parseDoctorOptions(args: string[]) {
+  let client: ReturnType<typeof parseAgentClientName> | undefined;
+  for (let index = 0; index < args.length; index += 1) {
+    if (args[index] === "--client") {
+      const value = args[index + 1];
+      if (!value || value.startsWith("--")) throw new Error("Missing value for --client.");
+      client = parseAgentClientName(value);
+      index += 1;
+    }
+  }
+  return {
+    json: args.includes("--json"),
+    strict: args.includes("--strict"),
+    client
+  };
 }
 
 function printDoctor(status: Awaited<ReturnType<typeof buildConnectionStatus>>): void {
   console.log("WHOOP MCP Doctor");
   console.log(`Status: ${status.ok ? "ready" : "needs setup"}`);
+  if (status.client) console.log(`Client: ${status.client}`);
   console.log("");
   console.log("Checks:");
   console.log(`- Node.js >=20: ${status.node.supported ? "ok" : `needs update (${status.node.version})`}`);
@@ -53,9 +71,23 @@ function printDoctor(status: Awaited<ReturnType<typeof buildConnectionStatus>>):
   }
   console.log(`- Privacy mode: ${status.privacy_mode}`);
   console.log(`- Cache: ${status.cache.enabled ? `enabled at ${status.cache.path}` : "disabled"}`);
+  if (status.client_checks?.hermes) {
+    const hermes = status.client_checks.hermes;
+    console.log("- Hermes config:");
+    console.log(`  path: ${hermes.config_path}`);
+    console.log(`  configured: ${hermes.whoop_server_configured ? "ok" : "missing"}`);
+    console.log(`  pinned package: ${hermes.package_pinned ? "ok" : "missing"}`);
+    console.log(`  skill: ${hermes.skill_installed ? hermes.skill_path : "missing"}`);
+    console.log(`  direct tool prefix: ${hermes.direct_tool_prefix}`);
+  }
   console.log("");
   console.log("Next steps:");
   status.next_steps.forEach((step, index) => console.log(`${index + 1}. ${step}`));
+  if (status.client_checks?.hermes?.recommendations.length) {
+    console.log("");
+    console.log("Hermes recommendations:");
+    status.client_checks.hermes.recommendations.forEach((step, index) => console.log(`${index + 1}. ${step}`));
+  }
 }
 
 function printHelp(): void {
@@ -67,6 +99,7 @@ Usage:
   whoop-mcp-server setup           Guided setup, local config, and MCP client config
   whoop-mcp-server doctor          Check setup and next steps
   whoop-mcp-server doctor --json   Print setup status as JSON
+  whoop-mcp-server doctor --client hermes
   whoop-mcp-server auth            Authorize WHOOP with local browser callback
   whoop-mcp-server auth --no-open  Print auth URL without opening browser
 

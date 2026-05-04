@@ -29,12 +29,13 @@
     "start": "node dist/index.js",
     "dev": "tsx src/index.ts",
     "smoke": "node scripts/smoke-tools.mjs",
-    "test": "npm run typecheck && npm run build && npm run smoke && npm run smoke:http && npm run test:summary && npm run test:privacy-cache && npm run test:cli-ux",
+    "test": "npm run typecheck && npm run build && npm run smoke && npm run smoke:http && npm run test:summary && npm run test:privacy-cache && npm run test:cli-ux && npm run test:hermes-agent",
     "test:summary": "node scripts/summary-fixture-test.mjs",
     "prepublishOnly": "npm test",
     "smoke:http": "node scripts/smoke-http.mjs",
     "test:privacy-cache": "node scripts/privacy-cache-test.mjs",
-    "test:cli-ux": "node scripts/cli-ux-test.mjs"
+    "test:cli-ux": "node scripts/cli-ux-test.mjs",
+    "test:hermes-agent": "node scripts/hermes-agent-manifest-test.mjs"
   },
   "keywords": [
     "mcp",
