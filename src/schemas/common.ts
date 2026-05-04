@@ -162,7 +162,7 @@ export const CapabilitiesOutputSchema = z.object({
   }).strict()),
   recommended_agent_flow: z.array(z.string()),
   contribution_paths: z.array(z.string()),
-  links: z.record(z.string())
+  links: z.record(z.string(), z.string())
 }).passthrough();
 
 export const ConnectionStatusOutputSchema = z.object({
