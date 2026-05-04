@@ -104,8 +104,8 @@ Start with:
 - `whoop_connection_status`
 - `whoop_daily_summary`
 - `whoop_weekly_summary`
-- prompt `daily_performance_coach`
-- prompt `weekly_training_review`
+- prompt `whoop_daily_performance_coach`
+- prompt `whoop_weekly_training_review`
 
 Use raw collection tools only when you need lower-level data access.
 

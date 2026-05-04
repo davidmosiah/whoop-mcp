@@ -55,38 +55,48 @@ function parseDoctorOptions(args: string[]) {
 }
 
 function printDoctor(status: Awaited<ReturnType<typeof buildConnectionStatus>>): void {
-  console.log("WHOOP MCP Doctor");
-  console.log(`Status: ${status.ok ? "ready" : "needs setup"}`);
+  const ok = "✓";
+  const fail = "✗";
+  const info = "·";
+  const check = (passed: boolean) => (passed ? ok : fail);
+  const line = (mark: string, label: string, detail?: string) => {
+    const labelCol = label.padEnd(28);
+    console.log(`  ${mark}  ${labelCol}${detail ? `  ${detail}` : ""}`);
+  };
+
+  console.log("WHOOP MCP · Doctor");
+  console.log(`Status: ${status.ok ? `READY ${ok}` : `NEEDS SETUP ${fail}`}`);
   if (status.client) console.log(`Client: ${status.client}`);
   console.log("");
-  console.log("Checks:");
-  console.log(`- Node.js >=20: ${status.node.supported ? "ok" : `needs update (${status.node.version})`}`);
-  console.log(`- WHOOP env vars: ${status.missing_env.length === 0 ? "ok" : `missing ${status.missing_env.join(", ")}`}`);
-  console.log(`- Local config: ${status.config.exists ? `${status.config.source} at ${status.config.path}` : "missing"}`);
-  console.log(`- Automatic auth redirect: ${status.automatic_auth_supported ? "ok" : "not configured for local callback"}`);
-  console.log(`- Token file: ${status.token.exists ? status.token.path : "missing"}`);
+  console.log("Checks");
+  line(check(status.node.supported), "Node.js >=20", status.node.supported ? undefined : `version ${status.node.version}`);
+  line(check(status.missing_env.length === 0), "Env vars", status.missing_env.length ? `missing: ${status.missing_env.join(", ")}` : undefined);
+  line(check(status.config.exists), "Local config", status.config.exists ? `${status.config.source} at ${status.config.path}` : "missing");
+  line(check(status.automatic_auth_supported), "Automatic auth redirect", status.automatic_auth_supported ? undefined : "not configured for local callback");
+  line(check(status.token.exists), "Token file", status.token.exists ? status.token.path : "missing");
   if (status.token.exists) {
-    console.log(`- Token permissions: ${status.token.secure_permissions === false ? "insecure" : "ok"}`);
-    console.log(`- Refresh token: ${status.token.has_refresh_token ? "present" : "missing"}`);
+    line(status.token.secure_permissions === false ? fail : ok, "Token permissions", status.token.secure_permissions === false ? "insecure (chmod 600)" : undefined);
+    line(check(Boolean(status.token.has_refresh_token)), "Refresh token", status.token.has_refresh_token ? undefined : "missing");
   }
-  console.log(`- Privacy mode: ${status.privacy_mode}`);
-  console.log(`- Cache: ${status.cache.enabled ? `enabled at ${status.cache.path}` : "disabled"}`);
+  line(info, "Privacy mode", status.privacy_mode);
+  line(status.cache.enabled ? ok : info, "Cache", status.cache.enabled ? `enabled at ${status.cache.path}` : "disabled");
   if (status.client_checks?.hermes) {
     const hermes = status.client_checks.hermes;
-    console.log("- Hermes config:");
-    console.log(`  path: ${hermes.config_path}`);
-    console.log(`  configured: ${hermes.whoop_server_configured ? "ok" : "missing"}`);
-    console.log(`  pinned package: ${hermes.package_pinned ? "ok" : "missing"}`);
-    console.log(`  skill: ${hermes.skill_installed ? hermes.skill_path : "missing"}`);
-    console.log(`  direct tool prefix: ${hermes.direct_tool_prefix}`);
+    console.log("");
+    console.log("Hermes");
+    line(info, "config path", hermes.config_path);
+    line(check(hermes.whoop_server_configured), "configured");
+    line(check(hermes.package_pinned), "pinned package");
+    line(check(hermes.skill_installed), "skill", hermes.skill_installed ? hermes.skill_path : "missing");
+    line(info, "direct tool prefix", hermes.direct_tool_prefix);
   }
   console.log("");
-  console.log("Next steps:");
-  status.next_steps.forEach((step, index) => console.log(`${index + 1}. ${step}`));
+  console.log("Next steps");
+  status.next_steps.forEach((step, index) => console.log(`  ${index + 1}. ${step}`));
   if (status.client_checks?.hermes?.recommendations.length) {
     console.log("");
-    console.log("Hermes recommendations:");
-    status.client_checks.hermes.recommendations.forEach((step, index) => console.log(`${index + 1}. ${step}`));
+    console.log("Hermes recommendations");
+    status.client_checks.hermes.recommendations.forEach((step, index) => console.log(`  ${index + 1}. ${step}`));
   }
 }
 

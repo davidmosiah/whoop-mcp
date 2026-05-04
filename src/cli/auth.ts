@@ -35,11 +35,21 @@ export async function runAuthCommand(args: string[]): Promise<number> {
 
   const result = await waitForOAuthCode(redirect, state, timeoutMs, async (url) => {
     if (!json) {
-      console.log("WHOOP authorization");
-      console.log(`1. Opening: ${url}`);
-      console.log("2. Approve access in the browser.");
-      console.log("3. This command will save tokens locally and will not print them.");
-      if (noOpen) console.log(`Open this URL manually: ${url}`);
+      console.log("WHOOP MCP · Authorization");
+      console.log("");
+      if (noOpen) {
+        console.log("Open this URL manually:");
+        console.log(`  ${url}`);
+      } else {
+        console.log("Opening WHOOP authorization in your browser...");
+      }
+      console.log("");
+      console.log("Steps");
+      console.log("  1. Approve access in the browser tab that opens.");
+      console.log("  2. WHOOP will redirect to the local callback.");
+      console.log("  3. Tokens are saved locally; this command never prints them.");
+      console.log("");
+      console.log("Waiting for callback...");
     }
     if (!noOpen) openBrowser(url);
   }, authUrl);
@@ -54,9 +64,14 @@ export async function runAuthCommand(args: string[]): Promise<number> {
   };
   if (json) console.log(JSON.stringify(output, null, 2));
   else {
-    console.log("WHOOP connected successfully.");
-    console.log(`Token file: ${output.token_path}`);
-    console.log(output.next_step);
+    console.log("");
+    console.log("✓ WHOOP connected");
+    console.log("");
+    console.log(`  Token file:  ${output.token_path}`);
+    if (output.scope) console.log(`  Scope:       ${output.scope}`);
+    if (output.expires_at) console.log(`  Expires at:  ${output.expires_at}`);
+    console.log("");
+    console.log(`→ Next: ${output.next_step}`);
   }
   return 0;
 }
@@ -125,10 +140,41 @@ function openBrowser(url: string): void {
 function successHtml(): string {
   return `<!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><title>WHOOP connected</title></head>
-<body style="font-family: system-ui; max-width: 640px; margin: 48px auto; line-height: 1.5;">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WHOOP connected · Delx Wellness</title>
+  <style>
+    :root { color-scheme: light dark; }
+    * { box-sizing: border-box; }
+    body { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; max-width: 520px; margin: 0 auto; padding: 64px 24px; line-height: 1.55; color: #111; background: #fff; }
+    @media (prefers-color-scheme: dark) {
+      body { color: #e5e7eb; background: #0a0a0a; }
+      .lede, .step-label, .footer { color: #9ca3af; }
+      code { background: #1f2937; color: #f9fafb; }
+    }
+    .check { width: 56px; height: 56px; border-radius: 999px; background: #0ea5a3; color: #fff; display: grid; place-items: center; font-size: 28px; font-weight: 600; margin-bottom: 24px; }
+    h1 { font-size: 28px; font-weight: 600; margin: 0 0 8px; letter-spacing: -0.01em; }
+    .lede { color: #6b7280; margin: 0 0 32px; }
+    .step-label { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #6b7280; margin: 32px 0 12px; }
+    ol { padding-left: 20px; margin: 0 0 24px; }
+    li { margin-bottom: 6px; }
+    code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.9em; background: #f3f4f6; padding: 2px 6px; border-radius: 4px; }
+    .footer { margin-top: 48px; font-size: 13px; color: #9ca3af; }
+    .footer a { color: inherit; }
+  </style>
+</head>
+<body>
+  <div class="check" aria-hidden="true">&check;</div>
   <h1>WHOOP connected</h1>
-  <p>You can close this tab and return to your terminal.</p>
+  <p class="lede">Tokens are saved locally with user-only permissions. Your MCP client never sees them.</p>
+  <p class="step-label">What's next</p>
+  <ol>
+    <li>Switch back to your terminal.</li>
+    <li>Run <code>whoop-mcp-server doctor</code> to verify the setup.</li>
+    <li>Add the MCP server to your AI client (Claude Desktop, Cursor, Hermes…).</li>
+  </ol>
+  <p class="footer">You can close this tab.<br>Part of <a href="https://github.com/davidmosiah/delx-wellness">Delx Wellness</a> · local-first wellness MCP connectors.</p>
 </body>
 </html>`;
 }

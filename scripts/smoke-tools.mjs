@@ -37,9 +37,9 @@ const expectedResources = [
 ];
 
 const expectedPrompts = [
-  'daily_performance_coach',
-  'sleep_recovery_investigator',
-  'weekly_training_review'
+  'whoop_daily_performance_coach',
+  'whoop_sleep_recovery_investigator',
+  'whoop_weekly_training_review'
 ];
 
 const client = new Client({ name: 'whoop-mcp-smoke-test', version: '0.0.0' });
@@ -58,7 +58,7 @@ try {
   const promptNames = prompts.prompts.map((prompt) => prompt.name).sort();
   assert.deepEqual(promptNames, expectedPrompts.sort());
 
-  const prompt = await client.getPrompt({ name: 'daily_performance_coach', arguments: { timezone: 'UTC' } });
+  const prompt = await client.getPrompt({ name: 'whoop_daily_performance_coach', arguments: { timezone: 'UTC' } });
   assert.ok(prompt.messages[0]?.content?.type === 'text');
 
   const auditResult = await client.callTool({

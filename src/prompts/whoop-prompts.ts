@@ -14,9 +14,9 @@ function userPrompt(text: string) {
 
 export function registerWhoopPrompts(server: McpServer): void {
   server.registerPrompt(
-    "daily_performance_coach",
+    "whoop_daily_performance_coach",
     {
-      title: "Daily Performance Coach",
+      title: "WHOOP Daily Performance Coach",
       description: "Use WHOOP data to produce a practical, non-medical daily plan for training, recovery and focus.",
       argsSchema: { timezone: TimezoneArg }
     },
@@ -31,9 +31,9 @@ Requirements:
   );
 
   server.registerPrompt(
-    "weekly_training_review",
+    "whoop_weekly_training_review",
     {
-      title: "Weekly Training Review",
+      title: "WHOOP Weekly Training Review",
       description: "Use WHOOP weekly summary data to create a practical next-week training, sleep and focus plan.",
       argsSchema: { timezone: TimezoneArg }
     },
@@ -48,9 +48,9 @@ Requirements:
   );
 
   server.registerPrompt(
-    "sleep_recovery_investigator",
+    "whoop_sleep_recovery_investigator",
     {
-      title: "Sleep Recovery Investigator",
+      title: "WHOOP Sleep Recovery Investigator",
       description: "Investigate sleep consistency, sleep debt and recovery signals from WHOOP summaries.",
       argsSchema: { timezone: TimezoneArg }
     },

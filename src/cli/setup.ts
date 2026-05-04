@@ -58,11 +58,14 @@ export async function runSetupCommand(args: string[]): Promise<number> {
 
   if (options.json) console.log(JSON.stringify(setupOutput, null, 2));
   else {
-    console.log("WHOOP MCP setup saved.");
-    console.log(`Local config: ${configPath}`);
-    console.log(`MCP client config: ${clientConfig.path}`);
-    if (clientConfig.hermes_skill_path) console.log(`Hermes skill: ${clientConfig.hermes_skill_path}`);
-    console.log("Secrets were saved only in the local WHOOP MCP config file.");
+    console.log("WHOOP MCP · Setup");
+    console.log("");
+    console.log(`  ✓  Local config       ${configPath}`);
+    console.log(`  ✓  MCP client config  ${clientConfig.path}`);
+    if (clientConfig.hermes_skill_path) console.log(`  ✓  Hermes skill       ${clientConfig.hermes_skill_path}`);
+    console.log("");
+    console.log("Secrets were saved only in the local config file (chmod 600).");
+    console.log(`→ Next: ${setupOutput.next_step}`);
   }
 
   if (!options.noAuth) {

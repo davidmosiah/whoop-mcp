@@ -255,7 +255,7 @@ export function registerWhoopTools(server: McpServer): void {
     "whoop_get_body_measurements",
     {
       title: "Get WHOOP Body Measurements",
-      description: "Get the authenticated user's WHOOP body measurements. Requires read:body_measurement scope.",
+      description: "Get the authenticated user's WHOOP body measurements (height, weight, max heart rate). Requires read:body_measurement scope. Not medical advice.",
       inputSchema: SimpleReadInputSchema.shape,
       outputSchema: EndpointDataOutputSchema.shape,
       annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true }
@@ -274,8 +274,8 @@ export function registerWhoopTools(server: McpServer): void {
   );
 
   registerCollectionTool(server, "whoop_list_cycles", "WHOOP Cycles", "/v2/cycle", "List WHOOP physiological cycles. Supports start/end filters and WHOOP pagination. Requires read:cycles scope.");
-  registerCollectionTool(server, "whoop_list_recoveries", "WHOOP Recoveries", "/v2/recovery", "List WHOOP recoveries sorted by related sleep start time descending. Requires read:recovery scope.");
-  registerCollectionTool(server, "whoop_list_sleeps", "WHOOP Sleeps", "/v2/activity/sleep", "List WHOOP sleep activities. Supports start/end filters and WHOOP pagination. Requires read:sleep scope.");
+  registerCollectionTool(server, "whoop_list_recoveries", "WHOOP Recoveries", "/v2/recovery", "List WHOOP recoveries sorted by related sleep start time descending. Returns recovery score, HRV, RHR, SpO2 and skin temperature when scored. Requires read:recovery scope. Not medical advice.");
+  registerCollectionTool(server, "whoop_list_sleeps", "WHOOP Sleeps", "/v2/activity/sleep", "List WHOOP sleep activities. Returns sleep stages, performance, consistency and efficiency when scored. Supports start/end filters and WHOOP pagination. Requires read:sleep scope. Not medical advice.");
   registerCollectionTool(server, "whoop_list_workouts", "WHOOP Workouts", "/v2/activity/workout", "List WHOOP workouts. Supports start/end filters and WHOOP pagination. Requires read:workout scope.");
 
   server.registerTool(
@@ -402,8 +402,8 @@ This workflow tool compares a recent window against a prior window when availabl
   );
 
   registerGetByIdTool(server, "whoop_get_cycle", "WHOOP Cycle", (id) => `/v2/cycle/${id}`, "Get one WHOOP cycle by numeric cycle id. Requires read:cycles scope.");
-  registerGetByIdTool(server, "whoop_get_sleep", "WHOOP Sleep", (id) => `/v2/activity/sleep/${id}`, "Get one WHOOP sleep activity by UUID. Requires read:sleep scope.");
+  registerGetByIdTool(server, "whoop_get_sleep", "WHOOP Sleep", (id) => `/v2/activity/sleep/${id}`, "Get one WHOOP sleep activity by UUID. Requires read:sleep scope. Not medical advice.");
   registerGetByIdTool(server, "whoop_get_workout", "WHOOP Workout", (id) => `/v2/activity/workout/${id}`, "Get one WHOOP workout by UUID. Requires read:workout scope.");
-  registerGetByIdTool(server, "whoop_get_cycle_sleep", "WHOOP Cycle Sleep", (id) => `/v2/cycle/${id}/sleep`, "Get the sleep associated with a WHOOP cycle. Requires read:sleep scope.");
-  registerGetByIdTool(server, "whoop_get_cycle_recovery", "WHOOP Cycle Recovery", (id) => `/v2/cycle/${id}/recovery`, "Get the recovery associated with a WHOOP cycle. Requires read:recovery scope.");
+  registerGetByIdTool(server, "whoop_get_cycle_sleep", "WHOOP Cycle Sleep", (id) => `/v2/cycle/${id}/sleep`, "Get the sleep associated with a WHOOP cycle. Requires read:sleep scope. Not medical advice.");
+  registerGetByIdTool(server, "whoop_get_cycle_recovery", "WHOOP Cycle Recovery", (id) => `/v2/cycle/${id}/recovery`, "Get the recovery associated with a WHOOP cycle. Requires read:recovery scope. Not medical advice.");
 }
