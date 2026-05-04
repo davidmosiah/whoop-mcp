@@ -13,6 +13,8 @@ GitHub Pages mirror: <https://davidmosiah.github.io/whoop-mcp/>
 
 Delx Wellness registry: <https://github.com/davidmosiah/delx-wellness>
 
+Connector quality standard: <https://github.com/davidmosiah/delx-wellness/blob/main/docs/connector-quality-standard.md>
+
 > **Unofficial project:** this repository is not affiliated with, endorsed by, sponsored by, or supported by WHOOP, Inc. WHOOP is a trademark of its respective owner. Use this project only with your own WHOOP account and according to WHOOP's Developer Terms and API policies.
 
 Built by [David Mosiah](https://github.com/davidmosiah) for people building practical AI-agent workflows around personal health, recovery, sleep and training context.
