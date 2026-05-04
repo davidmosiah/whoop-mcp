@@ -4,6 +4,7 @@ import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
 
 const expectedTools = [
   'whoop_cache_status',
+  'whoop_capabilities',
   'whoop_connection_status',
   'whoop_daily_summary',
   'whoop_exchange_code',
@@ -25,6 +26,7 @@ const expectedTools = [
 ];
 
 const expectedResources = [
+  'whoop://capabilities',
   'whoop://latest/cycle',
   'whoop://latest/recovery',
   'whoop://latest/sleep',
@@ -65,6 +67,14 @@ try {
   assert.ok(['env', 'local_config', 'mixed', 'missing'].includes(auditResult.structuredContent?.config_source));
   assert.ok(auditResult.structuredContent?.secret_env_vars?.includes('WHOOP_CLIENT_SECRET'));
   assert.ok(!auditResult.structuredContent?.secret_env_vars?.includes('WHOOP_CLIENT_ID'));
+
+  const capabilitiesResult = await client.callTool({
+    name: 'whoop_capabilities',
+    arguments: { response_format: 'json' }
+  });
+  assert.equal(capabilitiesResult.structuredContent?.unofficial, true);
+  assert.ok(capabilitiesResult.structuredContent?.api_boundary?.does_not_include?.includes('continuous heart-rate samples'));
+  assert.ok(capabilitiesResult.structuredContent?.recommended_agent_flow?.some((step) => step.includes('whoop_connection_status')));
 
   const statusResult = await client.callTool({
     name: 'whoop_connection_status',

@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.1.4
+
+- Add SEO/GEO production metadata: JSON-LD, robots.txt, sitemap.xml, llms.txt, security.txt and PNG social preview.
+- Include SEO/GEO static docs in npm package files while continuing to exclude local Vercel metadata.
+
+## 0.1.3
+
+- Set `https://whoopmcp.vercel.app/` as the primary project URL in README/package metadata while keeping GitHub Pages as a mirror.
+- Refine the landing page hero, install path, project links and architecture section for a clearer first-time user experience.
+- Add a new high-fidelity SVG architecture visual and refresh the hero illustration.
+- Tighten npm package file inclusion so local Vercel metadata cannot ship in package tarballs.
+
+## 0.1.2
+
+- Add `whoop_capabilities` and `whoop://capabilities` so agents can discover supported data, unsupported raw sensor streams, privacy modes and recommended tool order without calling WHOOP.
+- Add explicit data-boundary documentation for raw WHOOP API payloads vs raw device sensor streams.
+- Add FAQ, roadmap, install-help/data-coverage issue templates and PR checklist.
+- Improve the GitHub Pages site with data-boundary, FAQ and community/contribution sections.
+
 ## 0.1.1
 
 - Add `whoop-mcp-unofficial` as a binary alias so `npx -y whoop-mcp-unofficial setup` works directly.

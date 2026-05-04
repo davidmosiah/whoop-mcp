@@ -1,10 +1,19 @@
 # whoop-mcp-server
 
+[![MCP Compatible](https://img.shields.io/badge/MCP-compatible-7C3AED?style=flat-square&logo=anthropic&logoColor=white)](https://modelcontextprotocol.io) [![License: MIT](https://img.shields.io/badge/license-MIT-green?style=flat-square)](https://opensource.org/licenses/MIT) [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/) [![Provider: WHOOP](https://img.shields.io/badge/data-WHOOP-FF0026?style=flat-square)](https://whoop.com)
+
+
 [![CI](https://github.com/davidmosiah/whoop-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/davidmosiah/whoop-mcp/actions/workflows/ci.yml)
 
 Unofficial MCP server for connecting AI agents to the WHOOP API.
 
+Website: <https://whoopmcp.vercel.app/>
+
+GitHub Pages mirror: <https://davidmosiah.github.io/whoop-mcp/>
+
 > **Unofficial project:** this repository is not affiliated with, endorsed by, sponsored by, or supported by WHOOP, Inc. WHOOP is a trademark of its respective owner. Use this project only with your own WHOOP account and according to WHOOP's Developer Terms and API policies.
+
+Built by [David Mosiah](https://github.com/davidmosiah) for people building practical AI-agent workflows around personal health, recovery, sleep and training context.
 
 ## What it does
 
@@ -18,11 +27,34 @@ Unofficial MCP server for connecting AI agents to the WHOOP API.
 - Daily and weekly workflow summaries for agents
 - MCP resources and prompts for agent-native workflows
 - Optional SQLite read-through cache
-- Privacy modes for summary, structured or raw payloads
+- Privacy modes for summary, structured or raw WHOOP API payloads
 - Structured MCP tool outputs and a privacy audit tool
 - Human-friendly `doctor` and `auth` CLI commands for setup without manual code copying
 
 The server runs over MCP `stdio`, so it works well as a local integration for agents such as Hermes, OpenClaw, Claude Desktop, Cursor, and other MCP clients.
+
+Helpful docs:
+
+- [Quickstart](docs/quickstart.md)
+- [Privacy model](docs/privacy.md)
+- [FAQ](docs/faq.md)
+- [Roadmap](docs/roadmap.md)
+- [Resources and prompts](docs/resources-prompts.md)
+
+## Data availability
+
+This project uses the official WHOOP OAuth API. When the docs or tools say `raw`, they mean the upstream WHOOP API response body for a supported endpoint, not raw device sensor samples.
+
+| Data type | Supported today | Notes |
+| --- | --- | --- |
+| Profile and body measurements | Yes | Basic profile, height, weight and max heart rate when authorized. |
+| Recovery | Yes | Recovery score, HRV, resting heart rate, SpO2 and skin temperature when WHOOP returns a scored recovery. |
+| Cycles and strain | Yes | Physiological cycles, day strain, kilojoules and average/max heart rate fields exposed by WHOOP. |
+| Sleep | Yes | Sleep sessions, sleep-stage durations, performance, consistency and efficiency fields exposed by WHOOP. |
+| Workouts | Yes | Workout strain, sport metadata, heart-rate zones, average/max heart rate and related summary metrics. |
+| Raw WHOOP API JSON | Opt-in | Available with `WHOOP_PRIVACY_MODE=raw` or per-call `privacy_mode=raw`. |
+| Continuous/high-frequency sensor streams | No | Continuous heart-rate samples and other raw device streams are not available through the official WHOOP API. |
+| Live BLE heart-rate listening | No | WHOOP devices can broadcast HR over BLE, but this MCP does not implement a Bluetooth listener. |
 
 ## Security and privacy model
 
@@ -30,7 +62,7 @@ The server runs over MCP `stdio`, so it works well as a local integration for ag
 - Token file defaults to `~/.whoop-mcp/tokens.json` with `0600` permissions.
 - Refresh token rotation is protected with a lock file to reduce concurrent-agent refresh races.
 - Most tools are read-only after OAuth setup. `whoop_revoke_access` is intentionally destructive and removes access.
-- `WHOOP_PRIVACY_MODE` defaults to `structured`; full raw WHOOP payloads are opt-in.
+- `WHOOP_PRIVACY_MODE` defaults to `structured`; full raw WHOOP API payloads are opt-in.
 - This project does not provide medical advice. It exposes user-authorized data for analysis by your own tools/agents.
 
 ## Requirements
@@ -42,8 +74,6 @@ The server runs over MCP `stdio`, so it works well as a local integration for ag
 Official WHOOP API docs: <https://developer.whoop.com/api/>
 
 ## Install with npx
-
-After npm publication:
 
 ```bash
 npx -y whoop-mcp-unofficial doctor
@@ -164,6 +194,7 @@ The exchange tool stores tokens locally and intentionally does not return token 
 
 ### User
 
+- `whoop_capabilities` - Explain supported data, unavailable sensor streams, privacy modes, recommended agent workflow and project links without reading WHOOP.
 - `whoop_get_profile` - Get basic profile.
 - `whoop_get_body_measurements` - Get height, weight and max heart rate.
 - `whoop_cache_status` - Show optional SQLite cache status.
@@ -206,6 +237,7 @@ These tools fetch the required WHOOP collections, compute defensive baselines, a
 
 ### Resources
 
+- `whoop://capabilities`
 - `whoop://latest/recovery`
 - `whoop://latest/sleep`
 - `whoop://latest/cycle`

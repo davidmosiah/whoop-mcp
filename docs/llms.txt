@@ -1,0 +1,45 @@
+# WHOOP MCP Unofficial
+
+> Unofficial local-first MCP server for connecting AI agents to user-authorized WHOOP data through the official WHOOP OAuth API.
+
+Primary URL: https://whoopmcp.vercel.app/
+GitHub: https://github.com/davidmosiah/whoop-mcp
+npm: https://www.npmjs.com/package/whoop-mcp-unofficial
+Mirror: https://davidmosiah.github.io/whoop-mcp/
+Creator: David Mosiah, https://github.com/davidmosiah
+
+## What it is
+
+WHOOP MCP Unofficial lets MCP-compatible agents read a user's own WHOOP recovery, sleep, strain, workout, profile and body measurement data through read-only OAuth scopes. It is designed for local-first AI-agent workflows where tokens stay on the user's machine.
+
+## Important boundaries
+
+- This project is unofficial and not affiliated with, endorsed by, sponsored by, or supported by WHOOP, Inc.
+- It uses the official WHOOP OAuth API.
+- `raw` means full WHOOP API JSON for supported endpoints, not raw sensor telemetry.
+- Continuous heart-rate samples, accelerometer data and other raw device streams are not available through the official WHOOP API and are not exposed by this MCP.
+- It is not medical advice, diagnosis, treatment or emergency monitoring.
+
+## Agent starting points
+
+Agents should call tools in this order:
+
+1. `whoop_capabilities`
+2. `whoop_connection_status`
+3. `whoop_daily_summary` or `whoop_weekly_summary`
+4. Lower-level collection tools only when detailed records are needed
+
+## Install
+
+```bash
+npx -y whoop-mcp-unofficial setup
+npx -y whoop-mcp-unofficial auth
+npx -y whoop-mcp-unofficial doctor
+```
+
+## Useful docs
+
+- Quickstart: https://whoopmcp.vercel.app/quickstart.md
+- FAQ: https://whoopmcp.vercel.app/faq.md
+- Privacy model: https://whoopmcp.vercel.app/privacy.md
+- Roadmap: https://whoopmcp.vercel.app/roadmap.md

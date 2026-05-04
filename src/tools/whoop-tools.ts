@@ -3,6 +3,7 @@ import {
   AuthUrlInputSchema,
   AuthUrlOutputSchema,
   CacheStatusOutputSchema,
+  CapabilitiesOutputSchema,
   CollectionInputSchema,
   CollectionOutputSchema,
   ConnectionStatusOutputSchema,
@@ -19,6 +20,7 @@ import {
   WeeklySummaryInputSchema
 } from "../schemas/common.js";
 import { buildPrivacyAudit } from "../services/audit.js";
+import { buildCapabilities } from "../services/capabilities.js";
 import { buildConnectionStatus } from "../services/connection-status.js";
 import { getConfig } from "../services/config.js";
 import { bulletList, formatCollection, makeError, makeResponse } from "../services/format.js";
@@ -113,6 +115,34 @@ function registerGetByIdTool(server: McpServer, name: string, title: string, end
 }
 
 export function registerWhoopTools(server: McpServer): void {
+  server.registerTool(
+    "whoop_capabilities",
+    {
+      title: "WHOOP MCP Capabilities",
+      description: "Explain supported WHOOP data, unavailable raw sensor streams, privacy modes, recommended agent workflow, and project links. Does not read WHOOP or expose secrets.",
+      inputSchema: ResponseOnlyInputSchema.shape,
+      outputSchema: CapabilitiesOutputSchema.shape,
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: false
+      }
+    },
+    async ({ response_format }) => {
+      const capabilities = buildCapabilities();
+      return makeResponse(capabilities, response_format, bulletList("WHOOP MCP Capabilities", {
+        project: capabilities.project,
+        unofficial: capabilities.unofficial,
+        api_boundary: capabilities.api_boundary.source,
+        raw_definition: capabilities.api_boundary.raw_definition,
+        unsupported: capabilities.api_boundary.does_not_include.join(", "),
+        recommended_first_tools: "whoop_connection_status, whoop_daily_summary, whoop_weekly_summary",
+        docs: capabilities.links.docs
+      }));
+    }
+  );
+
   server.registerTool(
     "whoop_get_auth_url",
     {

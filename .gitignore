@@ -6,3 +6,6 @@ dist/
 .DS_Store
 coverage/
 .whoop-mcp/
+
+# MCP Registry local auth tokens
+.mcpregistry_*_token

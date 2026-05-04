@@ -16,7 +16,9 @@ Modes:
 
 - `summary`: minimum fields needed for basic interpretation.
 - `structured`: normalized fields useful for agents and analytics. This is the default.
-- `raw`: full WHOOP API payload. Use only when you explicitly need upstream details.
+- `raw`: full WHOOP API payload for a supported endpoint. Use only when you explicitly need upstream details.
+
+`raw` does not mean raw device telemetry. Continuous/high-frequency heart-rate samples and other raw sensor streams are not available through the official WHOOP API, so this MCP does not expose them. WHOOP devices can broadcast heart rate over BLE, but this project currently stays inside the official OAuth API boundary and does not implement Bluetooth collection.
 
 ## Token storage
 

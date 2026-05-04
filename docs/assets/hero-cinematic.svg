@@ -1,0 +1,54 @@
+<svg width="980" height="1040" viewBox="0 0 980 1040" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Cinematic WHOOP MCP product interface</title>
+  <desc id="desc">A polished interface card showing WHOOP recovery, sleep, strain and an AI decision layer.</desc>
+  <defs>
+    <radialGradient id="core" cx="50%" cy="42%" r="62%">
+      <stop stop-color="#D7FF69" stop-opacity="0.98"/>
+      <stop offset="0.28" stop-color="#76E7B1" stop-opacity="0.78"/>
+      <stop offset="0.72" stop-color="#07110D" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#020403" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="panel" x1="0" x2="1" y1="0" y2="1">
+      <stop stop-color="#F6F1E0" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#F6F1E0" stop-opacity="0.04"/>
+    </linearGradient>
+    <linearGradient id="line" x1="0" x2="1">
+      <stop stop-color="#CAFF5B" stop-opacity="0"/>
+      <stop offset="0.24" stop-color="#CAFF5B"/>
+      <stop offset="0.58" stop-color="#75E6B0"/>
+      <stop offset="1" stop-color="#8DD8FF" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="blurGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="20" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect x="24" y="24" width="932" height="992" rx="64" fill="#050806" stroke="#F6F1E0" stroke-opacity="0.16"/>
+  <rect x="52" y="54" width="876" height="932" rx="44" fill="url(#panel)"/>
+  <g opacity="0.11" stroke="#F6F1E0">
+    <path d="M104 150H876M104 270H876M104 390H876M104 510H876M104 630H876M104 750H876M104 870H876"/>
+    <path d="M170 100V924M290 100V924M410 100V924M530 100V924M650 100V924M770 100V924"/>
+  </g>
+  <circle cx="490" cy="410" r="304" fill="url(#core)" filter="url(#blurGlow)" opacity="0.9"/>
+  <circle cx="490" cy="410" r="250" stroke="#CAFF5B" stroke-opacity="0.26"/>
+  <circle cx="490" cy="410" r="184" stroke="#8DD8FF" stroke-opacity="0.25" stroke-dasharray="9 16"/>
+  <circle cx="490" cy="410" r="114" fill="#07110D" fill-opacity="0.72" stroke="#F6F1E0" stroke-opacity="0.22"/>
+  <path d="M105 564H235L264 520L300 632L342 430L386 680L426 564H560L592 522L626 616L670 472L712 650L754 564H874" stroke="url(#line)" stroke-width="5" stroke-linecap="round"/>
+  <g font-family="Avenir, Avenir Next, Helvetica, sans-serif">
+    <rect x="104" y="108" width="256" height="138" rx="26" fill="#050806" fill-opacity="0.76" stroke="#F6F1E0" stroke-opacity="0.17"/>
+    <text x="132" y="154" fill="#978F7F" font-size="17" font-weight="900" letter-spacing="2">RECOVERY</text>
+    <text x="132" y="212" fill="#CAFF5B" font-size="58" font-weight="900">72%</text>
+    <rect x="616" y="138" width="246" height="126" rx="26" fill="#050806" fill-opacity="0.76" stroke="#F6F1E0" stroke-opacity="0.17"/>
+    <text x="644" y="184" fill="#978F7F" font-size="17" font-weight="900" letter-spacing="2">SLEEP</text>
+    <text x="644" y="240" fill="#8DD8FF" font-size="52" font-weight="900">87%</text>
+    <rect x="124" y="690" width="246" height="126" rx="26" fill="#050806" fill-opacity="0.8" stroke="#F6F1E0" stroke-opacity="0.17"/>
+    <text x="152" y="736" fill="#978F7F" font-size="17" font-weight="900" letter-spacing="2">STRAIN</text>
+    <text x="152" y="792" fill="#FFBF70" font-size="54" font-weight="900">14.6</text>
+    <rect x="460" y="718" width="396" height="154" rx="32" fill="#CAFF5B"/>
+    <text x="492" y="768" fill="#102012" font-size="18" font-weight="900" letter-spacing="2">AI DECISION LAYER</text>
+    <text x="492" y="814" fill="#102012" font-size="34" font-weight="900">Maintain intensity.</text>
+    <text x="492" y="850" fill="#102012" font-size="23" font-weight="800">Protect sleep tonight.</text>
+    <rect x="164" y="898" width="652" height="54" rx="27" fill="#050806" fill-opacity="0.78" stroke="#F6F1E0" stroke-opacity="0.16"/>
+    <text x="198" y="933" fill="#75E6B0" font-size="18" font-weight="900">npx -y whoop-mcp-unofficial setup</text>
+  </g>
+</svg>

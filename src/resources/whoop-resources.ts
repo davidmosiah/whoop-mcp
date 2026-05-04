@@ -1,4 +1,5 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { buildCapabilities } from "../services/capabilities.js";
 import { getConfig } from "../services/config.js";
 import { applyPrivacy, resolvePrivacyMode } from "../services/privacy.js";
 import { buildDailySummary, buildWeeklySummary } from "../services/summary.js";
@@ -23,6 +24,17 @@ async function latestCollectionResource(uri: URL, endpoint: string) {
 }
 
 export function registerWhoopResources(server: McpServer): void {
+  server.registerResource(
+    "whoop_capabilities_resource",
+    "whoop://capabilities",
+    {
+      title: "WHOOP MCP Capabilities",
+      description: "Static capabilities, data boundary, privacy modes and recommended agent workflow.",
+      mimeType: "application/json"
+    },
+    async (uri) => jsonResource(uri, buildCapabilities())
+  );
+
   server.registerResource(
     "whoop_latest_recovery",
     "whoop://latest/recovery",

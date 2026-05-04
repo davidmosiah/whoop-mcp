@@ -109,6 +109,8 @@ Start with:
 
 Use raw collection tools only when you need lower-level data access.
 
+Important wording: `raw` means the full JSON returned by supported WHOOP API endpoints. It does not mean continuous device sensor streams or second-by-second heart-rate samples. WHOOP's official API exposes processed recovery, cycle, sleep and workout records, not high-frequency raw sensor data.
+
 ## Optional HTTP transport
 
 stdio is the default. For local HTTP testing:
