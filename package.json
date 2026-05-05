@@ -74,7 +74,7 @@
   "bugs": {
     "url": "https://github.com/davidmosiah/whoop-mcp/issues"
   },
-  "homepage": "https://whoopmcp.vercel.app/",
+  "homepage": "https://wellness.delx.ai/connectors/whoop",
   "mcpName": "io.github.davidmosiah/whoop-mcp",
   "publishConfig": {
     "access": "public",

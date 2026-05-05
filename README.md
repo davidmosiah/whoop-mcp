@@ -208,7 +208,8 @@ curl http://127.0.0.1:3000/health
 ## Links
 
 - npm: <https://www.npmjs.com/package/whoop-mcp-unofficial>
-- Docs site: <https://whoopmcp.vercel.app/>
+- Docs site: <https://wellness.delx.ai/connectors/whoop>
+- Legacy docs: <https://whoopmcp.vercel.app/>
 - GitHub Pages mirror: <https://davidmosiah.github.io/whoop-mcp/>
 - Delx Wellness registry: <https://github.com/davidmosiah/delx-wellness>
 - Connector quality standard: <https://github.com/davidmosiah/delx-wellness/blob/main/docs/connector-quality-standard.md>
