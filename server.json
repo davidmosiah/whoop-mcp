@@ -6,12 +6,12 @@
     "url": "https://github.com/davidmosiah/whoop-mcp",
     "source": "github"
   },
-  "version": "0.1.4",
+  "version": "0.2.0",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "whoop-mcp-unofficial",
-      "version": "0.1.4",
+      "version": "0.2.0",
       "transport": {
         "type": "stdio"
       },
@@ -68,5 +68,5 @@
       ]
     }
   ],
-  "website": "https://wellness.delx.ai/connectors/whoop"
+  "websiteUrl": "https://wellness.delx.ai/connectors/whoop"
 }
