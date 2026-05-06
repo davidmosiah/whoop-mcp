@@ -288,6 +288,34 @@ export const ConnectionStatusOutputSchema = z.object({
   next_steps: z.array(z.string())
 }).strict();
 
+
+export const DataInventoryOutputSchema = z.object({
+  kind: z.literal("data_inventory"),
+  source: z.string(),
+  mcp_name: z.string(),
+  generated_at: z.string(),
+  unofficial: z.boolean(),
+  data_access_model: z.string(),
+  auth: z.unknown().optional(),
+  scopes: z.array(z.string()),
+  api_boundary: z.unknown().optional(),
+  privacy_modes: z.array(z.unknown()),
+  categories: z.array(z.object({
+    name: z.string(),
+    examples: z.array(z.string()),
+    tools: z.array(z.string())
+  }).strict()),
+  totals: z.object({
+    categories: z.number().int().nonnegative(),
+    listed_tools: z.number().int().nonnegative(),
+    scopes: z.number().int().nonnegative()
+  }).strict(),
+  first_tools: z.array(z.string()),
+  recommended_agent_flow: z.array(z.string()),
+  links: z.record(z.string(), z.string()),
+  notes: z.array(z.string())
+}).strict();
+
 export const SummaryOutputSchema = z.object({
   kind: z.enum(["daily_summary", "weekly_summary"]),
   generated_at: z.string()

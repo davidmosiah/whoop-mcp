@@ -4,49 +4,26 @@ export const AGENT_CLIENTS = ["generic", "claude", "cursor", "windsurf", "hermes
 export type AgentClientName = typeof AGENT_CLIENTS[number];
 
 export const HERMES_DIRECT_TOOLS = [
-  "mcp_whoop_whoop_agent_manifest",
-  "mcp_whoop_whoop_connection_status",
-  "mcp_whoop_whoop_daily_summary",
-  "mcp_whoop_whoop_weekly_summary",
-  "mcp_whoop_whoop_wellness_context",
-  "mcp_whoop_whoop_list_recoveries",
-  "mcp_whoop_whoop_list_sleeps",
-  "mcp_whoop_whoop_list_cycles"
+  "mcp_whoop_whoop_agent_manifest", "mcp_whoop_whoop_connection_status", "mcp_whoop_whoop_daily_summary",
+  "mcp_whoop_whoop_data_inventory", "mcp_whoop_whoop_list_cycles", "mcp_whoop_whoop_list_recoveries",
+  "mcp_whoop_whoop_list_sleeps", "mcp_whoop_whoop_weekly_summary", "mcp_whoop_whoop_wellness_context"
 ];
 
 const STANDARD_TOOLS = [
-  "whoop_agent_manifest",
-  "whoop_capabilities",
-  "whoop_connection_status",
-  "whoop_get_auth_url",
-  "whoop_exchange_code",
-  "whoop_get_profile",
-  "whoop_get_body_measurements",
-  "whoop_list_cycles",
-  "whoop_list_recoveries",
-  "whoop_list_sleeps",
-  "whoop_list_workouts",
-  "whoop_get_cycle",
-  "whoop_get_sleep",
-  "whoop_get_workout",
-  "whoop_get_cycle_sleep",
-  "whoop_get_cycle_recovery",
-  "whoop_daily_summary",
-  "whoop_weekly_summary",
-  "whoop_wellness_context",
-  "whoop_privacy_audit",
-  "whoop_cache_status",
-  "whoop_revoke_access"
+  "whoop_agent_manifest", "whoop_cache_status", "whoop_capabilities",
+  "whoop_connection_status", "whoop_daily_summary", "whoop_data_inventory",
+  "whoop_exchange_code", "whoop_get_auth_url", "whoop_get_body_measurements",
+  "whoop_get_cycle", "whoop_get_cycle_recovery", "whoop_get_cycle_sleep",
+  "whoop_get_profile", "whoop_get_sleep", "whoop_get_workout",
+  "whoop_list_cycles", "whoop_list_recoveries", "whoop_list_sleeps",
+  "whoop_list_workouts", "whoop_privacy_audit", "whoop_revoke_access",
+  "whoop_weekly_summary", "whoop_wellness_context"
 ];
 
 const RESOURCES = [
-  "whoop://agent-manifest",
-  "whoop://capabilities",
-  "whoop://latest/recovery",
-  "whoop://latest/sleep",
-  "whoop://latest/cycle",
-  "whoop://summary/daily",
-  "whoop://summary/weekly"
+  "whoop://agent-manifest", "whoop://capabilities", "whoop://inventory",
+  "whoop://latest/cycle", "whoop://latest/recovery", "whoop://latest/sleep",
+  "whoop://summary/daily", "whoop://summary/weekly"
 ];
 
 export function parseAgentClientName(value: string): AgentClientName {
@@ -73,7 +50,7 @@ export function buildAgentManifest(client: AgentClientName = "generic") {
       token_storage: "~/.whoop-mcp/tokens.json with 0600 permissions",
       secret_storage: "~/.whoop-mcp/config.json or WHOOP_* environment variables; never print secrets"
     },
-    recommended_first_calls: ["whoop_connection_status", "whoop_wellness_context", "whoop_daily_summary", "whoop_weekly_summary"],
+    recommended_first_calls: ["whoop_connection_status", "whoop_data_inventory", "whoop_wellness_context", "whoop_daily_summary", "whoop_weekly_summary"],
     standard_tools: STANDARD_TOOLS,
     resources: RESOURCES,
     hermes: {
@@ -89,7 +66,7 @@ export function buildAgentManifest(client: AgentClientName = "generic") {
       doctor_command: "npx -y whoop-mcp-unofficial doctor --client hermes --json"
     },
     agent_rules: [
-      "Call whoop_connection_status before WHOOP data tools.",
+      "Call whoop_connection_status and whoop_data_inventory before WHOOP data tools.",
       "If setup is incomplete, guide the user through setup, auth and doctor instead of guessing token state.",
       "Treat WHOOP health data as sensitive. Do not expose raw payloads unless the user asks for raw mode.",
       "Raw mode means upstream WHOOP API JSON, not continuous sensor streams or Bluetooth data.",

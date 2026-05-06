@@ -1,6 +1,7 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { buildAgentManifest, formatAgentManifestMarkdown } from "../services/agent-manifest.js";
 import { buildCapabilities } from "../services/capabilities.js";
+import { buildDataInventory } from "../services/inventory.js";
 import { getConfig } from "../services/config.js";
 import { applyPrivacy, resolvePrivacyMode } from "../services/privacy.js";
 import { buildDailySummary, buildWeeklySummary } from "../services/summary.js";
@@ -35,6 +36,7 @@ async function latestCollectionResource(uri: URL, endpoint: string) {
 }
 
 export function registerWhoopResources(server: McpServer): void {
+  server.registerResource("whoop_data_inventory", "whoop://inventory", { title: "WHOOP Data Inventory", description: "Static inventory of supported WHOOP data domains, privacy modes and recommended first calls.", mimeType: "application/json" }, async (uri) => jsonResource(uri, buildDataInventory()));
   server.registerResource(
     "whoop_agent_manifest",
     "whoop://agent-manifest",

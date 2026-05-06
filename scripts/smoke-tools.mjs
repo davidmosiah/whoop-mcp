@@ -6,38 +6,17 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 
 const expectedTools = [
-  'whoop_agent_manifest',
-  'whoop_cache_status',
-  'whoop_capabilities',
-  'whoop_connection_status',
-  'whoop_daily_summary',
-  'whoop_exchange_code',
-  'whoop_get_auth_url',
-  'whoop_get_body_measurements',
-  'whoop_get_cycle',
-  'whoop_get_cycle_recovery',
-  'whoop_get_cycle_sleep',
-  'whoop_get_profile',
-  'whoop_get_sleep',
-  'whoop_get_workout',
-  'whoop_list_cycles',
-  'whoop_list_recoveries',
-  'whoop_list_sleeps',
-  'whoop_list_workouts',
-  'whoop_privacy_audit',
-  'whoop_revoke_access',
-  'whoop_weekly_summary',
-  'whoop_wellness_context'
+  'whoop_agent_manifest', 'whoop_cache_status', 'whoop_capabilities', 'whoop_connection_status',
+  'whoop_daily_summary', 'whoop_data_inventory', 'whoop_exchange_code', 'whoop_get_auth_url',
+  'whoop_get_body_measurements', 'whoop_get_cycle', 'whoop_get_cycle_recovery', 'whoop_get_cycle_sleep',
+  'whoop_get_profile', 'whoop_get_sleep', 'whoop_get_workout', 'whoop_list_cycles',
+  'whoop_list_recoveries', 'whoop_list_sleeps', 'whoop_list_workouts', 'whoop_privacy_audit',
+  'whoop_revoke_access', 'whoop_weekly_summary', 'whoop_wellness_context'
 ];
 
 const expectedResources = [
-  'whoop://agent-manifest',
-  'whoop://capabilities',
-  'whoop://latest/cycle',
-  'whoop://latest/recovery',
-  'whoop://latest/sleep',
-  'whoop://summary/daily',
-  'whoop://summary/weekly'
+  'whoop://agent-manifest', 'whoop://capabilities', 'whoop://inventory', 'whoop://latest/cycle',
+  'whoop://latest/recovery', 'whoop://latest/sleep', 'whoop://summary/daily', 'whoop://summary/weekly'
 ];
 
 const expectedPrompts = [
@@ -95,6 +74,10 @@ try {
   assert.ok(capabilitiesResult.structuredContent?.api_boundary?.does_not_include?.includes('continuous heart-rate samples'));
   assert.ok(capabilitiesResult.structuredContent?.recommended_agent_flow?.some((step) => step.includes('whoop_connection_status')));
   assert.ok(capabilitiesResult.structuredContent?.recommended_agent_flow?.some((step) => step.includes('whoop_agent_manifest')));
+
+  const inventoryResult = await client.callTool({ name: 'whoop_data_inventory', arguments: { response_format: 'json' } });
+  assert.equal(inventoryResult.structuredContent?.kind, 'data_inventory');
+  assert.equal(typeof inventoryResult.structuredContent?.source, 'string');
 
   const manifestResult = await client.callTool({
     name: 'whoop_agent_manifest',

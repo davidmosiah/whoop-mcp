@@ -92,6 +92,7 @@ When this README says `raw`, it means the upstream WHOOP API JSON for a supporte
 **Start with these:**
 
 - `whoop_connection_status` — verify local setup before calling WHOOP
+- `whoop_data_inventory` — inventory supported data domains, scopes, privacy modes and recommended first calls without calling WHOOP APIs.
 - `whoop_daily_summary` — readiness, sleep, load and action candidates for today
 - `whoop_weekly_summary` — scorecard, comparison vs prior week, next-week plan
 
