@@ -1,5 +1,18 @@
 # whoop-mcp-server
 
+
+<!-- delx-wellness badges -->
+[![npm version](https://img.shields.io/npm/v/whoop-mcp-unofficial?color=14b8a6)](https://www.npmjs.com/package/whoop-mcp-unofficial)
+[![npm downloads](https://img.shields.io/npm/dw/whoop-mcp-unofficial?color=14b8a6)](https://www.npmjs.com/package/whoop-mcp-unofficial)
+[![License: MIT](https://img.shields.io/badge/License-MIT-22c55e.svg)](https://opensource.org/licenses/MIT)
+[![Part of Delx Wellness](https://img.shields.io/badge/part%20of-Delx%20Wellness-0ea5a3)](https://wellness.delx.ai)
+
+> **One-command install** with [Delx Wellness for Hermes](https://github.com/davidmosiah/delx-wellness-hermes):
+> `npx -y delx-wellness-hermes setup` — preconfigures this connector and the other 8 in a dedicated Hermes profile.
+>
+> Or wire it standalone into Claude Desktop / Cursor / ChatGPT Desktop — see the install section below.
+<!-- /delx-wellness badges -->
+
 [![MCP Compatible](https://img.shields.io/badge/MCP-compatible-7C3AED?style=flat-square&logo=anthropic&logoColor=white)](https://modelcontextprotocol.io)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green?style=flat-square)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
@@ -220,6 +233,28 @@ curl http://127.0.0.1:3000/health
 - Delx Wellness registry: <https://github.com/davidmosiah/delx-wellness>
 - Connector quality standard: <https://github.com/davidmosiah/delx-wellness/blob/main/docs/connector-quality-standard.md>
 - Official WHOOP API docs: <https://developer.whoop.com/api/>
+
+<!-- delx-wellness see-also -->
+
+## See also
+
+The full [Delx Wellness](https://wellness.delx.ai) connector library:
+
+| Provider | Package | Repo |
+|---|---|---|
+| WHOOP | [`whoop-mcp-unofficial`](https://www.npmjs.com/package/whoop-mcp-unofficial) | [whoop-mcp](https://github.com/davidmosiah/whoop-mcp) |
+| Oura | [`oura-mcp-unofficial`](https://www.npmjs.com/package/oura-mcp-unofficial) | [ouramcp](https://github.com/davidmosiah/ouramcp) |
+| Garmin | [`garmin-mcp-unofficial`](https://www.npmjs.com/package/garmin-mcp-unofficial) | [garminmcp](https://github.com/davidmosiah/garminmcp) |
+| Strava | [`strava-mcp-unofficial`](https://www.npmjs.com/package/strava-mcp-unofficial) | [strava-mcp](https://github.com/davidmosiah/strava-mcp) |
+| Fitbit | [`fitbit-mcp-unofficial`](https://www.npmjs.com/package/fitbit-mcp-unofficial) | [fitbitmcp](https://github.com/davidmosiah/fitbitmcp) |
+| Withings | [`withings-mcp-unofficial`](https://www.npmjs.com/package/withings-mcp-unofficial) | [withingsmcp](https://github.com/davidmosiah/withingsmcp) |
+| Apple Health | [`apple-health-mcp-unofficial`](https://www.npmjs.com/package/apple-health-mcp-unofficial) | [apple-health-mcp](https://github.com/davidmosiah/apple-health-mcp) |
+| Polar | [`polar-mcp-unofficial`](https://www.npmjs.com/package/polar-mcp-unofficial) | [polarmcp](https://github.com/davidmosiah/polarmcp) |
+| Nourish (nutrition) | [`wellness-nourish`](https://www.npmjs.com/package/wellness-nourish) | [wellness-nourish](https://github.com/davidmosiah/wellness-nourish) |
+
+**One-command setup for Hermes** — preconfigures every connector above plus wellness skills + onboarding: [`delx-wellness-hermes`](https://github.com/davidmosiah/delx-wellness-hermes).
+
+<!-- /delx-wellness see-also -->
 
 ## License
 
