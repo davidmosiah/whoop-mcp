@@ -323,6 +323,8 @@ export const SummaryOutputSchema = z.object({
 
 export const WellnessContextOutputSchema = z.object({
   source: z.literal("whoop"),
+  context_contract_version: z.literal("delx-wellness-context/v1"),
+  context_type: z.literal("wellness_context"),
   generated_at: z.string(),
   recovery_score: z.number().min(0).max(100).optional(),
   sleep_score: z.number().min(0).max(100).optional(),
@@ -332,6 +334,7 @@ export const WellnessContextOutputSchema = z.object({
   injury_flags: z.array(z.string()),
   notes: z.array(z.string()),
   data_quality: z.unknown().optional(),
+  recommended_handoff: z.object({ tool: z.string(), reason: z.string() }).strict(),
   telegram_summary: z.string().optional()
 }).strict();
 
