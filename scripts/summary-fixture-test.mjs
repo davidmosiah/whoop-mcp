@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { buildDailySummary, buildWeeklySummary } from '../dist/services/summary.js';
-import { buildWellnessContext } from '../dist/services/context.js';
+import { buildWellnessContext, formatWellnessContextMarkdown } from '../dist/services/context.js';
 
 const minute = 60 * 1000;
 const hour = 60 * minute;
@@ -105,10 +105,16 @@ assert.ok(weekly.diagnostic.action_candidates.length >= 3);
 
 const context = await buildWellnessContext(fakeClient, { days: 10, timezone: 'UTC' });
 assert.equal(context.source, 'whoop');
+assert.equal(context.context_contract_version, 'delx-wellness-context/v1');
+assert.equal(context.context_type, 'wellness_context');
+assert.equal(context.recommended_handoff.tool, 'exercise_catalog_recommend_session');
 assert.equal(context.recovery_score, 82);
 assert.equal(context.sleep_score, 86);
 assert.equal(context.strain_score, 11.5);
 assert.equal(context.recent_training_load, 'normal');
 assert.ok(context.telegram_summary.includes('WHOOP'));
+const contextMarkdown = formatWellnessContextMarkdown(context);
+assert.ok(contextMarkdown.includes('context_type'));
+assert.ok(contextMarkdown.includes('exercise_catalog_recommend_session'));
 
 console.log(JSON.stringify({ ok: true, daily: daily.kind, weekly: weekly.kind }, null, 2));

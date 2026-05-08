@@ -44,6 +44,8 @@ export async function buildWellnessContext(client: Pick<WhoopClient, "list">, op
 
   return {
     source: "whoop",
+    context_contract_version: "delx-wellness-context/v1",
+    context_type: "wellness_context",
     generated_at: summary.generated_at,
     recovery_score: recoveryScore,
     sleep_score: sleepScore,
@@ -53,6 +55,10 @@ export async function buildWellnessContext(client: Pick<WhoopClient, "list">, op
     injury_flags: options.injury_flags ?? [],
     notes,
     data_quality: summary.data_quality,
+    recommended_handoff: {
+      tool: "exercise_catalog_recommend_session",
+      reason: "Use WHOOP recovery, sleep and strain to scale workout intensity and volume.",
+    },
     telegram_summary: [
       "WHOOP wellness context",
       recoveryScore !== undefined ? `Recovery: ${recoveryScore}` : undefined,
@@ -65,8 +71,14 @@ export async function buildWellnessContext(client: Pick<WhoopClient, "list">, op
 
 export function formatWellnessContextMarkdown(context: Record<string, unknown>): string {
   const lines = ["# WHOOP Wellness Context", ""];
-  for (const key of ["recovery_score", "sleep_score", "strain_score", "recent_training_load"]) {
+  for (const key of ["context_contract_version", "context_type", "recovery_score", "sleep_score", "strain_score", "recent_training_load"]) {
     if (context[key] !== undefined) lines.push(`- **${key}**: ${String(context[key])}`);
+  }
+  const handoff = record(context.recommended_handoff);
+  if (handoff.tool !== undefined || handoff.reason !== undefined) {
+    lines.push("", "## Recommended Handoff");
+    if (handoff.tool !== undefined) lines.push(`- **tool**: ${String(handoff.tool)}`);
+    if (handoff.reason !== undefined) lines.push(`- **reason**: ${String(handoff.reason)}`);
   }
   if (Array.isArray(context.notes) && context.notes.length) {
     lines.push("", "## Notes");
