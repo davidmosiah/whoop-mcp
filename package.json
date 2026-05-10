@@ -79,8 +79,7 @@
   "homepage": "https://wellness.delx.ai/connectors/whoop",
   "mcpName": "io.github.davidmosiah/whoop-mcp",
   "publishConfig": {
-    "access": "public",
-    "provenance": true
+    "access": "public"
   },
   "main": "dist/index.js"
 }
