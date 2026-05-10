@@ -7,11 +7,12 @@ import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
 
 const expectedTools = [
   'whoop_agent_manifest', 'whoop_cache_status', 'whoop_capabilities', 'whoop_connection_status',
-  'whoop_daily_summary', 'whoop_data_inventory', 'whoop_exchange_code', 'whoop_get_auth_url',
-  'whoop_get_body_measurements', 'whoop_get_cycle', 'whoop_get_cycle_recovery', 'whoop_get_cycle_sleep',
-  'whoop_get_profile', 'whoop_get_sleep', 'whoop_get_workout', 'whoop_list_cycles',
-  'whoop_list_recoveries', 'whoop_list_sleeps', 'whoop_list_workouts', 'whoop_privacy_audit',
-  'whoop_revoke_access', 'whoop_weekly_summary', 'whoop_wellness_context'
+  'whoop_daily_summary', 'whoop_data_inventory', 'whoop_demo', 'whoop_exchange_code',
+  'whoop_get_auth_url', 'whoop_get_body_measurements', 'whoop_get_cycle', 'whoop_get_cycle_recovery',
+  'whoop_get_cycle_sleep', 'whoop_get_profile', 'whoop_get_sleep', 'whoop_get_workout',
+  'whoop_list_cycles', 'whoop_list_recoveries', 'whoop_list_sleeps', 'whoop_list_workouts',
+  'whoop_privacy_audit', 'whoop_quickstart', 'whoop_revoke_access', 'whoop_weekly_summary',
+  'whoop_wellness_context'
 ];
 
 const expectedResources = [

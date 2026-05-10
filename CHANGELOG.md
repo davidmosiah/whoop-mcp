@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.0 - 2026-05-10
+
+- Add `whoop_quickstart` tool — personalized 3-step setup walkthrough adapted to current state (env vars set? OAuth token present? what's next?). Returns cross-connector hints to pair with wellness-nourish, wellness-cycle-coach, and wellness-cgm-mcp.
+- Add `whoop_demo` tool — realistic example payloads of `whoop_daily_summary`, `whoop_wellness_context`, and `whoop_list_recoveries` so agents see the contract before any real WHOOP API call.
+- `recommended_first_calls` on the agent manifest now leads with `whoop_quickstart` and `whoop_demo`.
+- Tool count: 23 → 25.
+
 ## 0.1.4
 
 - Add SEO/GEO production metadata: JSON-LD, robots.txt, sitemap.xml, llms.txt, security.txt and PNG social preview.

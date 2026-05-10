@@ -12,12 +12,12 @@ export const HERMES_DIRECT_TOOLS = [
 const STANDARD_TOOLS = [
   "whoop_agent_manifest", "whoop_cache_status", "whoop_capabilities",
   "whoop_connection_status", "whoop_daily_summary", "whoop_data_inventory",
-  "whoop_exchange_code", "whoop_get_auth_url", "whoop_get_body_measurements",
-  "whoop_get_cycle", "whoop_get_cycle_recovery", "whoop_get_cycle_sleep",
-  "whoop_get_profile", "whoop_get_sleep", "whoop_get_workout",
+  "whoop_demo", "whoop_exchange_code", "whoop_get_auth_url",
+  "whoop_get_body_measurements", "whoop_get_cycle", "whoop_get_cycle_recovery",
+  "whoop_get_cycle_sleep", "whoop_get_profile", "whoop_get_sleep", "whoop_get_workout",
   "whoop_list_cycles", "whoop_list_recoveries", "whoop_list_sleeps",
-  "whoop_list_workouts", "whoop_privacy_audit", "whoop_revoke_access",
-  "whoop_weekly_summary", "whoop_wellness_context"
+  "whoop_list_workouts", "whoop_privacy_audit", "whoop_quickstart",
+  "whoop_revoke_access", "whoop_weekly_summary", "whoop_wellness_context"
 ];
 
 const RESOURCES = [
@@ -50,7 +50,7 @@ export function buildAgentManifest(client: AgentClientName = "generic") {
       token_storage: "~/.whoop-mcp/tokens.json with 0600 permissions",
       secret_storage: "~/.whoop-mcp/config.json or WHOOP_* environment variables; never print secrets"
     },
-    recommended_first_calls: ["whoop_connection_status", "whoop_data_inventory", "whoop_wellness_context", "whoop_daily_summary", "whoop_weekly_summary"],
+    recommended_first_calls: ["whoop_quickstart", "whoop_demo", "whoop_connection_status", "whoop_wellness_context", "whoop_daily_summary"],
     standard_tools: STANDARD_TOOLS,
     resources: RESOURCES,
     hermes: {

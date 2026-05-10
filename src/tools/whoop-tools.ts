@@ -188,6 +188,131 @@ export function registerWhoopTools(server: McpServer): void {
   );
 
   server.registerTool(
+    "whoop_quickstart",
+    {
+      title: "WHOOP Quickstart",
+      description:
+        "Personalized 3-step setup walkthrough for the human user. Adapts to current state (env vars set? token present? what's next?). Call this first when the user asks 'how do I connect WHOOP?'",
+      inputSchema: ResponseOnlyInputSchema.shape,
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: false
+      }
+    },
+    async ({ response_format }) => {
+      const status = await buildConnectionStatus();
+      const hasEnv = status.missing_env.length === 0;
+      const hasToken = status.ready_for_whoop_api;
+      const steps = [
+        {
+          step: 1,
+          title: hasEnv ? "(done) WHOOP Developer credentials configured" : "Sign up at https://developer.whoop.com",
+          action: hasEnv
+            ? "WHOOP_CLIENT_ID, WHOOP_CLIENT_SECRET, WHOOP_REDIRECT_URI are all set."
+            : `Create a WHOOP Developer app, register a redirect URI (use ${status.redirect_uri ?? "http://127.0.0.1:3000/callback"}), then set: ${status.missing_env.join(", ")}.`,
+          done: hasEnv,
+        },
+        {
+          step: 2,
+          title: hasToken ? "(done) Local token present — ready to read WHOOP data" : "Run the OAuth dance",
+          action: hasToken
+            ? "Tokens stored under ~/.whoop-mcp/tokens.json. The connector will refresh automatically when needed."
+            : "Run `whoop-mcp-server auth` (or call whoop_get_auth_url + whoop_exchange_code from the agent). Open the URL, grant access, paste the code.",
+          done: hasToken,
+        },
+        {
+          step: 3,
+          title: "Verify with the agent",
+          action: "Call whoop_connection_status, then whoop_daily_summary or whoop_wellness_context. Pair with wellness-nourish for recovery-aware meal coaching.",
+          example: hasToken
+            ? "whoop_wellness_context() → recovery score + sleep + cycle handoff for nourish/cycle-coach."
+            : "Until step 2 is done, the data tools will surface a clear 'auth required' message.",
+          done: false,
+        },
+      ];
+      const payload = {
+        ok: true,
+        ready: hasEnv && hasToken,
+        steps,
+        next: steps.find((s) => !s.done) ?? steps[steps.length - 1],
+        cross_connector_hints: [
+          "Pair WHOOP recovery with wellness-nourish for recovery-aware meal coaching.",
+          "Pair WHOOP cycle with wellness-cycle-coach for late-luteal load adjustments.",
+          "Pair WHOOP recovery + wellness-cgm-mcp glucose for metabolic-stress signals.",
+        ],
+      };
+      const markdown = bulletList("WHOOP Quickstart", {
+        ready: payload.ready,
+        next: payload.next.title,
+      });
+      return makeResponse(payload, response_format, markdown);
+    }
+  );
+
+  server.registerTool(
+    "whoop_demo",
+    {
+      title: "WHOOP Demo",
+      description:
+        "Returns realistic example payloads of whoop_daily_summary, whoop_wellness_context, and whoop_list_recoveries so agents see the contract before calling real WHOOP APIs.",
+      inputSchema: ResponseOnlyInputSchema.shape,
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: false
+      }
+    },
+    async ({ response_format }) => {
+      const today = new Date().toISOString().slice(0, 10);
+      const payload = {
+        ok: true,
+        is_demo: true,
+        sample: {
+          whoop_daily_summary: {
+            date: today,
+            recovery: { score: 67, hrv_ms: 58, resting_heart_rate: 52 },
+            sleep: { performance: 88, duration_min: 462, efficiency: 91, stages: { rem_min: 96, deep_min: 78 } },
+            strain: { day_strain: 11.2, max_heart_rate: 162 },
+            workouts: 1,
+          },
+          whoop_wellness_context: {
+            window: "last_24h",
+            recovery_score: 67,
+            recovery_band: "moderate",
+            sleep_performance: 88,
+            day_strain: 11.2,
+            hrv_ms: 58,
+            resting_heart_rate: 52,
+            recommendation: "Moderate recovery + adequate sleep — green light for moderate intensity training. Consider a magnesium-rich meal to keep HRV trending up.",
+          },
+          whoop_list_recoveries: {
+            count: 3,
+            records: [
+              { date: today, score: 67, hrv_ms: 58 },
+              { date: yesterdayISO(), score: 72, hrv_ms: 61 },
+              { date: dayBeforeISO(), score: 54, hrv_ms: 49 },
+            ],
+          },
+        },
+        notes: [
+          "All sample data is synthetic; tagged with is_demo=true.",
+          "Real calls return live data from the WHOOP Developer API after OAuth setup.",
+        ],
+      };
+      const markdown = bulletList("WHOOP Demo", {
+        is_demo: true,
+        recovery_score: 67,
+        sleep_performance: 88,
+        recommendation: payload.sample.whoop_wellness_context.recommendation,
+      });
+      return makeResponse(payload, response_format, markdown);
+    }
+  );
+
+  server.registerTool(
     "whoop_get_auth_url",
     {
       title: "Get WHOOP OAuth URL",
@@ -445,4 +570,12 @@ This workflow tool compares a recent window against a prior window when availabl
   registerGetByIdTool(server, "whoop_get_workout", "WHOOP Workout", (id) => `/v2/activity/workout/${id}`, "Get one WHOOP workout by UUID. Requires read:workout scope.");
   registerGetByIdTool(server, "whoop_get_cycle_sleep", "WHOOP Cycle Sleep", (id) => `/v2/cycle/${id}/sleep`, "Get the sleep associated with a WHOOP cycle. Requires read:sleep scope. Not medical advice.");
   registerGetByIdTool(server, "whoop_get_cycle_recovery", "WHOOP Cycle Recovery", (id) => `/v2/cycle/${id}/recovery`, "Get the recovery associated with a WHOOP cycle. Requires read:recovery scope. Not medical advice.");
+}
+
+function yesterdayISO(): string {
+  return new Date(Date.now() - 86_400_000).toISOString().slice(0, 10);
+}
+
+function dayBeforeISO(): string {
+  return new Date(Date.now() - 2 * 86_400_000).toISOString().slice(0, 10);
 }
