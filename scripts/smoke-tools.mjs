@@ -11,7 +11,8 @@ const expectedTools = [
   'whoop_get_auth_url', 'whoop_get_body_measurements', 'whoop_get_cycle', 'whoop_get_cycle_recovery',
   'whoop_get_cycle_sleep', 'whoop_get_profile', 'whoop_get_sleep', 'whoop_get_workout',
   'whoop_list_cycles', 'whoop_list_recoveries', 'whoop_list_sleeps', 'whoop_list_workouts',
-  'whoop_privacy_audit', 'whoop_quickstart', 'whoop_revoke_access', 'whoop_weekly_summary',
+  'whoop_onboarding', 'whoop_privacy_audit', 'whoop_profile_get', 'whoop_profile_update',
+  'whoop_quickstart', 'whoop_revoke_access', 'whoop_weekly_summary',
   'whoop_wellness_context'
 ];
 

@@ -16,7 +16,8 @@ const STANDARD_TOOLS = [
   "whoop_get_body_measurements", "whoop_get_cycle", "whoop_get_cycle_recovery",
   "whoop_get_cycle_sleep", "whoop_get_profile", "whoop_get_sleep", "whoop_get_workout",
   "whoop_list_cycles", "whoop_list_recoveries", "whoop_list_sleeps",
-  "whoop_list_workouts", "whoop_privacy_audit", "whoop_quickstart",
+  "whoop_list_workouts", "whoop_onboarding", "whoop_privacy_audit",
+  "whoop_profile_get", "whoop_profile_update", "whoop_quickstart",
   "whoop_revoke_access", "whoop_weekly_summary", "whoop_wellness_context"
 ];
 
@@ -50,7 +51,7 @@ export function buildAgentManifest(client: AgentClientName = "generic") {
       token_storage: "~/.whoop-mcp/tokens.json with 0600 permissions",
       secret_storage: "~/.whoop-mcp/config.json or WHOOP_* environment variables; never print secrets"
     },
-    recommended_first_calls: ["whoop_quickstart", "whoop_demo", "whoop_connection_status", "whoop_wellness_context", "whoop_daily_summary"],
+    recommended_first_calls: ["whoop_profile_get", "whoop_quickstart", "whoop_demo", "whoop_connection_status", "whoop_wellness_context", "whoop_daily_summary"],
     standard_tools: STANDARD_TOOLS,
     resources: RESOURCES,
     hermes: {

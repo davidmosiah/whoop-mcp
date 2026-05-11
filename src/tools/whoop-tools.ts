@@ -1,4 +1,5 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { z } from "zod";
 import {
   AgentManifestInputSchema,
   AgentManifestOutputSchema,
@@ -17,6 +18,7 @@ import {
   ExchangeCodeOutputSchema,
   IdInputSchema,
   PrivacyAuditOutputSchema,
+  ResponseFormatSchema,
   ResponseOnlyInputSchema,
   RevokeAccessOutputSchema,
   SimpleReadInputSchema,
@@ -35,6 +37,15 @@ import { bulletList, formatCollection, makeError, makeResponse } from "../servic
 import { applyPrivacy, resolvePrivacyMode } from "../services/privacy.js";
 import { buildDailySummary, buildWeeklySummary, formatSummaryMarkdown } from "../services/summary.js";
 import { buildWellnessContext, formatWellnessContextMarkdown } from "../services/context.js";
+import {
+  buildProfileSummary,
+  getOnboardingFlow,
+  getProfile,
+  getProfilePath,
+  missingCriticalFields,
+  updateProfile,
+  type WellnessProfileDocument
+} from "../services/profile-store.js";
 import { WhoopClient } from "../services/whoop-client.js";
 
 function client(): WhoopClient {
@@ -309,6 +320,155 @@ export function registerWhoopTools(server: McpServer): void {
         recommendation: payload.sample.whoop_wellness_context.recommendation,
       });
       return makeResponse(payload, response_format, markdown);
+    }
+  );
+
+  server.registerTool(
+    "whoop_profile_get",
+    {
+      title: "WHOOP Profile Get (shared wellness profile)",
+      description:
+        "Read the shared Delx wellness profile (~/.delx-wellness/profile.json). Returns the user's preferred name, body basics, goals, devices, training context, nutrition context, agent preferences, and missing critical fields. Cross-connector — the same profile is also available from other Delx Wellness MCPs (Oura, Garmin, Nourish, Fitbit, etc). Read-only.",
+      inputSchema: ResponseOnlyInputSchema.shape,
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: false
+      }
+    },
+    async ({ response_format }) => {
+      try {
+        const profile = await getProfile();
+        const payload = {
+          ok: true,
+          profile,
+          summary: buildProfileSummary(profile),
+          missing_critical: missingCriticalFields(profile),
+          storage_path: getProfilePath()
+        };
+        return makeResponse(
+          payload,
+          response_format,
+          bulletList("WHOOP Profile Get", {
+            summary: payload.summary,
+            missing_critical: payload.missing_critical.join(", ") || "none",
+            storage_path: payload.storage_path
+          })
+        );
+      } catch (error) {
+        return makeError((error as Error).message);
+      }
+    }
+  );
+
+  const ProfileUpdateInputSchema = z.object({
+    patch: z.record(z.string(), z.unknown())
+      .describe("Partial WellnessProfileDocument patch. Top-level keys may be: profile, goals, devices, training, nutrition, preferences, safety, notes."),
+    explicit_user_intent: z.boolean().optional()
+      .describe("Must be true. Set this AFTER the user has explicitly confirmed they want to save these changes to the shared wellness profile."),
+    response_format: ResponseFormatSchema
+  }).strict();
+
+  server.registerTool(
+    "whoop_profile_update",
+    {
+      title: "WHOOP Profile Update (shared wellness profile)",
+      description:
+        "Persist a partial patch to the shared Delx wellness profile (~/.delx-wellness/profile.json). REQUIRES explicit_user_intent=true. Top-level fields stored: profile (preferred_name, language, timezone, units, age_or_birth_year, height, weight, sex_or_gender_context), goals, devices, training, nutrition, preferences, safety, notes. NEVER stores OAuth tokens, API keys, refresh tokens, cookies, or any secret-shaped field — writes will be rejected at validation time. Cross-connector — the same profile is read by other Delx Wellness MCPs.",
+      inputSchema: ProfileUpdateInputSchema.shape,
+      annotations: {
+        readOnlyHint: false,
+        destructiveHint: false,
+        idempotentHint: false,
+        openWorldHint: false
+      }
+    },
+    async ({ patch, explicit_user_intent, response_format }) => {
+      if (!explicit_user_intent) {
+        return makeResponse(
+          {
+            ok: false,
+            error: "USER_ACTION_REQUIRED",
+            hint: "Set explicit_user_intent=true after the user confirms they want to save this."
+          },
+          response_format,
+          bulletList("WHOOP Profile Update", {
+            ok: false,
+            error: "USER_ACTION_REQUIRED",
+            hint: "Set explicit_user_intent=true after the user confirms they want to save this."
+          })
+        );
+      }
+      try {
+        const updated_fields = Object.keys(patch);
+        const profile = await updateProfile(patch as Partial<WellnessProfileDocument>);
+        const payload = {
+          ok: true,
+          profile,
+          summary: buildProfileSummary(profile),
+          updated_fields
+        };
+        return makeResponse(
+          payload,
+          response_format,
+          bulletList("WHOOP Profile Update", {
+            summary: payload.summary,
+            updated_fields: updated_fields.join(", ") || "none"
+          })
+        );
+      } catch (error) {
+        return makeError((error as Error).message);
+      }
+    }
+  );
+
+  const OnboardingInputSchema = z.object({
+    locale: z.enum(["en", "pt-BR"]).optional()
+      .describe("Onboarding locale. Defaults to 'en'. Use 'pt-BR' for Portuguese (Brazil)."),
+    response_format: ResponseFormatSchema
+  }).strict();
+
+  server.registerTool(
+    "whoop_onboarding",
+    {
+      title: "WHOOP Onboarding (shared wellness profile)",
+      description:
+        "Return the 11-question Delx wellness onboarding flow (in English or pt-BR) plus the current shared profile state and missing critical fields. Read-only. The agent should ask these questions one-by-one, then call whoop_profile_update with explicit_user_intent=true to save. The same profile is reused by every Delx Wellness connector (Oura, Garmin, Nourish, etc.) — agents can call the equivalent {connector}_onboarding tools to cover their respective domains, or rely on this one since all connectors share the same questions.",
+      inputSchema: OnboardingInputSchema.shape,
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: false
+      }
+    },
+    async ({ locale, response_format }) => {
+      try {
+        const flow = getOnboardingFlow(locale ?? "en");
+        const profile = await getProfile();
+        const payload = {
+          ok: true,
+          flow,
+          profile,
+          summary: buildProfileSummary(profile),
+          missing_critical: missingCriticalFields(profile),
+          cross_connector_hint:
+            "The Delx wellness profile is shared across all connectors. Other connectors (oura_onboarding, garmin_onboarding, nourish_*, fitbit_*, etc.) read and write the same ~/.delx-wellness/profile.json — ask the user once and reuse everywhere."
+        };
+        return makeResponse(
+          payload,
+          response_format,
+          bulletList("WHOOP Onboarding", {
+            locale: flow.locale,
+            questions: flow.questions.length,
+            missing_critical: payload.missing_critical.join(", ") || "none",
+            storage_path: flow.storage_path
+          })
+        );
+      } catch (error) {
+        return makeError((error as Error).message);
+      }
     }
   );
 

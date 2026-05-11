@@ -1,6 +1,7 @@
 import { buildConnectionStatus } from "../services/connection-status.js";
 import { SERVER_VERSION } from "../constants.js";
 import { parseAgentClientName } from "../services/agent-manifest.js";
+import { getOnboardingFlow, getProfilePath } from "../services/profile-store.js";
 import { runAuthCommand } from "./auth.js";
 import { runSetupCommand } from "./setup.js";
 
@@ -10,6 +11,7 @@ export async function runCliCommand(args: string[]): Promise<number | undefined>
   if (command === "setup") return runSetupCommand(rest);
   if (command === "doctor" || command === "status") return runDoctor(rest);
   if (command === "auth") return runAuthCommand(rest);
+  if (command === "onboarding") return runOnboarding(rest);
   if (command === "version" || command === "--version" || command === "-v") {
     console.log(SERVER_VERSION);
     return 0;
@@ -24,6 +26,40 @@ export async function runCliCommand(args: string[]): Promise<number | undefined>
     return 1;
   }
   return undefined;
+}
+
+function runOnboarding(args: string[]): number {
+  let locale: "en" | "pt-BR" = "en";
+  for (let index = 0; index < args.length; index += 1) {
+    if (args[index] === "--locale") {
+      const value = args[index + 1];
+      if (value === "pt-BR" || value === "en") locale = value;
+      index += 1;
+    } else if (args[index] === "--pt-BR" || args[index] === "--pt") {
+      locale = "pt-BR";
+    }
+  }
+  const flow = getOnboardingFlow(locale);
+  console.log(JSON.stringify(flow, null, 2));
+  if (process.stderr.isTTY) {
+    const lines = [
+      "",
+      "# Delx Wellness Onboarding (shared profile)",
+      "",
+      `The agent will ask these ${flow.questions.length} questions next — non-secret data only,`,
+      `stored at ~/.delx-wellness/profile.json (locale: ${flow.locale}).`,
+      "",
+      "Privacy contract:",
+      "- Profile NEVER stores OAuth tokens, API keys, refresh tokens, cookies, or any provider secret.",
+      "- Tokens stay in this connector's own ~/.whoop-mcp/tokens.json (0600 permissions).",
+      "- The shared profile is read/written by every Delx Wellness connector — answer once, reuse everywhere.",
+      "",
+      `Storage path: ${getProfilePath()}`,
+      ""
+    ];
+    process.stderr.write(lines.join("\n"));
+  }
+  return 0;
 }
 
 async function runDoctor(args: string[]): Promise<number> {
@@ -112,6 +148,9 @@ Usage:
   whoop-mcp-server doctor --client hermes
   whoop-mcp-server auth            Authorize WHOOP with local browser callback
   whoop-mcp-server auth --no-open  Print auth URL without opening browser
+  whoop-mcp-server onboarding      Print the shared Delx wellness onboarding flow (11 questions)
+  whoop-mcp-server onboarding --pt-BR
+                                   Print the onboarding flow in pt-BR
 
 Required env:
   WHOOP_CLIENT_ID
