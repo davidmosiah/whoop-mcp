@@ -2,6 +2,7 @@ import { URL, URLSearchParams } from "node:url";
 import { DEFAULT_LIMIT, MAX_WHOOP_LIMIT, WHOOP_API_BASE_URL, WHOOP_AUTH_URL, WHOOP_TOKEN_URL } from "../constants.js";
 import type { WhoopCollection, WhoopConfig, WhoopTokenSet } from "../types.js";
 import { disabledCacheStatus, WhoopCache, type CacheStatus } from "./cache.js";
+import { fetchWithRetry as fetchWithRetryMiddleware } from "./http-retry.js";
 import { redactErrorMessage } from "./redaction.js";
 import { TokenStore } from "./token-store.js";
 
@@ -227,15 +228,10 @@ export class WhoopClient {
   }
 
   private async fetchWithRetry(url: string, init: RequestInit): Promise<Response> {
-    for (let attempt = 0; attempt < 3; attempt += 1) {
-      const response = await fetch(url, init);
-      if (response.status !== 429 && response.status < 500) return response;
-      if (attempt === 2) return response;
-      const retryAfter = response.headers.get("retry-after") ?? response.headers.get("x-ratelimit-reset");
-      const delaySeconds = retryAfter ? Math.min(Math.max(Number(retryAfter), 1), 60) : 2 ** attempt;
-      await new Promise((resolve) => setTimeout(resolve, delaySeconds * 1000));
-    }
-    throw new Error("Unreachable retry loop state");
+    return fetchWithRetryMiddleware(fetch, url, init, {
+      vendor: "whoop",
+      envFlag: "WHOOP_NO_RETRY"
+    });
   }
 }
 

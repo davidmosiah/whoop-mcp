@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.4.2 - 2026-05-19
+
+### Added
+
+- **Dedicated HTTP retry middleware** (`src/services/http-retry.ts`) — extracted from `WhoopClient.fetchWithRetry` into a reusable, testable function with exponential backoff (500ms / 1s / 2s), ±20% jitter, and `Retry-After` header parsing (supports both seconds and HTTP-date formats).
+- **`WHOOP_NO_RETRY=true` env flag** — disables retries entirely for tests or callers that want raw error propagation.
+- **HTTP 408 added to retryable status set** alongside 429, 500, 502, 503, 504 — request-timeout responses are now transparently retried.
+- **Network-error retries** — fetch failures (ECONNRESET, ENOTFOUND, timeouts) are now retried with the same backoff schedule as HTTP errors instead of bubbling up on the first failure.
+- **Structured stderr logs** — each retry now writes `[whoop-mcp] retry N/3 after Xms (status=Y or error=Z)` so agents can correlate spike-and-recovery patterns in their logs.
+- `scripts/http-retry-test.mjs` — six-case unit suite covering happy path, Retry-After header, env disable flag, 401 non-retry, exhaustion, and network-error retry.
+
+### Changed
+
+- `WhoopClient.fetchWithRetry` now delegates to the shared middleware so the auth-failure 401 re-auth flow benefits from the same backoff guarantees.
+- Backoff no longer falls back to `x-ratelimit-reset` only — defers to `Retry-After` first (standard) and only computes jittered exponential if the header is absent or unparseable.
+
 ## 0.4.1 - 2026-05-11
 
 ### Fixed
