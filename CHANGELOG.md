@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.4.3 - 2026-05-20
+
+### Added
+
+- **HTTP response cache middleware** (`src/services/http-cache.ts`) — in-memory cache layered OUTSIDE retry (`fetchWithCache → fetchWithRetry → fetch`), so cached responses skip both network and retry. Default 60s TTL for GET only; POST/PUT/DELETE and 4xx/5xx responses are never cached.
+- **`WHOOP_NO_CACHE=true` env var** — global per-process cache bypass; advertised in `server.json`.
+- **Per-call `cache_ttl: 0`** request option — opts a single call out of cache without disabling globally.
+- **Query-param-order-insensitive cache keys** — `?start=…&end=…&limit=…` and `?limit=…&end=…&start=…` share one cache entry.
+- **`whoop_cache_status` now reports `http_cache` stats** alongside SQLite stats: `size`, `hit_count`, `miss_count`, `hit_rate`, `default_ttl_seconds`, `bypass_env_var`.
+- `scripts/http-cache-test.mjs` — eight-case unit suite covering cache hit, POST never cached, TTL expiration, query-param normalization, 4xx not cached, env-var bypass, per-call `cache_ttl: 0`, and `getCacheStats()` math.
+
 ## 0.4.2 - 2026-05-19
 
 ### Added

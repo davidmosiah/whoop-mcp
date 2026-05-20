@@ -6,12 +6,12 @@
     "url": "https://github.com/davidmosiah/whoop-mcp",
     "source": "github"
   },
-  "version": "0.4.2",
+  "version": "0.4.3",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "whoop-mcp-unofficial",
-      "version": "0.4.2",
+      "version": "0.4.3",
       "transport": {
         "type": "stdio"
       },
@@ -61,6 +61,13 @@
         {
           "name": "WHOOP_CACHE_PATH",
           "description": "Optional local SQLite cache path. Defaults to ~/.whoop-mcp/cache.sqlite.",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": false
+        },
+        {
+          "name": "WHOOP_NO_CACHE",
+          "description": "Set to true to bypass the in-memory HTTP response cache (60s TTL for GET only). POST/PUT/DELETE and 4xx/5xx responses are never cached regardless.",
           "isRequired": false,
           "format": "string",
           "isSecret": false

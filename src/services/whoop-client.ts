@@ -2,6 +2,7 @@ import { URL, URLSearchParams } from "node:url";
 import { DEFAULT_LIMIT, MAX_WHOOP_LIMIT, WHOOP_API_BASE_URL, WHOOP_AUTH_URL, WHOOP_TOKEN_URL } from "../constants.js";
 import type { WhoopCollection, WhoopConfig, WhoopTokenSet } from "../types.js";
 import { disabledCacheStatus, WhoopCache, type CacheStatus } from "./cache.js";
+import { fetchWithCache, getCacheStats } from "./http-cache.js";
 import { fetchWithRetry as fetchWithRetryMiddleware } from "./http-retry.js";
 import { redactErrorMessage } from "./redaction.js";
 import { TokenStore } from "./token-store.js";
@@ -64,8 +65,17 @@ export class WhoopClient {
   }
 
   cacheStatus(): CacheStatus {
-    if (!this.config.cacheEnabled) return disabledCacheStatus(this.config.cachePath);
-    return this.getCache().status();
+    const httpStats = getCacheStats();
+    const http_cache = {
+      size: httpStats.size,
+      hit_count: httpStats.hit_count,
+      miss_count: httpStats.miss_count,
+      hit_rate: httpStats.hit_rate,
+      default_ttl_seconds: 60,
+      bypass_env_var: "WHOOP_NO_CACHE"
+    };
+    if (!this.config.cacheEnabled) return { ...disabledCacheStatus(this.config.cachePath), http_cache };
+    return { ...this.getCache().status(), http_cache };
   }
 
   async list(path: string, params: ListParams = {}): Promise<{ records: unknown[]; next_token?: string; pages_fetched: number }> {
@@ -228,9 +238,14 @@ export class WhoopClient {
   }
 
   private async fetchWithRetry(url: string, init: RequestInit): Promise<Response> {
-    return fetchWithRetryMiddleware(fetch, url, init, {
+    const retryWrappedFetch = (u: string, i?: RequestInit) => fetchWithRetryMiddleware(fetch, u, i, {
       vendor: "whoop",
       envFlag: "WHOOP_NO_RETRY"
+    });
+    return fetchWithCache(url, init, {
+      defaultTtlSeconds: 60,
+      envVarBypass: "WHOOP_NO_CACHE",
+      innerFetch: retryWrappedFetch
     });
   }
 }

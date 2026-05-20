@@ -126,7 +126,15 @@ export const CacheStatusOutputSchema = z.object({
   enabled: z.boolean(),
   path: z.string(),
   entries: z.number().int().nonnegative(),
-  newest_cached_at: z.string().optional()
+  newest_cached_at: z.string().optional(),
+  http_cache: z.object({
+    size: z.number().int().nonnegative(),
+    hit_count: z.number().int().nonnegative(),
+    miss_count: z.number().int().nonnegative(),
+    hit_rate: z.number().min(0).max(1),
+    default_ttl_seconds: z.number().int().nonnegative(),
+    bypass_env_var: z.string()
+  }).strict().optional()
 }).strict();
 
 export const RevokeAccessOutputSchema = z.object({
