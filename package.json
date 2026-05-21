@@ -76,7 +76,8 @@
     "url": "git+https://github.com/davidmosiah/whoop-mcp.git"
   },
   "bugs": {
-    "url": "https://github.com/davidmosiah/whoop-mcp/issues"
+    "url": "https://github.com/davidmosiah/whoop-mcp/issues",
+    "email": "support@delx.ai"
   },
   "homepage": "https://wellness.delx.ai/connectors/whoop",
   "mcpName": "io.github.davidmosiah/whoop-mcp",

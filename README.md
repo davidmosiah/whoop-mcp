@@ -265,6 +265,14 @@ The full [Delx Wellness](https://wellness.delx.ai) connector library:
 
 <!-- /delx-wellness see-also -->
 
+## 📧 Contact & Support
+
+- 📨 **support@delx.ai** — general questions, integration help, partnerships
+- 🐛 **Bug reports / feature requests** — [GitHub Issues](https://github.com/davidmosiah/whoop-mcp/issues)
+- 🐦 **Updates** — [@delx369](https://x.com/delx369) on X
+- 🌐 **Site** — [wellness.delx.ai](https://wellness.delx.ai)
+
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
