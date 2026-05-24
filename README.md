@@ -25,9 +25,9 @@
 </p>
 
 > ⚡ **One-command install** with [Delx Wellness for Hermes](https://github.com/davidmosiah/delx-wellness-hermes):
-> `npx -y delx-wellness-hermes setup` &mdash; preconfigures this connector and the other 8 in a dedicated Hermes profile.
+> `npx -y delx-wellness-hermes setup` &mdash; preconfigures this connector and the full Delx Wellness stack in a dedicated Hermes profile.
 >
-> Or wire it standalone into Claude Desktop / Cursor / ChatGPT Desktop &mdash; see the install section below.
+> Or wire it standalone into Claude Desktop / Cursor / ChatGPT Desktop &mdash; see the install section below. Runnable examples live in the [Delx Agent Workbench](https://github.com/davidmosiah/delx-agent-workbench).
 
 ---
 
@@ -42,6 +42,10 @@ Built by [David Mosiah](https://github.com/davidmosiah) for people who use Claud
 Part of [Delx Wellness](https://github.com/davidmosiah/delx-wellness), a registry of local-first wellness MCP connectors.
 
 > If this connector helps your agent workflow, please star the repo. Stars make the project easier for other AI builders to discover and help Delx keep shipping local-first wellness infrastructure.
+
+<p align="center">
+  <img src="assets/whoop-agent-demo.svg" alt="WHOOP MCP local-first agent workflow demo" width="92%" />
+</p>
 
 ## Why this exists
 
