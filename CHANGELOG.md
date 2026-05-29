@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.5 - 2026-05-29
+
+### Docs
+
+- **README "See it before you connect" section** — documents the existing `whoop_demo` tool with real captured markdown + JSON output, so agents and first-time users can see the recovery/sleep/strain data contract before completing OAuth. Adds `whoop_demo` to the "Start with these" tools list. No code changes.
+
 ## 0.4.3 - 2026-05-20
 
 ### Added

@@ -6,12 +6,12 @@
     "url": "https://github.com/davidmosiah/whoop-mcp",
     "source": "github"
   },
-  "version": "0.4.4",
+  "version": "0.4.5",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "whoop-mcp-unofficial",
-      "version": "0.4.4",
+      "version": "0.4.5",
       "transport": {
         "type": "stdio"
       },

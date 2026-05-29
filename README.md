@@ -78,6 +78,57 @@ Then add this to your MCP client config:
 
 For Claude Desktop, run `setup --client claude` and the snippet is written for you.
 
+## See it before you connect
+
+No WHOOP account yet? Call `whoop_demo` — it returns realistic **synthetic** recovery, sleep and strain payloads (tagged `is_demo: true`) so your agent learns the data contract before any OAuth. Just ask:
+
+```text
+Call whoop_demo and explain what my daily WHOOP signals would look like.
+```
+
+Default (`markdown`) output:
+
+```text
+# WHOOP Demo
+
+- **is_demo**: true
+- **recovery_score**: 67
+- **sleep_performance**: 88
+- **recommendation**: Moderate recovery + adequate sleep — green light for moderate intensity training. Consider a magnesium-rich meal to keep HRV trending up.
+```
+
+With `response_format=json` you get the full shape the live tools return:
+
+```json
+{
+  "is_demo": true,
+  "sample": {
+    "whoop_daily_summary": {
+      "date": "2026-05-29",
+      "recovery": { "score": 67, "hrv_ms": 58, "resting_heart_rate": 52 },
+      "sleep": { "performance": 88, "duration_min": 462, "efficiency": 91, "stages": { "rem_min": 96, "deep_min": 78 } },
+      "strain": { "day_strain": 11.2, "max_heart_rate": 162 },
+      "workouts": 1
+    },
+    "whoop_wellness_context": {
+      "window": "last_24h", "recovery_score": 67, "recovery_band": "moderate",
+      "sleep_performance": 88, "day_strain": 11.2, "hrv_ms": 58, "resting_heart_rate": 52,
+      "recommendation": "Moderate recovery + adequate sleep — green light for moderate intensity training. Consider a magnesium-rich meal to keep HRV trending up."
+    },
+    "whoop_list_recoveries": {
+      "count": 3,
+      "records": [
+        { "date": "2026-05-29", "score": 67, "hrv_ms": 58 },
+        { "date": "2026-05-28", "score": 72, "hrv_ms": 61 },
+        { "date": "2026-05-27", "score": 54, "hrv_ms": 49 }
+      ]
+    }
+  }
+}
+```
+
+Once you finish OAuth setup below, `whoop_daily_summary`, `whoop_wellness_context` and `whoop_list_recoveries` return this same shape with your **live** WHOOP data.
+
 ## Try it with your agent
 
 Three things to ask first:
@@ -117,6 +168,7 @@ When this README says `raw`, it means the upstream WHOOP API JSON for a supporte
 
 **Start with these:**
 
+- `whoop_demo` — realistic **synthetic** recovery/sleep/strain payloads, no OAuth needed (see [See it before you connect](#see-it-before-you-connect))
 - `whoop_connection_status` — verify local setup before calling WHOOP
 - `whoop_data_inventory` — inventory supported data domains, scopes, privacy modes and recommended first calls without calling WHOOP APIs.
 - `whoop_daily_summary` — readiness, sleep, load and action candidates for today
