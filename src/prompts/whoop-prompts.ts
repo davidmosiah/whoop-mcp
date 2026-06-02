@@ -1,7 +1,24 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { completable } from "@modelcontextprotocol/sdk/server/completable.js";
 import { z } from "zod";
 
-const TimezoneArg = z.string().default("UTC").describe("IANA timezone for interpreting daily/weekly summaries.");
+const COMMON_TIMEZONES = [
+  "UTC", "America/Fortaleza", "America/Sao_Paulo", "America/New_York", "America/Chicago",
+  "America/Denver", "America/Los_Angeles", "America/Toronto", "America/Mexico_City",
+  "Europe/London", "Europe/Lisbon", "Europe/Paris", "Europe/Berlin", "Europe/Madrid",
+  "Europe/Rome", "Asia/Tokyo", "Asia/Shanghai", "Asia/Singapore", "Asia/Kolkata",
+  "Asia/Dubai", "Australia/Sydney", "Pacific/Auckland"
+];
+
+// Completable so MCP clients (Claude, Goose, Cursor) autocomplete valid IANA
+// timezones for the prompt argument instead of the agent guessing.
+const TimezoneArg = completable(
+  z.string().default("UTC").describe("IANA timezone for interpreting daily/weekly summaries."),
+  (value) => {
+    const v = (value ?? "").toLowerCase();
+    return COMMON_TIMEZONES.filter((tz) => tz.toLowerCase().includes(v)).slice(0, 25);
+  }
+);
 
 function userPrompt(text: string) {
   return {

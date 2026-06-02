@@ -1,4 +1,5 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { buildAgentManifest, formatAgentManifestMarkdown } from "../services/agent-manifest.js";
 import { buildCapabilities } from "../services/capabilities.js";
 import { buildDataInventory } from "../services/inventory.js";
@@ -90,6 +91,42 @@ export function registerWhoopResources(server: McpServer): void {
       mimeType: "application/json"
     },
     async (uri) => latestCollectionResource(uri, "/v2/cycle")
+  );
+
+  // Parameterized resource: agents can @-mention the latest record of any
+  // domain (incl. workout, which has no fixed resource above) via one URI.
+  // {type} autocompletes. Reuses the same privacy-mode-aware reader.
+  const LATEST_ENDPOINTS: Record<string, string> = {
+    recovery: "/v2/recovery",
+    sleep: "/v2/activity/sleep",
+    cycle: "/v2/cycle",
+    workout: "/v2/activity/workout"
+  };
+  server.registerResource(
+    "whoop_latest_by_type",
+    new ResourceTemplate("whoop://latest/{type}", {
+      list: undefined,
+      complete: {
+        type: (value) =>
+          Object.keys(LATEST_ENDPOINTS).filter((t) => t.startsWith((value ?? "").toLowerCase()))
+      }
+    }),
+    {
+      title: "Latest WHOOP record by type",
+      description: "Latest record for a given domain (recovery | sleep | cycle | workout) using the configured privacy mode.",
+      mimeType: "application/json"
+    },
+    async (uri, variables) => {
+      const raw = Array.isArray(variables.type) ? variables.type[0] : variables.type;
+      const type = String(raw ?? "").toLowerCase();
+      const endpoint = LATEST_ENDPOINTS[type];
+      if (!endpoint) {
+        return jsonResource(uri, {
+          error: `unknown type "${type}". Valid: ${Object.keys(LATEST_ENDPOINTS).join(", ")}`
+        });
+      }
+      return latestCollectionResource(uri, endpoint);
+    }
   );
 
   server.registerResource(

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.0 - 2026-06-02
+
+### Added
+- **MCP completions on prompt arguments** — the `timezone` arg on all 3 prompts (`whoop_daily_performance_coach`, `whoop_weekly_training_review`, `whoop_sleep_recovery_investigator`) now autocompletes common IANA timezones, so MCP clients (Claude, Goose, Cursor) suggest valid values instead of the agent guessing.
+- **Parameterized resource template `whoop://latest/{type}`** — agents can read the latest record for any domain (`recovery` | `sleep` | `cycle` | `workout`) via one URI, with `{type}` autocompletion. Adds `workout` (no fixed resource before) and reuses the privacy-mode-aware reader. The fixed `whoop://latest/{recovery,sleep,cycle}` resources remain for listing. No behavior or gating change.
+
 ## 0.4.5 - 2026-05-29
 
 ### Docs
