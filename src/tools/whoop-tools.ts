@@ -507,7 +507,7 @@ export function registerWhoopTools(server: McpServer): void {
     "whoop_exchange_code",
     {
       title: "Exchange WHOOP OAuth Code",
-      description: "Exchange a WHOOP OAuth authorization code for local tokens. Tokens are stored locally with 0600 permissions and are never returned by this tool.",
+      description: "Exchange a WHOOP OAuth authorization code for local tokens. Tokens are stored locally with 0600 permissions and are never returned by this tool. Gated: requires explicit user intent — agents must not call this autonomously.",
       inputSchema: ExchangeCodeInputSchema.shape,
       outputSchema: ExchangeCodeOutputSchema.shape,
       annotations: {
@@ -645,7 +645,7 @@ export function registerWhoopTools(server: McpServer): void {
     "whoop_revoke_access",
     {
       title: "Revoke WHOOP OAuth Access",
-      description: "Revoke the current WHOOP OAuth access grant and delete the local token file. Use only when the user explicitly wants to disconnect WHOOP.",
+      description: "Revoke the current WHOOP OAuth access grant and delete the local token file. Use only when the user explicitly wants to disconnect WHOOP. Gated: requires explicit user intent — agents must not call this autonomously.",
       inputSchema: ResponseOnlyInputSchema.shape,
       outputSchema: RevokeAccessOutputSchema.shape,
       annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true }
