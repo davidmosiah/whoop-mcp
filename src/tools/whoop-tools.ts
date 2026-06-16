@@ -23,6 +23,8 @@ import {
   RevokeAccessOutputSchema,
   SimpleReadInputSchema,
   SummaryOutputSchema,
+  TrendInputSchema,
+  TrendOutputSchema,
   WeeklySummaryInputSchema,
   WellnessContextInputSchema,
   WellnessContextOutputSchema
@@ -33,9 +35,9 @@ import { buildCapabilities } from "../services/capabilities.js";
 import { buildDataInventory, formatInventoryMarkdown } from "../services/inventory.js";
 import { buildConnectionStatus } from "../services/connection-status.js";
 import { getConfig } from "../services/config.js";
-import { bulletList, formatCollection, makeError, makeResponse } from "../services/format.js";
+import { bulletList, formatCollection, formatRecordMarkdown, makeError, makeResponse } from "../services/format.js";
 import { applyPrivacy, resolvePrivacyMode } from "../services/privacy.js";
-import { buildDailySummary, buildWeeklySummary, formatSummaryMarkdown } from "../services/summary.js";
+import { buildDailySummary, buildRecoveryTrend, buildSleepTrend, buildWeeklySummary, formatSummaryMarkdown, formatTrendMarkdown } from "../services/summary.js";
 import { buildWellnessContext, formatWellnessContextMarkdown } from "../services/context.js";
 import {
   buildProfileSummary,
@@ -125,7 +127,7 @@ function registerGetByIdTool(server: McpServer, name: string, title: string, end
         return makeResponse(
           { endpoint, privacy_mode: privacyMode, data },
           params.response_format,
-          bulletList(title, { endpoint, privacy_mode: privacyMode, data: JSON.stringify(data) })
+          formatRecordMarkdown(endpoint, title, { endpoint, privacy_mode: privacyMode }, data)
         );
       } catch (error) {
         return makeError((error as Error).message);
@@ -700,6 +702,48 @@ This workflow tool compares a recent window against a prior window when availabl
       try {
         const summary = await buildWeeklySummary(client(), params);
         return makeResponse(summary, params.response_format, formatSummaryMarkdown(summary));
+      } catch (error) {
+        return makeError((error as Error).message);
+      }
+    }
+  );
+
+  server.registerTool(
+    "whoop_recovery_trend",
+    {
+      title: "WHOOP Recovery Trend",
+      description: `Aggregate WHOOP recovery over the last N days (default 30) into a per-metric trend for recovery score, HRV (hrv_rmssd_milli) and resting heart rate.
+
+Each metric returns { avg, min, max, slope, direction, n_valid } where slope is a least-squares fit over the chronologically ordered scored records (oldest to newest) and direction is rising, falling, stable or insufficient_data. Use this to answer "is my recovery trending up or down?" without paging the raw collection yourself. Read-only; fetches recent WHOOP v2 records, computes statistics, stores nothing. Not medical advice.`,
+      inputSchema: TrendInputSchema.shape,
+      outputSchema: TrendOutputSchema.shape,
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true }
+    },
+    async (params) => {
+      try {
+        const trend = await buildRecoveryTrend(client(), params);
+        return makeResponse(trend, params.response_format, formatTrendMarkdown(trend));
+      } catch (error) {
+        return makeError((error as Error).message);
+      }
+    }
+  );
+
+  server.registerTool(
+    "whoop_sleep_trend",
+    {
+      title: "WHOOP Sleep Trend",
+      description: `Aggregate WHOOP sleep over the last N days (default 30) into a per-metric trend for sleep performance percentage, sleep duration (hours) and sleep efficiency percentage.
+
+Each metric returns { avg, min, max, slope, direction, n_valid } where slope is a least-squares fit over the chronologically ordered scored sleeps (oldest to newest) and direction is rising, falling, stable or insufficient_data. Use this to answer "is my sleep improving or degrading?" without paging the raw collection yourself. Read-only; fetches recent WHOOP v2 records, computes statistics, stores nothing. Not medical advice.`,
+      inputSchema: TrendInputSchema.shape,
+      outputSchema: TrendOutputSchema.shape,
+      annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true }
+    },
+    async (params) => {
+      try {
+        const trend = await buildSleepTrend(client(), params);
+        return makeResponse(trend, params.response_format, formatTrendMarkdown(trend));
       } catch (error) {
         return makeError((error as Error).message);
       }

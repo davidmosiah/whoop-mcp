@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "whoop": {
+      "command": "npx",
+      "args": ["-y", "whoop-mcp-unofficial"]
+    }
+  }
+}

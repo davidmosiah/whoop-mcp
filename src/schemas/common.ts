@@ -91,6 +91,14 @@ export const WeeklySummaryInputSchema = z.object({
   response_format: ResponseFormatSchema
 }).strict();
 
+export const TrendInputSchema = z.object({
+  days: z.number().int().min(2).max(30).default(30)
+    .describe("Number of days to aggregate into the trend. Minimum 2 (slope needs two points), maximum 30. Defaults to 30."),
+  timezone: z.string().min(1).max(80).default("UTC")
+    .describe("IANA timezone reserved for display, e.g. America/New_York."),
+  response_format: ResponseFormatSchema
+}).strict();
+
 export const AuthUrlOutputSchema = z.object({
   auth_url: z.string(),
   redirect_uri: z.string(),
@@ -329,6 +337,27 @@ export const SummaryOutputSchema = z.object({
   generated_at: z.string()
 }).passthrough();
 
+export const TrendStatSchema = z.object({
+  avg: z.number().optional(),
+  min: z.number().optional(),
+  max: z.number().optional(),
+  slope: z.number().optional(),
+  direction: z.enum(["rising", "falling", "stable", "insufficient_data"]),
+  n_valid: z.number().int().nonnegative()
+}).strict();
+
+export const TrendOutputSchema = z.object({
+  kind: z.enum(["recovery_trend", "sleep_trend"]),
+  generated_at: z.string(),
+  lookback_days: z.number().int().positive(),
+  data_quality: z.unknown(),
+  metrics: z.record(z.string(), TrendStatSchema),
+  diagnostic: z.object({
+    summary: z.array(z.string()),
+    disclaimer: z.string()
+  }).strict()
+}).passthrough();
+
 export const WellnessContextOutputSchema = z.object({
   source: z.literal("whoop"),
   context_contract_version: z.literal("delx-wellness-context/v1"),
@@ -356,3 +385,4 @@ export type ExchangeCodeInput = z.infer<typeof ExchangeCodeInputSchema>;
 export type DailySummaryInput = z.infer<typeof DailySummaryInputSchema>;
 export type WellnessContextInput = z.infer<typeof WellnessContextInputSchema>;
 export type WeeklySummaryInput = z.infer<typeof WeeklySummaryInputSchema>;
+export type TrendInput = z.infer<typeof TrendInputSchema>;

@@ -517,6 +517,175 @@ export async function buildWeeklySummary(client: WhoopClient, options: SummaryOp
   };
 }
 
+export interface TrendStat {
+  avg?: number;
+  min?: number;
+  max?: number;
+  slope?: number;
+  direction: "rising" | "falling" | "stable" | "insufficient_data";
+  n_valid: number;
+}
+
+// Least-squares slope of values against their chronological index (oldest = 0).
+// Units are "metric change per record". direction derives from the slope sign,
+// using a small per-metric epsilon so near-flat series read as "stable".
+function trendStat(valuesOldestFirst: Array<number | undefined>, epsilon: number): TrendStat {
+  const points: Array<{ x: number; y: number }> = [];
+  valuesOldestFirst.forEach((value, index) => {
+    if (typeof value === "number" && Number.isFinite(value)) points.push({ x: index, y: value });
+  });
+  const n = points.length;
+  if (n === 0) {
+    return { direction: "insufficient_data", n_valid: 0 };
+  }
+  const ys = points.map((point) => point.y);
+  const stat: TrendStat = {
+    avg: round(avg(ys), 1),
+    min: round(Math.min(...ys), 1),
+    max: round(Math.max(...ys), 1),
+    direction: "stable",
+    n_valid: n
+  };
+  if (n < 2) {
+    stat.direction = "insufficient_data";
+    return stat;
+  }
+  const meanX = points.reduce((sum, point) => sum + point.x, 0) / n;
+  const meanY = ys.reduce((sum, value) => sum + value, 0) / n;
+  let numerator = 0;
+  let denominator = 0;
+  for (const point of points) {
+    numerator += (point.x - meanX) * (point.y - meanY);
+    denominator += (point.x - meanX) ** 2;
+  }
+  const slope = denominator === 0 ? 0 : numerator / denominator;
+  stat.slope = round(slope, 3);
+  stat.direction = slope > epsilon ? "rising" : slope < -epsilon ? "falling" : "stable";
+  return stat;
+}
+
+function withinDays(records: UnknownRecord[], datePaths: string[][], days: number): UnknownRecord[] {
+  const cutoff = Date.now() - days * 24 * HOUR_MS;
+  return records.filter((record) => {
+    const time = firstDate(record, datePaths)?.getTime();
+    return time !== undefined && time >= cutoff;
+  });
+}
+
+// Returns metric values ordered oldest -> newest so slope reads positive when a
+// metric is improving over time.
+function oldestFirst(records: UnknownRecord[], datePaths: string[][], extractor: (record: UnknownRecord) => number | undefined): Array<number | undefined> {
+  return [...sortDesc(records, datePaths)].reverse().map(extractor);
+}
+
+export async function buildRecoveryTrend(client: WhoopClient, options: SummaryOptions) {
+  const days = Math.max(options.days, 1);
+  const bundle = await fetchBundle(client, days + 2);
+  const datePaths = [["created_at"], ["updated_at"]];
+  const recoveries = withinDays(scored(bundle.recoveries), datePaths, days);
+
+  const score = trendStat(oldestFirst(recoveries, datePaths, recoveryScore), 0.3);
+  const hrvTrend = trendStat(oldestFirst(recoveries, datePaths, hrv), 0.2);
+  const rhrTrend = trendStat(oldestFirst(recoveries, datePaths, rhr), 0.1);
+
+  return {
+    kind: "recovery_trend",
+    generated_at: new Date().toISOString(),
+    lookback_days: days,
+    data_quality: {
+      confidence: confidence({ recoveries: recoveries.length, sleeps: recoveries.length, cycles: recoveries.length }, 3),
+      counts: { recoveries: recoveries.length },
+      pages_fetched: bundle.pages_fetched
+    },
+    metrics: {
+      recovery_score: score,
+      hrv_rmssd_milli: hrvTrend,
+      resting_heart_rate: rhrTrend
+    },
+    diagnostic: {
+      summary: [
+        score.avg !== undefined ? `Recovery score averaged ${score.avg} over ${score.n_valid} day(s) and is ${score.direction}.` : "No scored recovery in the window.",
+        hrvTrend.avg !== undefined ? `HRV averaged ${hrvTrend.avg} ms (${hrvTrend.direction}).` : undefined,
+        rhrTrend.avg !== undefined ? `Resting HR averaged ${rhrTrend.avg} bpm (${rhrTrend.direction}).` : undefined
+      ].filter((value): value is string => Boolean(value)),
+      disclaimer: "Performance coaching only; not medical advice."
+    }
+  };
+}
+
+export async function buildSleepTrend(client: WhoopClient, options: SummaryOptions) {
+  const days = Math.max(options.days, 1);
+  const bundle = await fetchBundle(client, days + 2);
+  const datePaths = [["start"], ["created_at"]];
+  const sleeps = withinDays(scored(bundle.sleeps), datePaths, days);
+  const durationHours = (record: UnknownRecord): number | undefined => hours(sleepActualMs(record));
+
+  const performance = trendStat(oldestFirst(sleeps, datePaths, sleepPerformance), 0.3);
+  const duration = trendStat(oldestFirst(sleeps, datePaths, durationHours), 0.05);
+  const efficiency = trendStat(oldestFirst(sleeps, datePaths, sleepEfficiency), 0.2);
+
+  return {
+    kind: "sleep_trend",
+    generated_at: new Date().toISOString(),
+    lookback_days: days,
+    data_quality: {
+      confidence: confidence({ recoveries: sleeps.length, sleeps: sleeps.length, cycles: sleeps.length }, 3),
+      counts: { sleeps: sleeps.length },
+      pages_fetched: bundle.pages_fetched
+    },
+    metrics: {
+      sleep_performance_pct: performance,
+      sleep_duration_hours: duration,
+      sleep_efficiency_pct: efficiency
+    },
+    diagnostic: {
+      summary: [
+        performance.avg !== undefined ? `Sleep performance averaged ${performance.avg}% over ${performance.n_valid} night(s) and is ${performance.direction}.` : "No scored sleep in the window.",
+        duration.avg !== undefined ? `Sleep duration averaged ${duration.avg}h (${duration.direction}).` : undefined,
+        efficiency.avg !== undefined ? `Sleep efficiency averaged ${efficiency.avg}% (${efficiency.direction}).` : undefined
+      ].filter((value): value is string => Boolean(value)),
+      disclaimer: "Performance coaching only; not medical advice."
+    }
+  };
+}
+
+export function formatTrendMarkdown(trend: Record<string, unknown>): string {
+  const title = trend.kind === "sleep_trend" ? "WHOOP Sleep Trend" : "WHOOP Recovery Trend";
+  const lines = [`# ${title}`, ""];
+  lines.push(`- **lookback_days**: ${String(trend.lookback_days ?? "n/a")}`);
+  const dataQuality = trend.data_quality as UnknownRecord | undefined;
+  if (dataQuality) {
+    lines.push(`- **confidence**: ${String(dataQuality.confidence ?? "unknown")}`);
+    lines.push(`- **counts**: ${JSON.stringify(dataQuality.counts ?? {})}`);
+  }
+  lines.push("");
+  const metrics = trend.metrics as Record<string, TrendStat> | undefined;
+  if (metrics) {
+    lines.push("## Metrics");
+    for (const [name, stat] of Object.entries(metrics)) {
+      const parts = [
+        stat.avg !== undefined ? `avg ${stat.avg}` : undefined,
+        stat.min !== undefined ? `min ${stat.min}` : undefined,
+        stat.max !== undefined ? `max ${stat.max}` : undefined,
+        `direction ${stat.direction}`,
+        stat.slope !== undefined ? `slope ${stat.slope}/day` : undefined,
+        `n=${stat.n_valid}`
+      ].filter(Boolean).join(", ");
+      lines.push(`- **${name}**: ${parts}`);
+    }
+    lines.push("");
+  }
+  const diagnostic = trend.diagnostic as UnknownRecord | undefined;
+  const summary = Array.isArray(diagnostic?.summary) ? diagnostic.summary : undefined;
+  if (summary?.length) {
+    lines.push("## Summary");
+    for (const item of summary) lines.push(`- ${String(item)}`);
+    lines.push("");
+  }
+  lines.push(`_Disclaimer: ${String(diagnostic?.disclaimer ?? "Not medical advice.")}_`);
+  return lines.join("\n");
+}
+
 export function formatSummaryMarkdown(summary: Record<string, unknown>): string {
   const kind = summary.kind === "weekly_summary" ? "WHOOP Weekly Summary" : "WHOOP Daily Summary";
   const lines = [`# ${kind}`, ""];

@@ -209,6 +209,11 @@ export class WhoopClient {
   private async parseResponse(response: Response): Promise<unknown> {
     const text = await response.text();
     const payload = text ? safeJson(text) : null;
+    if (response.status === 429) {
+      const retryAfter = parseRetryAfterSeconds(response.headers.get("retry-after"));
+      const retryHint = retryAfter !== undefined ? `retry in ${retryAfter} seconds` : "retry after a short backoff";
+      throw new Error(`WHOOP API HTTP 429: Rate limited by WHOOP — ${retryHint} (or enable caching with WHOOP_CACHE=sqlite to reduce calls).`);
+    }
     if (!response.ok) {
       const details = payload && typeof payload === "object" ? JSON.stringify(payload) : text;
       throw new Error(`WHOOP API HTTP ${response.status}: ${redactErrorMessage(details || response.statusText)}`);
@@ -256,4 +261,16 @@ function safeJson(text: string): unknown {
   } catch {
     return text;
   }
+}
+
+function parseRetryAfterSeconds(header: string | null): number | undefined {
+  if (!header) return undefined;
+  const seconds = Number(header);
+  if (Number.isFinite(seconds) && seconds >= 0) return Math.ceil(seconds);
+  const dateMs = Date.parse(header);
+  if (!Number.isNaN(dateMs)) {
+    const diff = Math.ceil((dateMs - Date.now()) / 1000);
+    return diff > 0 ? diff : 0;
+  }
+  return undefined;
 }

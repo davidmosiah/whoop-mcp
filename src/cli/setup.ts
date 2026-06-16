@@ -175,7 +175,9 @@ function parsePrivacyMode(value: string): "summary" | "structured" | "raw" {
 }
 
 function writeClientConfig(client: AgentClientName, homeDir: string): ClientConfigResult {
-  if (client === "claude") return { path: mergeClaudeConfig(homeDir) };
+  if (client === "claude") return { path: mergeMcpJsonConfig(claudeConfigPath(homeDir)) };
+  if (client === "cursor") return { path: mergeMcpJsonConfig(cursorConfigPath(homeDir)) };
+  if (client === "windsurf") return { path: mergeMcpJsonConfig(windsurfConfigPath(homeDir)) };
   if (client === "hermes") return writeHermesClientConfig(homeDir);
   const path = join(homeDir, ".whoop-mcp", "mcp-configs", `${client}.json`);
   mkdirSync(dirname(path), { recursive: true, mode: 0o700 });
@@ -184,10 +186,24 @@ function writeClientConfig(client: AgentClientName, homeDir: string): ClientConf
   return { path };
 }
 
-function mergeClaudeConfig(homeDir: string): string {
-  const path = process.platform === "darwin"
+function claudeConfigPath(homeDir: string): string {
+  return process.platform === "darwin"
     ? join(homeDir, "Library", "Application Support", "Claude", "claude_desktop_config.json")
     : join(homeDir, ".whoop-mcp", "mcp-configs", "claude-desktop.json");
+}
+
+function cursorConfigPath(homeDir: string): string {
+  return join(homeDir, ".cursor", "mcp.json");
+}
+
+function windsurfConfigPath(homeDir: string): string {
+  return join(homeDir, ".codeium", "windsurf", "mcp_config.json");
+}
+
+// Read/merge the `whoop` server into any `{ mcpServers: { ... } }`-shaped config
+// (Claude Desktop, Cursor, Windsurf all share this format). Other servers and
+// top-level keys are preserved; a corrupt or missing file is treated as empty.
+function mergeMcpJsonConfig(path: string): string {
   mkdirSync(dirname(path), { recursive: true, mode: 0o700 });
   let existing: Record<string, unknown> = {};
   try {
