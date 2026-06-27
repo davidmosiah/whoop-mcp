@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.1 - 2026-06-27
+
+### Security
+
+- Pin transitive `hono` resolution to `4.12.27` via npm overrides, resolving production audit advisories while keeping the public MCP API unchanged.
+
 ## 0.5.0 - 2026-06-02
 
 ### Added
