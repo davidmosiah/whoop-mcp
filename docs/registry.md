@@ -20,6 +20,13 @@ Primary website:
 https://whoopmcp.vercel.app/
 ```
 
+Credits:
+
+```text
+WHOOP MCP Unofficial builds on prior WHOOP MCP groundwork by Shashank Mishra:
+https://github.com/shashankswe2020-ux/whoop-mcp
+```
+
 Publishing requires npm and MCP Registry authentication:
 
 ```bash

@@ -47,6 +47,17 @@ Built by [David Mosiah](https://github.com/davidmosiah) for people who use Claud
 
 Part of [Delx Wellness](https://github.com/davidmosiah/delx-wellness), a registry of local-first wellness MCP connectors.
 
+## Prior work and credits
+
+WHOOP MCP Unofficial builds on prior WHOOP MCP groundwork by
+[Shashank Mishra](https://github.com/shashankswe2020-ux), including the
+OAuth/WHOOP API direction and the earlier MIT-licensed
+[`whoop-ai-mcp`](https://www.npmjs.com/package/whoop-ai-mcp) package
+([source](https://github.com/shashankswe2020-ux/whoop-mcp)). This project
+extends that foundation with local-first setup, privacy audits, dual transport,
+agent manifests, summaries, caching, registry metadata and Delx Wellness hub
+integration.
+
 > If this connector helps your agent workflow, please star the repo. Stars make the project easier for other AI builders to discover and help Delx keep shipping local-first wellness infrastructure.
 
 <p align="center">

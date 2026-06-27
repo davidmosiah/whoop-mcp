@@ -13,6 +13,7 @@ if (packageJson.private !== true && packageJson.license !== 'UNLICENSED') {
   requireFile('LICENSE');
 }
 requireFile('llms.txt');
+requireFile('docs/credits.md');
 requireFile('server.json');
 
 if (serverJson.version !== packageJson.version) {
@@ -35,6 +36,21 @@ if (npmPackage) {
 
 if (Array.isArray(packageJson.files) && !packageJson.files.includes('llms.txt')) {
   errors.push('package.json files must include llms.txt.');
+}
+
+const attributionTargets = [
+  ['README.md', readFileSync('README.md', 'utf8')],
+  ['docs/credits.md', readFileSync('docs/credits.md', 'utf8')],
+  ['docs/llms.txt', readFileSync('docs/llms.txt', 'utf8')],
+  ['llms.txt', readFileSync('llms.txt', 'utf8')]
+];
+for (const [path, text] of attributionTargets) {
+  if (!text.includes('Shashank')) {
+    errors.push(`${path} must credit Shashank's prior WHOOP MCP work.`);
+  }
+  if (!text.includes('whoop-ai-mcp')) {
+    errors.push(`${path} must mention the prior whoop-ai-mcp package.`);
+  }
 }
 
 if (errors.length) {

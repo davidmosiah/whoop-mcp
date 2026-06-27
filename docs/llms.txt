@@ -7,6 +7,7 @@ GitHub: https://github.com/davidmosiah/whoop-mcp
 npm: https://www.npmjs.com/package/whoop-mcp-unofficial
 Mirror: https://davidmosiah.github.io/whoop-mcp/
 Creator: David Mosiah, https://github.com/davidmosiah
+Prior work: Shashank Mishra, whoop-ai-mcp, https://github.com/shashankswe2020-ux/whoop-mcp
 
 ## What it is
 
@@ -44,3 +45,4 @@ npx -y whoop-mcp-unofficial doctor
 - FAQ: https://whoopmcp.vercel.app/faq.md
 - Privacy model: https://whoopmcp.vercel.app/privacy.md
 - Roadmap: https://whoopmcp.vercel.app/roadmap.md
+- Credits: https://whoopmcp.vercel.app/credits.md

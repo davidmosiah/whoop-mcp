@@ -3,6 +3,7 @@ Unofficial local-first WHOOP MCP server for AI recovery, strain, sleep and HRV a
 Repository: https://github.com/davidmosiah/whoop-mcp
 Homepage: https://wellness.delx.ai/connectors/whoop
 NPM: https://www.npmjs.com/package/whoop-mcp-unofficial
+Prior work: Shashank Mishra's MIT-licensed whoop-ai-mcp, https://github.com/shashankswe2020-ux/whoop-mcp
 Primary command: npm exec --yes --package=whoop-mcp-unofficial -- whoop-mcp-server doctor
 MCP command: whoop-mcp-server
 

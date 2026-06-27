@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.5.2 - 2026-06-27
+
+### Docs
+
+- Add explicit prior-work credit for Shashank Mishra and the MIT-licensed
+  `whoop-ai-mcp` package in the README, docs site, LLM docs and new
+  `docs/credits.md` page.
+- Add metadata checks so the Shashank / `whoop-ai-mcp` attribution cannot be
+  accidentally removed from primary docs.
+
 ## 0.5.1 - 2026-06-27
 
 ### Security
