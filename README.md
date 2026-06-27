@@ -31,6 +31,10 @@
 >
 > Or wire it standalone into Claude Desktop / Cursor / ChatGPT Desktop &mdash; see the install section below. Runnable examples live in the [Delx Agent Workbench](https://github.com/davidmosiah/delx-agent-workbench).
 
+> **Public proof:** WHOOP MCP is tracked in the Delx [Open Source Growth Snapshot](https://github.com/davidmosiah/delx-wellness/blob/main/docs/open-source-growth-snapshot.md) alongside downloads, stars and next-action priorities. If it saves you OAuth and MCP setup time, star this repo so other recovery-focused agent builders can find it faster.
+>
+> **First useful prompt:** `Use whoop_connection_status, then whoop_daily_summary, then give me a 5-line operating brief for today.`
+
 ---
 
 <!-- /delx-wellness header v2 -->
