@@ -3,6 +3,7 @@ import { SERVER_VERSION } from "../constants.js";
 import { parseAgentClientName } from "../services/agent-manifest.js";
 import { getOnboardingFlow, getProfilePath } from "../services/profile-store.js";
 import { runAuthCommand } from "./auth.js";
+import { runDemoCaptureCommand } from "./demo-capture.js";
 import { runSetupCommand } from "./setup.js";
 
 export async function runCliCommand(args: string[]): Promise<number | undefined> {
@@ -11,6 +12,7 @@ export async function runCliCommand(args: string[]): Promise<number | undefined>
   if (command === "setup") return runSetupCommand(rest);
   if (command === "doctor" || command === "status") return runDoctor(rest);
   if (command === "auth") return runAuthCommand(rest);
+  if (command === "demo-capture") return runDemoCaptureCommand(rest);
   if (command === "onboarding") return runOnboarding(rest);
   if (command === "version" || command === "--version" || command === "-v") {
     console.log(SERVER_VERSION);
@@ -148,6 +150,7 @@ Usage:
   whoop-mcp-server doctor --client hermes
   whoop-mcp-server auth            Authorize WHOOP with local browser callback
   whoop-mcp-server auth --no-open  Print auth URL without opening browser
+  whoop-mcp-server demo-capture     Write a privacy-sanitized real recovery demo transcript
   whoop-mcp-server onboarding      Print the shared Delx wellness onboarding flow (11 questions)
   whoop-mcp-server onboarding --pt-BR
                                    Print the onboarding flow in pt-BR

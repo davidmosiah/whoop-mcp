@@ -14,6 +14,7 @@ if (packageJson.private !== true && packageJson.license !== 'UNLICENSED') {
 }
 requireFile('llms.txt');
 requireFile('docs/credits.md');
+requireFile('docs/demo/recovery-demo-redaction-contract.md');
 requireFile('server.json');
 
 if (serverJson.version !== packageJson.version) {
@@ -36,6 +37,14 @@ if (npmPackage) {
 
 if (Array.isArray(packageJson.files) && !packageJson.files.includes('llms.txt')) {
   errors.push('package.json files must include llms.txt.');
+}
+
+if (!packageJson.scripts?.['demo:capture'] || !packageJson.scripts?.['test:demo-capture']) {
+  errors.push('package.json must expose demo:capture and test:demo-capture scripts.');
+}
+
+if (!readFileSync('README.md', 'utf8').includes('demo-capture')) {
+  errors.push('README.md must document the privacy-sanitized demo-capture command.');
 }
 
 const attributionTargets = [

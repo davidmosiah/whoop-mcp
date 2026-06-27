@@ -1,6 +1,6 @@
 {
   "name": "whoop-mcp-unofficial",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "Unofficial MCP server for connecting AI agents to the WHOOP API.",
   "type": "module",
   "bin": {
@@ -17,6 +17,7 @@
     "docs/.nojekyll",
     "docs/.well-known",
     "docs/assets",
+    "docs/demo",
     "docs/*.md",
     "docs/*.txt",
     "docs/*.xml",
@@ -29,8 +30,9 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "start": "node dist/index.js",
     "dev": "tsx src/index.ts",
+    "demo:capture": "npm run build && node dist/index.js demo-capture",
     "smoke": "node scripts/smoke-tools.mjs",
-    "test": "npm run typecheck && npm run build && npm run smoke && npm run smoke:http && npm run test:summary && npm run test:privacy-cache && npm run test:cli-ux && npm run test:agent-readiness && npm run test:hermes-agent && npm run test:metadata && npm run test:http-retry && npm run test:http-cache",
+    "test": "npm run typecheck && npm run build && npm run smoke && npm run smoke:http && npm run test:summary && npm run test:privacy-cache && npm run test:cli-ux && npm run test:agent-readiness && npm run test:hermes-agent && npm run test:metadata && npm run test:demo-capture && npm run test:http-retry && npm run test:http-cache",
     "test:summary": "node scripts/summary-fixture-test.mjs",
     "prepublishOnly": "npm test",
     "smoke:http": "node scripts/smoke-http.mjs",
@@ -39,6 +41,7 @@
     "test:agent-readiness": "node scripts/agent-readiness-test.mjs",
     "test:hermes-agent": "node scripts/hermes-agent-manifest-test.mjs",
     "test:metadata": "node scripts/metadata-check.mjs",
+    "test:demo-capture": "node dist/index.js demo-capture --fixture --assert-sanitized --output /tmp/whoop-demo-capture.json --markdown /tmp/whoop-demo-capture.md",
     "test:http-retry": "node scripts/http-retry-test.mjs",
     "test:http-cache": "node scripts/http-cache-test.mjs"
   },

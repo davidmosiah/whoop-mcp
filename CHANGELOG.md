@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.5.3 - 2026-06-27
+
+### Added
+
+- Add `whoop-mcp-server demo-capture`, a privacy-sanitized real-demo capture
+  command that gates on local OAuth readiness, runs the `whoop_daily_summary`
+  path, emits JSON/Markdown transcripts and fails if secrets, local token paths,
+  raw payloads, exact recovery numbers or exact sleep details appear.
+- Add a fixture-backed demo-capture regression test and a versioned
+  `docs/demo/recovery-demo-redaction-contract.md` sample so public WHOOP demos
+  have a reviewable privacy contract before real-account captures are shared.
+
 ## 0.5.2 - 2026-06-27
 
 ### Docs

@@ -146,6 +146,25 @@ With `response_format=json` you get the full shape the live tools return:
 
 Once you finish OAuth setup below, `whoop_daily_summary`, `whoop_wellness_context` and `whoop_list_recoveries` return this same shape with your **live** WHOOP data.
 
+## Record a real demo safely
+
+After OAuth is connected, generate a privacy-sanitized transcript for README demos, issue updates or agent evals:
+
+```bash
+npx -y whoop-mcp-unofficial demo-capture \
+  --output whoop-recovery-demo.redacted.json \
+  --markdown whoop-recovery-demo.redacted.md \
+  --assert-sanitized
+```
+
+`demo-capture` runs the same readiness path an agent should use:
+`whoop_connection_status` shape first, then `whoop_daily_summary`, then a short
+recovery-aware prompt. It fails closed when setup is incomplete and the
+sanitizer blocks OAuth secrets, local token paths, raw payloads, exact recovery
+numbers and exact sleep details. The committed
+[redaction contract](docs/demo/recovery-demo-redaction-contract.md) is a
+fixture-only sample; real captures should be reviewed before publishing.
+
 ## Try it with your agent
 
 Three things to ask first:
@@ -231,6 +250,7 @@ Each accepts `timezone` (IANA, default `UTC`).
 - Refresh-token rotation uses a lock file to avoid concurrent refresh races.
 - `whoop_revoke_access` is the only destructive tool — it deletes local tokens and revokes the grant.
 - `WHOOP_PRIVACY_MODE` defaults to `structured`. Raw WHOOP API payloads are opt-in via `raw` mode or per-call override.
+- `demo-capture` redacts demo transcripts before writing anything intended for docs or issues.
 - The MCP client never sees access or refresh tokens.
 - This is **not medical advice**. The server exposes user-authorized data for personal AI workflows, not diagnosis or treatment.
 
@@ -304,6 +324,7 @@ curl http://127.0.0.1:3000/health
 - [Privacy model](docs/privacy.md)
 - [FAQ](docs/faq.md)
 - [Resources & prompts](docs/resources-prompts.md)
+- [Demo redaction contract](docs/demo/recovery-demo-redaction-contract.md)
 - [Roadmap](docs/roadmap.md)
 
 ## Links

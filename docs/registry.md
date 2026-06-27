@@ -38,3 +38,13 @@ mcp-publisher publish
 ```
 
 The MCP Registry currently hosts metadata only; the npm package must be published first.
+
+Public demo hygiene:
+
+```bash
+whoop-mcp-server demo-capture --assert-sanitized --markdown whoop-recovery-demo.redacted.md
+```
+
+Only publish generated demo captures after confirming the transcript is
+sanitized and does not include OAuth secrets, local token paths, raw payloads,
+exact recovery numbers or exact sleep details.
