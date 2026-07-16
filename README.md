@@ -225,6 +225,8 @@ When this README says `raw`, it means the upstream WHOOP API JSON for a supporte
 
 Common collection params: `start`, `end`, `limit` (max 25), `next_token`, `all_pages`, `max_pages`, `response_format` (`markdown`/`json`), `privacy_mode` (`summary`/`structured`/`raw`).
 
+`start` and `end` remain exact timezone-aware ISO date-times at the WHOOP boundary. Invalid or reversed ranges fail before a network request.
+
 **Single records by id**
 
 - `whoop_get_cycle`, `whoop_get_sleep`, `whoop_get_workout`
@@ -250,6 +252,7 @@ Each accepts `timezone` (IANA, default `UTC`).
 - Refresh-token rotation uses a lock file to avoid concurrent refresh races.
 - `whoop_revoke_access` is the only destructive tool — it deletes local tokens and revokes the grant.
 - `WHOOP_PRIVACY_MODE` defaults to `structured`. Raw WHOOP API payloads are opt-in via `raw` mode or per-call override.
+- Structured mode preserves complete nested physiological data and future upstream fields while removing GPS and secret-bearing values.
 - `demo-capture` redacts demo transcripts before writing anything intended for docs or issues.
 - The MCP client never sees access or refresh tokens.
 - This is **not medical advice**. The server exposes user-authorized data for personal AI workflows, not diagnosis or treatment.

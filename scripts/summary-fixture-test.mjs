@@ -117,4 +117,15 @@ const contextMarkdown = formatWellnessContextMarkdown(context);
 assert.ok(contextMarkdown.includes('context_type'));
 assert.ok(contextMarkdown.includes('exercise_catalog_recommend_session'));
 
+const failingClient = {
+  async list(endpoint) {
+    if (endpoint === '/v2/activity/sleep') throw new Error('synthetic WHOOP sleep failure');
+    return fakeClient.list(endpoint);
+  },
+};
+await assert.rejects(
+  buildDailySummary(failingClient, { days: 10, timezone: 'UTC' }),
+  /synthetic WHOOP sleep failure/,
+);
+
 console.log(JSON.stringify({ ok: true, daily: daily.kind, weekly: weekly.kind }, null, 2));

@@ -79,6 +79,7 @@ export class WhoopClient {
   }
 
   async list(path: string, params: ListParams = {}): Promise<{ records: unknown[]; next_token?: string; pages_fetched: number }> {
+    validateWhoopDateRange(params);
     const limit = Math.min(Math.max(params.limit ?? DEFAULT_LIMIT, 1), MAX_WHOOP_LIMIT);
     const maxPages = params.all_pages ? Math.max(1, params.max_pages ?? 1) : 1;
     let nextToken = params.next_token;
@@ -253,6 +254,23 @@ export class WhoopClient {
       innerFetch: retryWrappedFetch
     });
   }
+}
+
+function validateWhoopDateRange(params: ListParams): void {
+  const start = params.start ? validateWhoopDateTime(params.start, "start") : undefined;
+  const end = params.end ? validateWhoopDateTime(params.end, "end") : undefined;
+  if (start !== undefined && end !== undefined && start > end) {
+    throw new Error("WHOOP start must not be later than end");
+  }
+}
+
+function validateWhoopDateTime(value: string, field: "start" | "end"): number {
+  const hasTimezone = /(?:Z|[+-]\d{2}:\d{2})$/i.test(value);
+  const parsed = Date.parse(value);
+  if (!hasTimezone || !Number.isFinite(parsed)) {
+    throw new Error(`Invalid WHOOP ${field} date-time: use ISO 8601 with a timezone`);
+  }
+  return parsed;
 }
 
 function safeJson(text: string): unknown {

@@ -49,30 +49,21 @@ export function normalizeRecord(endpoint: string, record: unknown, mode: Privacy
   if (endpoint.includes("/activity/sleep") || endpoint.includes("/sleep")) return normalizeSleep(record, mode);
   if (endpoint.includes("/activity/workout")) return normalizeWorkout(record, mode);
   if (endpoint.includes("/cycle")) return normalizeCycle(record, mode);
-  return mode === "summary" ? pickDefined({ id: record.id, score_state: record.score_state }) : record;
+  return mode === "summary" ? pickDefined({ id: record.id, score_state: record.score_state }) : sanitizeStructured(record);
 }
 
 function normalizeProfile(record: Record<string, unknown>, mode: PrivacyMode): Record<string, unknown> {
   if (mode === "summary") {
     return pickDefined({ user_id: record.user_id, first_name: record.first_name });
   }
-  return pickDefined({
-    user_id: record.user_id,
-    email: record.email,
-    first_name: record.first_name,
-    last_name: record.last_name
-  });
+  return sanitizeStructured(record);
 }
 
 function normalizeBody(record: Record<string, unknown>, mode: PrivacyMode): Record<string, unknown> {
   if (mode === "summary") {
     return pickDefined({ max_heart_rate: record.max_heart_rate });
   }
-  return pickDefined({
-    height_meter: record.height_meter,
-    weight_kilogram: record.weight_kilogram,
-    max_heart_rate: record.max_heart_rate
-  });
+  return sanitizeStructured(record);
 }
 
 function normalizeCycle(record: Record<string, unknown>, mode: PrivacyMode): Record<string, unknown> {
@@ -87,7 +78,7 @@ function normalizeCycle(record: Record<string, unknown>, mode: PrivacyMode): Rec
     max_heart_rate: first(record, [["score", "max_heart_rate"], ["max_heart_rate"]])
   });
   if (mode === "summary") return base;
-  return pickDefined({
+  return mergeStructured(record, {
     ...base,
     user_id: record.user_id,
     created_at: record.created_at,
@@ -108,7 +99,7 @@ function normalizeRecovery(record: Record<string, unknown>, mode: PrivacyMode): 
     hrv_rmssd_milli: first(record, [["score", "hrv_rmssd_milli"], ["hrv_rmssd_milli"]])
   });
   if (mode === "summary") return base;
-  return pickDefined({
+  return mergeStructured(record, {
     ...base,
     user_id: record.user_id,
     user_calibrating: first(record, [["score", "user_calibrating"], ["user_calibrating"]]),
@@ -131,7 +122,7 @@ function normalizeSleep(record: Record<string, unknown>, mode: PrivacyMode): Rec
     sleep_efficiency_percentage: first(record, [["score", "sleep_efficiency_percentage"], ["sleep_efficiency_pct"]])
   });
   if (mode === "summary") return base;
-  return pickDefined({
+  return mergeStructured(record, {
     ...base,
     user_id: record.user_id,
     created_at: record.created_at,
@@ -163,7 +154,7 @@ function normalizeWorkout(record: Record<string, unknown>, mode: PrivacyMode): R
     max_heart_rate: first(record, [["score", "max_heart_rate"], ["max_heart_rate"]])
   });
   if (mode === "summary") return base;
-  return pickDefined({
+  return mergeStructured(record, {
     ...base,
     user_id: record.user_id,
     created_at: record.created_at,
@@ -179,4 +170,28 @@ function normalizeWorkout(record: Record<string, unknown>, mode: PrivacyMode): R
     zone_four_milli: first(record, [["score", "zone_durations", "zone_four_milli"], ["zone_four_milli"]]),
     zone_five_milli: first(record, [["score", "zone_durations", "zone_five_milli"], ["zone_five_milli"]])
   });
+}
+
+function mergeStructured(record: Record<string, unknown>, normalized: Record<string, unknown>): Record<string, unknown> {
+  return pickDefined({ ...normalized, ...sanitizeStructured(record) });
+}
+
+function sanitizeStructured(record: Record<string, unknown>): Record<string, unknown> {
+  return sanitizeValue(record) as Record<string, unknown>;
+}
+
+function sanitizeValue(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(sanitizeValue);
+  if (!isObject(value)) return value;
+
+  return Object.fromEntries(
+    Object.entries(value)
+      .filter(([key]) => !/^(gps|latlng|start_latlng|end_latlng|map|polyline|summary_polyline|route)$/i.test(key))
+      .map(([key, nestedValue]) => [
+        key,
+        /^(access[_-]?token|refresh[_-]?token|id[_-]?token|client[_-]?secret|authorization|password|api[_-]?key)$/i.test(key)
+          ? "[REDACTED]"
+          : sanitizeValue(nestedValue),
+      ]),
+  );
 }

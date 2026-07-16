@@ -25,6 +25,19 @@ const recovery = {
 const structured = applyPrivacy('/v2/recovery', recovery, 'structured');
 assert.equal(structured.user_id, 99);
 assert.equal(structured.recovery_score, 88);
+assert.deepEqual(structured.score, recovery.score);
+
+const futureStructured = applyPrivacy('/v2/activity/sleep', {
+  id: 'sleep-future',
+  score_state: 'SCORED',
+  score: {
+    sleep_performance_percentage: 88,
+    futureStageMetric: 73,
+  },
+  futureMetrics: { sleepRegularity: 91 },
+}, 'structured');
+assert.equal(futureStructured.score.futureStageMetric, 73);
+assert.deepEqual(futureStructured.futureMetrics, { sleepRegularity: 91 });
 
 const summary = applyPrivacy('/v2/recovery', recovery, 'summary');
 assert.equal(summary.recovery_score, 88);

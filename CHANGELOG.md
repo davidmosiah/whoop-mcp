@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.5.4 - 2026-07-16
+
+### Fixed
+
+- Preserve complete upstream recovery, sleep, cycle and workout records in structured mode, including nested scores and future WHOOP fields, while redacting GPS and secret-bearing values.
+- Validate WHOOP `start` and `end` as timezone-aware ISO date-times and reject reversed or invalid ranges before any HTTP request.
+- Add an executable HTTP-boundary regression suite for exact date-time forwarding, cursor pagination, response extraction and pre-network validation.
+- Prove that summary collection failures propagate to the caller instead of being silently converted into partial success.
+
 ## 0.5.3 - 2026-06-27
 
 ### Added
