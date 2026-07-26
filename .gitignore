@@ -9,3 +9,6 @@ coverage/
 
 # MCP Registry local auth tokens
 .mcpregistry_*_token
+
+# Vercel CLI local artifacts
+.vercel/
