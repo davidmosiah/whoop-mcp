@@ -1,5 +1,5 @@
 import { URL, URLSearchParams } from "node:url";
-import { DEFAULT_LIMIT, MAX_WHOOP_LIMIT, WHOOP_API_BASE_URL, WHOOP_AUTH_URL, WHOOP_TOKEN_URL } from "../constants.js";
+import { DEFAULT_LIMIT, MAX_WHOOP_LIMIT, SERVER_NAME, SERVER_VERSION, WHOOP_API_BASE_URL, WHOOP_AUTH_URL, WHOOP_TOKEN_URL } from "../constants.js";
 import type { WhoopCollection, WhoopConfig, WhoopTokenSet } from "../types.js";
 import { disabledCacheStatus, WhoopCache, type CacheStatus } from "./cache.js";
 import { fetchWithCache, getCacheStats } from "./http-cache.js";
@@ -122,7 +122,7 @@ export class WhoopClient {
       headers: {
         Authorization: `Bearer ${token.access_token}`,
         Accept: "application/json",
-        "User-Agent": "whoop-mcp-server/0.1.0"
+        "User-Agent": `${SERVER_NAME}/${SERVER_VERSION}`
       },
       body: body ? JSON.stringify(body) : undefined
     });
@@ -134,7 +134,7 @@ export class WhoopClient {
         headers: {
           Authorization: `Bearer ${refreshed.access_token}`,
           Accept: "application/json",
-          "User-Agent": "whoop-mcp-server/0.1.0"
+          "User-Agent": `${SERVER_NAME}/${SERVER_VERSION}`
         },
         body: body ? JSON.stringify(body) : undefined
       });
@@ -192,7 +192,7 @@ export class WhoopClient {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
         Accept: "application/json",
-        "User-Agent": "whoop-mcp-server/0.1.0"
+        "User-Agent": `${SERVER_NAME}/${SERVER_VERSION}`
       },
       body: body.toString()
     });
