@@ -1,4 +1,25 @@
 import type { PrivacyMode, WhoopConfig } from "../types.js";
+import {
+  resolvePrivacyMode as resolvePrivacyModeKit,
+  type PrivacyEscalationOpts,
+  type PrivacyMode as KitPrivacyMode,
+} from "delx-mcp-kit";
+
+export type { PrivacyEscalationOpts };
+
+/** Resolve privacy mode via delx-mcp-kit (agent raw/gps escalation requires intent). */
+export function resolvePrivacyMode(
+  config: WhoopConfig,
+  override?: PrivacyMode,
+  opts?: PrivacyEscalationOpts,
+): PrivacyMode {
+  return resolvePrivacyModeKit(
+    { privacyMode: config.privacyMode as KitPrivacyMode },
+    override as KitPrivacyMode | undefined,
+    opts,
+  ) as PrivacyMode;
+}
+
 
 function isObject(value: unknown): value is Record<string, unknown> {
   return Boolean(value && typeof value === "object" && !Array.isArray(value));
@@ -23,27 +44,6 @@ function first(record: unknown, paths: string[][]): unknown {
 
 function pickDefined(input: Record<string, unknown>): Record<string, unknown> {
   return Object.fromEntries(Object.entries(input).filter(([, value]) => value !== undefined && value !== null));
-}
-
-export type PrivacyEscalationOpts = {
-  explicit_user_intent?: boolean;
-};
-
-/**
- * Agent-requested privacy_mode=raw requires explicit_user_intent=true.
- * Config-default raw (env) is allowed without per-call intent.
- */
-export function resolvePrivacyMode(
-  config: { privacyMode: PrivacyMode },
-  override?: PrivacyMode,
-  opts?: PrivacyEscalationOpts
-): PrivacyMode {
-  if (override === "raw" && opts?.explicit_user_intent !== true) {
-    throw new Error(
-      "USER_ACTION_REQUIRED: privacy_mode=raw requires explicit_user_intent=true after the user explicitly asked for unredacted payloads."
-    );
-  }
-  return override ?? config.privacyMode;
 }
 
 export function applyPrivacy(endpoint: string, payload: unknown, mode: PrivacyMode): unknown {
