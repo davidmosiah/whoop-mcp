@@ -72,7 +72,7 @@ function registerCollectionTool(server: McpServer, name: string, title: string, 
     async (params) => {
       try {
         const config = getConfig();
-        const privacyMode = resolvePrivacyMode(config, params.privacy_mode);
+        const privacyMode = resolvePrivacyMode(config, params.privacy_mode, { explicit_user_intent: (params as { explicit_user_intent?: boolean }).explicit_user_intent });
         const result = await new WhoopClient(config).list(endpoint, params);
         const records = applyPrivacy(endpoint, { records: result.records }, privacyMode) as { records: unknown[] };
         const output = {
@@ -121,7 +121,7 @@ function registerGetByIdTool(server: McpServer, name: string, title: string, end
     async (params) => {
       try {
         const config = getConfig();
-        const privacyMode = resolvePrivacyMode(config, params.privacy_mode);
+        const privacyMode = resolvePrivacyMode(config, params.privacy_mode, { explicit_user_intent: (params as { explicit_user_intent?: boolean }).explicit_user_intent });
         const endpoint = endpointBuilder(params.id);
         const data = applyPrivacy(endpoint, await new WhoopClient(config).get(endpoint), privacyMode);
         return makeResponse(
@@ -545,11 +545,11 @@ export function registerWhoopTools(server: McpServer): void {
       outputSchema: EndpointDataOutputSchema.shape,
       annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true }
     },
-    async ({ response_format, privacy_mode }) => {
+    async ({ response_format, privacy_mode, explicit_user_intent }) => {
       try {
         const config = getConfig();
         const endpoint = "/v2/user/profile/basic";
-        const privacyMode = resolvePrivacyMode(config, privacy_mode);
+        const privacyMode = resolvePrivacyMode(config, privacy_mode, { explicit_user_intent });
         const data = applyPrivacy(endpoint, await new WhoopClient(config).get(endpoint), privacyMode);
         return makeResponse({ endpoint, privacy_mode: privacyMode, data }, response_format, bulletList("WHOOP Profile", data as Record<string, unknown>));
       } catch (error) {
@@ -567,11 +567,11 @@ export function registerWhoopTools(server: McpServer): void {
       outputSchema: EndpointDataOutputSchema.shape,
       annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true }
     },
-    async ({ response_format, privacy_mode }) => {
+    async ({ response_format, privacy_mode, explicit_user_intent }) => {
       try {
         const config = getConfig();
         const endpoint = "/v2/user/measurement/body";
-        const privacyMode = resolvePrivacyMode(config, privacy_mode);
+        const privacyMode = resolvePrivacyMode(config, privacy_mode, { explicit_user_intent });
         const data = applyPrivacy(endpoint, await new WhoopClient(config).get(endpoint), privacyMode);
         return makeResponse({ endpoint, privacy_mode: privacyMode, data }, response_format, bulletList("WHOOP Body Measurements", data as Record<string, unknown>));
       } catch (error) {

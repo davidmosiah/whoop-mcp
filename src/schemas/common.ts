@@ -8,6 +8,11 @@ export const PrivacyModeValueSchema = z.enum(["summary", "structured", "raw"]);
 export const PrivacyModeSchema = PrivacyModeValueSchema.optional()
   .describe("Optional per-call payload privacy override. Defaults to WHOOP_PRIVACY_MODE or structured. raw returns full WHOOP API payloads, not raw device sensor streams.");
 
+export const ExplicitPrivacyIntentSchema = z
+  .boolean()
+  .optional()
+  .describe("Required true when privacy_mode=raw (agent escalation of redaction).");
+
 export const DateTimeSchema = z.string()
   .datetime({ offset: true })
   .optional()
@@ -23,17 +28,20 @@ export const CollectionInputSchema = z.object({
   max_pages: z.number().int().min(1).max(MAX_PAGES).default(DEFAULT_MAX_PAGES)
     .describe("Maximum pages to fetch when all_pages is true."),
   privacy_mode: PrivacyModeSchema,
+  explicit_user_intent: ExplicitPrivacyIntentSchema,
   response_format: ResponseFormatSchema
 }).strict();
 
 export const IdInputSchema = z.object({
   id: z.union([z.string().min(1), z.number().int().positive()]).describe("WHOOP resource id."),
   privacy_mode: PrivacyModeSchema,
+  explicit_user_intent: ExplicitPrivacyIntentSchema,
   response_format: ResponseFormatSchema
 }).strict();
 
 export const SimpleReadInputSchema = z.object({
   privacy_mode: PrivacyModeSchema,
+  explicit_user_intent: ExplicitPrivacyIntentSchema,
   response_format: ResponseFormatSchema
 }).strict();
 

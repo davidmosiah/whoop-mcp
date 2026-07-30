@@ -63,3 +63,18 @@ try {
 }
 
 console.log(JSON.stringify({ ok: true, privacy: true, cache: true, redaction: true, audit: true }, null, 2));
+
+// Agent raw escalation requires explicit_user_intent
+{
+  const { resolvePrivacyMode } = await import('../dist/services/privacy.js');
+  const cfg = { privacyMode: 'structured' };
+  try {
+    resolvePrivacyMode(cfg, 'raw', { explicit_user_intent: false });
+    assert.fail('raw without intent should throw');
+  } catch (e) {
+    assert.match(String(e.message || e), /USER_ACTION_REQUIRED|explicit_user_intent/i);
+  }
+  assert.equal(resolvePrivacyMode(cfg, 'raw', { explicit_user_intent: true }), 'raw');
+  assert.equal(resolvePrivacyMode({ privacyMode: 'raw' }), 'raw');
+  console.log(JSON.stringify({ ok: true, suite: 'privacy-escalation-gate' }, null, 2));
+}
