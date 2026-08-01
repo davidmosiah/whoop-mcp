@@ -1,3 +1,33 @@
+## 0.6.0 - 2026-08-01
+
+### Fixed
+
+- **`whoop_demo` was teaching agents a contract the server never returns.** Every
+  one of the 16 key paths in the `whoop_daily_summary` example was invented
+  (`date`, `recovery.score`, `sleep.stages.rem_min`, `strain.day_strain`,
+  `workouts`, …) while all 53 real ones were missing — an agent that wrote a
+  parser against the demo got zero fields on the first live call. Same class of
+  error in the other two samples: `whoop_wellness_context` invented 7 keys
+  (`window`, `recovery_band`, `sleep_performance`, `day_strain`, `hrv_ms`,
+  `resting_heart_rate`, `recommendation`) and omitted 26 including the whole
+  `data_quality`, `recommended_handoff` and `telegram_summary` blocks;
+  `whoop_list_recoveries` omitted the `endpoint` / `privacy_mode` / `next_token`
+  / `has_more` / `pages_fetched` envelope and 18 record fields.
+- **The worst one was silent:** the demo called HRV `hrv_ms` while the server
+  emits `hrv_rmssd_milli`, and showed `records[].score` as a NUMBER where the
+  real structured payload returns an OBJECT. An agent reading `score` there
+  "finds" the field and reads it wrong.
+- All three samples now match what the real tools return, key for key and type
+  for type, including the `next_token` pagination envelope.
+
+### Added
+
+- `npm run test:demo-contract` (wired into `npm test`): registers the real tools
+  on a real MCP server, drives them over a synthetic WHOOP API, and fails the
+  build in three directions — a key the demo invents, a contract key the demo
+  omits, and a shared key whose type disagrees. Arrays compare as the union of
+  their elements, so a partially scored record cannot hide half the shape.
+
 ## 0.5.7 - 2026-07-30
 
 ### Added / Fixed

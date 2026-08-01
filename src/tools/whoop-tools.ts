@@ -32,6 +32,7 @@ import {
 import { buildAgentManifest, formatAgentManifestMarkdown } from "../services/agent-manifest.js";
 import { buildPrivacyAudit } from "../services/audit.js";
 import { buildCapabilities } from "../services/capabilities.js";
+import { buildDemoPayload } from "../services/demo.js";
 import { buildDataInventory, formatInventoryMarkdown } from "../services/inventory.js";
 import { buildConnectionStatus } from "../services/connection-status.js";
 import { getConfig } from "../services/config.js";
@@ -269,7 +270,7 @@ export function registerWhoopTools(server: McpServer): void {
     {
       title: "WHOOP Demo",
       description:
-        "Returns realistic example payloads of whoop_daily_summary, whoop_wellness_context, and whoop_list_recoveries so agents see the contract before calling real WHOOP APIs.",
+        "Returns realistic example payloads of whoop_daily_summary, whoop_wellness_context, and whoop_list_recoveries so agents see the contract before calling real WHOOP APIs. Shapes are verified against the real tools by a build gate, so a parser written against this demo works on live data.",
       inputSchema: ResponseOnlyInputSchema.shape,
       annotations: {
         readOnlyHint: true,
@@ -279,47 +280,15 @@ export function registerWhoopTools(server: McpServer): void {
       }
     },
     async ({ response_format }) => {
-      const today = new Date().toISOString().slice(0, 10);
-      const payload = {
-        ok: true,
-        is_demo: true,
-        sample: {
-          whoop_daily_summary: {
-            date: today,
-            recovery: { score: 67, hrv_ms: 58, resting_heart_rate: 52 },
-            sleep: { performance: 88, duration_min: 462, efficiency: 91, stages: { rem_min: 96, deep_min: 78 } },
-            strain: { day_strain: 11.2, max_heart_rate: 162 },
-            workouts: 1,
-          },
-          whoop_wellness_context: {
-            window: "last_24h",
-            recovery_score: 67,
-            recovery_band: "moderate",
-            sleep_performance: 88,
-            day_strain: 11.2,
-            hrv_ms: 58,
-            resting_heart_rate: 52,
-            recommendation: "Moderate recovery + adequate sleep — green light for moderate intensity training. Consider a magnesium-rich meal to keep HRV trending up.",
-          },
-          whoop_list_recoveries: {
-            count: 3,
-            records: [
-              { date: today, score: 67, hrv_ms: 58 },
-              { date: yesterdayISO(), score: 72, hrv_ms: 61 },
-              { date: dayBeforeISO(), score: 54, hrv_ms: 49 },
-            ],
-          },
-        },
-        notes: [
-          "All sample data is synthetic; tagged with is_demo=true.",
-          "Real calls return live data from the WHOOP Developer API after OAuth setup.",
-        ],
-      };
+      const payload = buildDemoPayload();
+      const context = payload.sample.whoop_wellness_context;
       const markdown = bulletList("WHOOP Demo", {
         is_demo: true,
-        recovery_score: 67,
-        sleep_performance: 88,
-        recommendation: payload.sample.whoop_wellness_context.recommendation,
+        recovery_score: context.recovery_score,
+        sleep_score: context.sleep_score,
+        strain_score: context.strain_score,
+        recent_training_load: context.recent_training_load,
+        recommended_handoff: context.recommended_handoff.tool,
       });
       return makeResponse(payload, response_format, markdown);
     }
@@ -786,12 +755,4 @@ Each metric returns { avg, min, max, slope, direction, n_valid } where slope is 
   registerGetByIdTool(server, "whoop_get_workout", "WHOOP Workout", (id) => `/v2/activity/workout/${id}`, "Get one WHOOP workout by UUID. Requires read:workout scope.");
   registerGetByIdTool(server, "whoop_get_cycle_sleep", "WHOOP Cycle Sleep", (id) => `/v2/cycle/${id}/sleep`, "Get the sleep associated with a WHOOP cycle. Requires read:sleep scope. Not medical advice.");
   registerGetByIdTool(server, "whoop_get_cycle_recovery", "WHOOP Cycle Recovery", (id) => `/v2/cycle/${id}/recovery`, "Get the recovery associated with a WHOOP cycle. Requires read:recovery scope. Not medical advice.");
-}
-
-function yesterdayISO(): string {
-  return new Date(Date.now() - 86_400_000).toISOString().slice(0, 10);
-}
-
-function dayBeforeISO(): string {
-  return new Date(Date.now() - 2 * 86_400_000).toISOString().slice(0, 10);
 }
