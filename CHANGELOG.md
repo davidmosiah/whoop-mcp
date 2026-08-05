@@ -1,3 +1,31 @@
+## 0.6.1 - 2026-08-01
+
+### Fixed
+
+- **The README was still teaching the contract 0.6.0 deleted.** 0.6.0 fixed the
+  `whoop_demo` tool but nothing compared the README with it, so the first thing
+  a human reads on this repo kept advertising `whoop_daily_summary.recovery.hrv_ms`,
+  `sleep.duration_min`, `sleep.stages.rem_min`, `strain.day_strain`,
+  `wellness_context.recovery_band` and `records[].score: 67`. The server returns
+  `latest.recovery.hrv_rmssd_milli`, `latest.sleep.actual_sleep_hours`, no
+  `stages` block at all, and a `score` that is an **object**. Copying the old
+  README example produced a parser that reads `undefined` on every field without
+  raising anything.
+- The published `markdown` example was wrong too: it showed a `recommendation`
+  line the tool never prints and called sleep `sleep_performance` instead of
+  `sleep_score`, while omitting `strain_score`, `recent_training_load` and
+  `recommended_handoff`.
+- Both README examples are now generated from the real tool: 113 key paths,
+  their types and their values.
+
+### Added
+
+- `npm run test:readme-contract` (wired into `npm test`) parses the examples out
+  of README.md and compares them with a live `whoop_demo` call, failing in four
+  directions: a key the README invents, a key it omits, a shared key whose type
+  disagrees, and a scalar value gone stale. The example is read from the file,
+  never copied into the test — a copy would only move the drift one layer up.
+
 ## 0.6.0 - 2026-08-01
 
 ### Fixed

@@ -105,44 +105,184 @@ Call whoop_demo and explain what my daily WHOOP signals would look like.
 
 Default (`markdown`) output:
 
+<!-- whoop-demo-markdown:start -->
 ```text
 # WHOOP Demo
 
 - **is_demo**: true
 - **recovery_score**: 67
-- **sleep_performance**: 88
-- **recommendation**: Moderate recovery + adequate sleep — green light for moderate intensity training. Consider a magnesium-rich meal to keep HRV trending up.
+- **sleep_score**: 88
+- **strain_score**: 11.2
+- **recent_training_load**: normal
+- **recommended_handoff**: exercise_catalog_recommend_session
 ```
+<!-- whoop-demo-markdown:end -->
 
 With `response_format=json` you get the full shape the live tools return:
 
+<!-- whoop-demo-json:start -->
 ```json
 {
+  "ok": true,
   "is_demo": true,
   "sample": {
     "whoop_daily_summary": {
-      "date": "2026-05-29",
-      "recovery": { "score": 67, "hrv_ms": 58, "resting_heart_rate": 52 },
-      "sleep": { "performance": 88, "duration_min": 462, "efficiency": 91, "stages": { "rem_min": 96, "deep_min": 78 } },
-      "strain": { "day_strain": 11.2, "max_heart_rate": 162 },
-      "workouts": 1
+      "kind": "daily_summary",
+      "generated_at": "2026-05-01T09:20:00.000Z",
+      "lookback_days": 10,
+      "data_quality": {
+        "confidence": "high",
+        "counts": {
+          "recoveries": 8,
+          "sleeps": 8,
+          "cycles": 8,
+          "workouts": 3
+        },
+        "pages_fetched": {
+          "recoveries": 1,
+          "sleeps": 1,
+          "cycles": 1,
+          "workouts": 1
+        }
+      },
+      "latest": {
+        "recovery": {
+          "date": "2026-05-01, 6:12 a.m.",
+          "score": 67,
+          "band": "green",
+          "hrv_rmssd_milli": 58,
+          "hrv_delta_pct": -6,
+          "resting_heart_rate": 52,
+          "resting_hr_delta_bpm": 2,
+          "score_state": "SCORED"
+        },
+        "sleep": {
+          "start": "2026-04-30, 10:48 p.m.",
+          "performance_pct": 88,
+          "consistency_pct": 74,
+          "efficiency_pct": 91,
+          "actual_sleep_hours": 7.7,
+          "sleep_need_hours": 8.4,
+          "sleep_debt_hours": 0.6,
+          "awake_minutes": 26,
+          "disturbances": 5,
+          "score_state": "SCORED"
+        },
+        "cycle": {
+          "start": "2026-05-01, 5:04 a.m.",
+          "strain": 11.2,
+          "baseline_strain": 12.4,
+          "score_state": "SCORED"
+        },
+        "workout": {
+          "start": "2026-05-01, 6:35 a.m.",
+          "sport": "running",
+          "strain": 8.2,
+          "high_zone_minutes": 15,
+          "aerobic_minutes": 50,
+          "score_state": "SCORED"
+        }
+      },
+      "diagnostic": {
+        "primary_signal": "Recovery is 67 (green).",
+        "signals": [
+          "Recovery is 67 (green).",
+          "HRV is 58 ms (-6% vs recent baseline).",
+          "Resting HR is 52 bpm (2 bpm vs recent baseline).",
+          "Sleep performance is 88%; actual sleep 7.7h vs need 8.4h.",
+          "Latest cycle strain is 11.2 vs baseline 12.4.",
+          "Latest workout: running, strain 8.2."
+        ],
+        "action_candidates": [
+          "Training: good window for progressive load if sleep, soreness and schedule are aligned.",
+          "Cognition: schedule deep work during the most stable energy window; use shorter analytical blocks if readiness is low."
+        ],
+        "disclaimer": "Performance coaching only; not medical advice."
+      }
     },
     "whoop_wellness_context": {
-      "window": "last_24h", "recovery_score": 67, "recovery_band": "moderate",
-      "sleep_performance": 88, "day_strain": 11.2, "hrv_ms": 58, "resting_heart_rate": 52,
-      "recommendation": "Moderate recovery + adequate sleep — green light for moderate intensity training. Consider a magnesium-rich meal to keep HRV trending up."
+      "source": "whoop",
+      "context_contract_version": "delx-wellness-context/v1",
+      "context_type": "wellness_context",
+      "generated_at": "2026-05-01T09:20:00.000Z",
+      "recovery_score": 67,
+      "sleep_score": 88,
+      "strain_score": 11.2,
+      "recent_training_load": "normal",
+      "soreness": [],
+      "injury_flags": [],
+      "notes": [
+        "WHOOP recovery band: green.",
+        "Latest workout: running."
+      ],
+      "data_quality": {
+        "confidence": "high",
+        "counts": {
+          "recoveries": 8,
+          "sleeps": 8,
+          "cycles": 8,
+          "workouts": 3
+        },
+        "pages_fetched": {
+          "recoveries": 1,
+          "sleeps": 1,
+          "cycles": 1,
+          "workouts": 1
+        }
+      },
+      "recommended_handoff": {
+        "tool": "exercise_catalog_recommend_session",
+        "reason": "Use WHOOP recovery, sleep and strain to scale workout intensity and volume."
+      },
+      "telegram_summary": "WHOOP wellness context | Recovery: 67 | Sleep: 88 | Strain: 11.2 | Load: normal"
     },
     "whoop_list_recoveries": {
+      "endpoint": "/v2/recovery",
+      "privacy_mode": "structured",
       "count": 3,
       "records": [
-        { "date": "2026-05-29", "score": 67, "hrv_ms": 58 },
-        { "date": "2026-05-28", "score": 72, "hrv_ms": 61 },
-        { "date": "2026-05-27", "score": 54, "hrv_ms": 49 }
-      ]
+        {
+          "cycle_id": 93101,
+          "sleep_id": "1a2b3c4d-0000-4000-8000-000000000001",
+          "created_at": "2026-05-01T09:14:00.000Z",
+          "updated_at": "2026-05-01T09:14:00.000Z",
+          "score_state": "SCORED",
+          "recovery_score": 67,
+          "resting_heart_rate": 52,
+          "hrv_rmssd_milli": 58,
+          "user_id": 10000001,
+          "user_calibrating": false,
+          "spo2_percentage": 96.1,
+          "skin_temp_celsius": 33.7,
+          "score": {
+            "user_calibrating": false,
+            "recovery_score": 67,
+            "hrv_rmssd_milli": 58,
+            "resting_heart_rate": 52,
+            "spo2_percentage": 96.1,
+            "skin_temp_celsius": 33.7
+          }
+        }
+      ],
+      "next_token": "c3ludGhldGljLWRlbW8tcGFnZS0y",
+      "has_more": true,
+      "pages_fetched": 1
     }
-  }
+  },
+  "notes": [
+    "All sample data is synthetic; tagged with is_demo=true.",
+    "Real calls return live data from the WHOOP Developer API after OAuth setup.",
+    "Shapes are verified against the real tools by scripts/demo-contract-test.mjs on every build.",
+    "whoop_list_recoveries is shown in the default privacy_mode=structured; summary mode drops the nested score object.",
+    "Performance coaching only; not medical advice."
+  ]
 }
 ```
+<!-- whoop-demo-json:end -->
+
+The `records` array is trimmed to its first entry here; the live tool returns all
+three, each with the same keys. `records[].score` is the untouched WHOOP object,
+not a number — a parser that reads it as a scalar silently gets `undefined`.
 
 Once you finish OAuth setup below, `whoop_daily_summary`, `whoop_wellness_context` and `whoop_list_recoveries` return this same shape with your **live** WHOOP data.
 
@@ -377,3 +517,9 @@ MIT — see [LICENSE](LICENSE).
 ## Disclaimer
 
 This software is provided as-is. It is not a medical device, does not provide medical advice, and should not be used for diagnosis or treatment. Always consult qualified professionals for medical concerns.
+
+**Demo:** [docs/readme-demo-synthetic.md](docs/readme-demo-synthetic.md) (synthetic if no device recording).
+
+
+> Raw mode means official WHOOP API JSON, not continuous sensor streams.
+
