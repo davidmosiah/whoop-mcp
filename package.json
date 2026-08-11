@@ -1,6 +1,6 @@
 {
   "name": "whoop-mcp-unofficial",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "description": "Unofficial MCP server for connecting AI agents to the WHOOP API.",
   "type": "module",
   "bin": {
@@ -98,11 +98,11 @@
   "main": "dist/index.js",
   "overrides": {
     "qs": "6.15.2",
-    "hono": "4.12.27",
+    "hono": "4.13.1",
     "fast-uri": "3.1.5",
     "ip-address": "10.4.0",
     "esbuild": "0.28.1",
-    "@hono/node-server": "2.0.12",
+    "@hono/node-server": "2.1.0",
     "body-parser": "2.3.0"
   }
 }
