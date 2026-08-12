@@ -454,12 +454,17 @@ Test with MCP Inspector:
 npx @modelcontextprotocol/inspector node dist/index.js
 ```
 
-Optional local HTTP transport:
+## HTTP (v2 stateless)
+
+Default is **stdio**. Optional Streamable HTTP — no session id, JSON responses, loopback only:
 
 ```bash
-WHOOP_MCP_TRANSPORT=http WHOOP_MCP_PORT=3000 node dist/index.js
-curl http://127.0.0.1:3000/health
+npx -y whoop-mcp-unofficial --http
+# GET  http://127.0.0.1:3000/health
+# POST http://127.0.0.1:3000/mcp   (sessionless)
 ```
+
+Env: `WHOOP_MCP_HOST`, `WHOOP_MCP_PORT`, `WHOOP_MCP_TRANSPORT=http`.
 
 ## Docs
 
