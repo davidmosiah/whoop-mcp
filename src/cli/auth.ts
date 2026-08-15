@@ -28,9 +28,9 @@ export async function runAuthCommand(args: string[]): Promise<number> {
   const json = args.includes("--json");
   const config = getConfig();
   const redirect = parseLocalRedirectUri(config.redirectUri);
-  const state = randomBytes(4).toString("hex");
+  const state = randomBytes(16).toString("hex");
   const client = new WhoopClient(config);
-  const authUrl = client.authUrl(state);
+  const authUrl = await client.authUrl(state);
   const timeoutMs = Number(process.env.WHOOP_AUTH_TIMEOUT_MS ?? 300_000);
 
   const result = await waitForOAuthCode(redirect, state, timeoutMs, async (url) => {
@@ -54,7 +54,7 @@ export async function runAuthCommand(args: string[]): Promise<number> {
     if (!noOpen) openBrowser(url);
   }, authUrl);
 
-  const exchange = await client.exchangeCode(result.code);
+  const exchange = await client.exchangeCode(result.code, state);
   const output = {
     ok: true,
     token_path: exchange.token_path,

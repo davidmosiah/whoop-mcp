@@ -1,4 +1,5 @@
 import { URL, URLSearchParams } from "node:url";
+import { dirname } from "node:path";
 import { DEFAULT_LIMIT, MAX_WHOOP_LIMIT, SERVER_NAME, SERVER_VERSION, WHOOP_API_BASE_URL, WHOOP_AUTH_URL, WHOOP_TOKEN_URL } from "../constants.js";
 import type { WhoopCollection, WhoopConfig, WhoopTokenSet } from "../types.js";
 import { disabledCacheStatus, WhoopCache, type CacheStatus } from "./cache.js";
@@ -6,6 +7,7 @@ import { fetchWithCache, getCacheStats } from "./http-cache.js";
 import { fetchWithRetry as fetchWithRetryMiddleware } from "./http-retry.js";
 import { redactErrorMessage } from "./redaction.js";
 import { TokenStore } from "./token-store.js";
+import { PkceStore } from "./pkce-store.js";
 
 export interface ListParams {
   start?: string;
@@ -18,24 +20,29 @@ export interface ListParams {
 
 export class WhoopClient {
   private readonly tokenStore: TokenStore;
+  private readonly pkceStore: PkceStore;
   private cache?: WhoopCache;
 
   constructor(private readonly config: WhoopConfig) {
     this.tokenStore = new TokenStore(config.tokenPath);
+    this.pkceStore = new PkceStore(dirname(config.tokenPath));
   }
 
-  authUrl(state?: string, scopes?: string[]): string {
+  async authUrl(state: string, scopes?: string[]): Promise<string> {
+    const session = await this.pkceStore.createSession(state);
     const params = new URLSearchParams({
       client_id: this.config.clientId,
       redirect_uri: this.config.redirectUri,
       response_type: "code",
-      scope: (scopes?.length ? scopes : this.config.scopes).join(" ")
+      scope: (scopes?.length ? scopes : this.config.scopes).join(" "),
+      code_challenge: session.code_challenge,
+      code_challenge_method: "S256"
     });
-    if (state) params.set("state", state);
+    params.set("state", state);
     return `${WHOOP_AUTH_URL}?${params.toString()}`;
   }
 
-  async exchangeCode(input: string): Promise<{ ok: true; token_path: string; scope?: string; expires_at?: number }> {
+  async exchangeCode(input: string, state?: string): Promise<{ ok: true; token_path: string; scope?: string; expires_at?: number }> {
     const code = this.extractCode(input);
     const body = new URLSearchParams({
       grant_type: "authorization_code",
@@ -45,8 +52,17 @@ export class WhoopClient {
       client_secret: this.config.clientSecret
     });
 
+    if (state) {
+      const session = await this.pkceStore.getSession(state);
+      if (session) {
+        body.set("code_verifier", session.code_verifier);
+        await this.pkceStore.deleteSession(state);
+      }
+    }
+
     const tokens = await this.requestTokens(body);
     await this.tokenStore.withLock(async () => this.tokenStore.write(tokens));
+    await this.pkceStore.cleanup();
     return { ok: true, token_path: this.config.tokenPath, scope: tokens.scope, expires_at: tokens.expires_at };
   }
 
@@ -181,8 +197,13 @@ export class WhoopClient {
         client_secret: this.config.clientSecret
       });
       const refreshed = await this.requestTokens(body);
-      await this.tokenStore.write({ ...current, ...refreshed });
-      return { ...current, ...refreshed };
+      const merged = {
+        ...current,
+        ...refreshed,
+        refresh_token: refreshed.refresh_token ?? current.refresh_token
+      };
+      await this.tokenStore.write(merged);
+      return merged;
     });
   }
 

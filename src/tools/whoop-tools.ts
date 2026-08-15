@@ -459,13 +459,16 @@ export function registerWhoopTools(server: McpServer): void {
     },
     async (params) => {
       try {
+        const { randomBytes } = await import("node:crypto");
         const config = getConfig();
-        const url = new WhoopClient(config).authUrl(params.state, params.scopes);
+        const state = params.state ?? randomBytes(16).toString("hex");
+        const url = await new WhoopClient(config).authUrl(state, params.scopes);
         const output = {
           auth_url: url,
           redirect_uri: config.redirectUri,
           scopes: params.scopes?.length ? params.scopes : config.scopes,
-          next_step: "Open auth_url, approve access, then pass the returned code or full redirect URL to whoop_exchange_code."
+          state,
+          next_step: "Open auth_url, approve access, then pass the returned code (and state from the redirect URL) to whoop_exchange_code."
         };
         return makeResponse(output, params.response_format, bulletList("WHOOP OAuth URL", output));
       } catch (error) {
@@ -490,7 +493,7 @@ export function registerWhoopTools(server: McpServer): void {
     },
     async (params) => {
       try {
-        const result = await client().exchangeCode(params.code);
+        const result = await client().exchangeCode(params.code, params.state);
         const output = {
           ok: result.ok,
           token_path: result.token_path,

@@ -67,6 +67,7 @@ export const AuthUrlInputSchema = z.object({
 
 export const ExchangeCodeInputSchema = z.object({
   code: z.string().min(1).describe("OAuth authorization code, or a full redirect URL containing ?code=..."),
+  state: z.string().optional().describe("Optional OAuth state from the redirect URL. Recommended for PKCE verification."),
   response_format: ResponseFormatSchema
 }).strict();
 
