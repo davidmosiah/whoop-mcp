@@ -1,3 +1,10 @@
+## 0.6.4 - 2026-08-26
+
+### Security
+
+- Preserve existing refresh token when WHOOP omits it on refresh.
+- OAuth authorization now uses PKCE S256 and 128-bit state.
+
 ## 0.6.1 - 2026-08-01
 
 ### Fixed
