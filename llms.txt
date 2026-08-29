@@ -17,3 +17,6 @@ MCP command: whoop-mcp-server
 - Use demo-capture for public WHOOP recovery demos; it writes a privacy-sanitized transcript and blocks secrets, local paths, raw payloads, exact recovery numbers and exact sleep details.
 - Tokens stay local under ~/.whoop-mcp/tokens.json (or equivalent) and should never be printed.
 - Not medical advice. Use as trend context only — outputs are operational context, not medical, legal or financial advice.
+
+Skill (same gates, no MCP client required): skill/SKILL.md
+npx -y whoop-mcp-unofficial call <tool> --json '{...}'

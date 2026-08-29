@@ -5,12 +5,14 @@ import { getOnboardingFlow, getProfilePath } from "../services/profile-store.js"
 import { runAuthCommand } from "./auth.js";
 import { runDemoCaptureCommand } from "./demo-capture.js";
 import { runSetupCommand } from "./setup.js";
+import { runToolCall } from "./tool-calls.js";
 
 export async function runCliCommand(args: string[]): Promise<number | undefined> {
   const [command, ...rest] = args;
   if (!command || command === "--http") return undefined;
   if (command === "setup") return runSetupCommand(rest);
   if (command === "doctor" || command === "status") return runDoctor(rest);
+  if (command === "call") return runToolCall(rest);
   if (command === "auth") return runAuthCommand(rest);
   if (command === "demo-capture") return runDemoCaptureCommand(rest);
   if (command === "onboarding") return runOnboarding(rest);
@@ -154,6 +156,8 @@ Usage:
   whoop-mcp-server onboarding      Print the shared Delx wellness onboarding flow (11 questions)
   whoop-mcp-server onboarding --pt-BR
                                    Print the onboarding flow in pt-BR
+  whoop-mcp-server call <tool> [--json '{...}']
+                                   Same tools as MCP (skill path; gates identical)
 
 Required env:
   WHOOP_CLIENT_ID
