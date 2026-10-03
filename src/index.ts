@@ -9,6 +9,7 @@ import { runCliCommand } from "./cli/commands.js";
 import { registerWhoopPrompts } from "./prompts/whoop-prompts.js";
 import { registerWhoopResources } from "./resources/whoop-resources.js";
 import { registerWhoopTools } from "./tools/whoop-tools.js";
+import { installClientSafeToolSchemas } from "./services/client-safe-json-schema.js";
 
 function createServer(): McpServer {
   const server = new McpServer({
@@ -17,6 +18,7 @@ function createServer(): McpServer {
   });
 
   registerWhoopTools(server);
+  installClientSafeToolSchemas(server);
   registerWhoopResources(server);
   registerWhoopPrompts(server);
   return server;

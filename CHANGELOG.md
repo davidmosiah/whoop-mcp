@@ -1,3 +1,10 @@
+## 0.6.6 - 2026-10-03
+
+### Fixed
+
+- Advertise tool input and output schemas as JSON Schema 2020-12 so Claude Desktop can discover and invoke tools without a draft-07 dialect error. Tool metadata and runtime Zod validation are preserved for both stdio and HTTP.
+- Extend protocol smoke tests to compile all advertised schemas with Ajv2020, validate structured results, and reject invalid arguments without WHOOP credentials or health data.
+
 ## 0.6.5 - 2026-08-29
 
 Skill layer ships in-package (`skill/SKILL.md`). Agents can use MCP tools **or** `call <tool> --json` on the same binary; mutation gates stay identical.
