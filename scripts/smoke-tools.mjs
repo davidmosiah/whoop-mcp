@@ -4,6 +4,9 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+import { AjvJsonSchemaValidator } from '@modelcontextprotocol/sdk/validation/ajv';
+import Ajv2020 from 'ajv/dist/2020.js';
+import addFormats from 'ajv-formats';
 
 const expectedTools = [
   'whoop_agent_manifest', 'whoop_cache_status', 'whoop_capabilities', 'whoop_connection_status',
@@ -27,13 +30,17 @@ const expectedPrompts = [
   'whoop_weekly_training_review'
 ];
 
-const client = new Client({ name: 'whoop-mcp-smoke-test', version: '0.0.0' });
+const ajv = new Ajv2020({ strictSchema: true, validateSchema: true, allErrors: true });
+addFormats(ajv);
+const client = new Client({ name: 'whoop-mcp-smoke-test', version: '0.0.0' }, {
+  jsonSchemaValidator: new AjvJsonSchemaValidator(ajv)
+});
 const homeDir = mkdtempSync(join(tmpdir(), 'whoop-mcp-smoke-'));
 const transport = new StdioClientTransport({
   command: 'node',
   args: ['dist/index.js'],
   env: {
-    ...process.env,
+    PATH: process.env.PATH,
     HOME: homeDir,
     WHOOP_CLIENT_ID: '',
     WHOOP_CLIENT_SECRET: '',
@@ -47,6 +54,25 @@ try {
   const tools = await client.listTools();
   const toolNames = tools.tools.map((tool) => tool.name).sort();
   assert.deepEqual(toolNames, expectedTools.sort());
+  assert.equal(tools.tools.filter((tool) => tool.outputSchema).length, 25, 'retain advertised output contracts');
+  for (const tool of tools.tools) {
+    for (const key of ['inputSchema', 'outputSchema']) {
+      if (!tool[key]) continue;
+      assert.equal(tool[key].$schema, 'https://json-schema.org/draft/2020-12/schema', `${tool.name}.${key}`);
+      assert.doesNotThrow(() => ajv.compile(tool[key]), `${tool.name}.${key} must compile with Ajv2020`);
+    }
+  }
+  const inventoryTool = tools.tools.find((tool) => tool.name === 'whoop_data_inventory');
+  assert.equal(inventoryTool.title, 'WHOOP Data Inventory');
+  assert.match(inventoryTool.description, /Does not call WHOOP APIs/);
+  assert.deepEqual(inventoryTool.annotations, {
+    readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false
+  });
+  const collectionInput = ajv.compile(tools.tools.find((tool) => tool.name === 'whoop_list_cycles').inputSchema);
+  assert.equal(collectionInput({ limit: 0 }), false, 'advertised input bounds remain enforced');
+  const invalidInput = await client.callTool({ name: 'whoop_list_cycles', arguments: { limit: 0 } });
+  assert.equal(invalidInput.isError, true, 'runtime Zod validation remains enforced');
+  assert.match(invalidInput.content[0].text, /Input validation error/);
 
   const resources = await client.listResources();
   const resourceUris = resources.resources.map((resource) => resource.uri).sort();
@@ -80,6 +106,10 @@ try {
   const inventoryResult = await client.callTool({ name: 'whoop_data_inventory', arguments: { response_format: 'json' } });
   assert.equal(inventoryResult.structuredContent?.kind, 'data_inventory');
   assert.equal(typeof inventoryResult.structuredContent?.source, 'string');
+  const inventoryOutput = ajv.compile(inventoryTool.outputSchema);
+  assert.equal(inventoryOutput(inventoryResult.structuredContent), true);
+  const { kind: _kind, ...invalidInventory } = inventoryResult.structuredContent;
+  assert.equal(inventoryOutput(invalidInventory), false, 'required output fields remain enforced');
 
   const manifestResult = await client.callTool({
     name: 'whoop_agent_manifest',
