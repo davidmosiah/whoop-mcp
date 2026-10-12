@@ -33,4 +33,6 @@ The manual MCP flow:
 3. `whoop_exchange_code`
 4. Data tools and summaries
 
+Custom OAuth state values must not contain forward slashes, backslashes or null bytes. The PKCE store rejects these values before accessing the filesystem. Generated state values and other path-free custom values continue to work.
+
 Tokens rotate during refresh. This server uses a local lock file to reduce refresh-token races when multiple agents call the server concurrently.

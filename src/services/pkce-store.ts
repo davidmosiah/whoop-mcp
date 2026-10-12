@@ -15,10 +15,14 @@ export class PkceStore {
   constructor(private readonly storePath: string) {}
 
   private sessionPath(state: string): string {
+    if (state.includes("/") || state.includes("\\") || state.includes("\0")) {
+      throw new Error("Invalid OAuth state: path separators and null bytes are not allowed.");
+    }
     return join(this.storePath, `pkce-${state}.json`);
   }
 
   async createSession(state: string): Promise<PkceSession> {
+    const sessionPath = this.sessionPath(state);
     const code_verifier = generateCodeVerifier();
     const code_challenge = computeCodeChallenge(code_verifier);
     const session: PkceSession = {
@@ -29,7 +33,6 @@ export class PkceStore {
     };
 
     await fs.mkdir(this.storePath, { recursive: true, mode: 0o700 });
-    const sessionPath = this.sessionPath(state);
     const tmp = `${sessionPath}.tmp-${process.pid}`;
     await fs.writeFile(tmp, JSON.stringify(session, null, 2), { mode: 0o600 });
     await fs.rename(tmp, sessionPath);
