@@ -1,8 +1,9 @@
-## Unreleased
+## 0.6.7 - 2026-10-17
 
 ### Security
 
-- Raise stale npm override pins so Dependabot can resolve patched transitives: `qs@6.16.0`, `hono@4.13.7`, `fast-uri@3.1.8`, `ip-address@10.7.1`. Published package version is unchanged.
+- Reject OAuth `state` values containing `/`, `\` or null bytes before any PKCE storage access. Caller-supplied state was interpolated into PKCE session filenames next to `tokens.json`, so a crafted value passed to `whoop_get_auth_url` or `whoop_exchange_code` could overwrite or delete the token file or other reachable JSON files. Generated and other path-free custom states keep working. Thanks to @smkrv (#25).
+- Raise stale npm override pins so Dependabot can resolve patched transitives: `qs@6.16.0`, `hono@4.13.7`, `fast-uri@3.1.8`, `ip-address@10.7.1`.
 
 ## 0.6.6 - 2026-10-03
 
