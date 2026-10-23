@@ -10,6 +10,7 @@
 //   2. init.cache_ttl === 0                  (per-call opt-out)
 //   3. Non-GET method                         (POST/PUT/DELETE never cached)
 //   4. Response status >= 400                 (don't cache errors)
+//   5. Authorization or Cookie header present (never share authenticated data)
 //
 // No new npm dependencies — Node built-ins only.
 
@@ -46,7 +47,9 @@ export async function fetchWithCache(
   const method = (nativeInit.method ?? "GET").toUpperCase();
 
   const bypassEnv = options.envVarBypass ? process.env[options.envVarBypass] === "true" : false;
-  const bypass = bypassEnv || ttlSeconds === 0 || method !== "GET";
+  const headers = new Headers(nativeInit.headers);
+  const authenticated = headers.has("authorization") || headers.has("cookie");
+  const bypass = bypassEnv || ttlSeconds === 0 || method !== "GET" || authenticated;
 
   if (!bypass) {
     const key = cacheKey(method, url);
