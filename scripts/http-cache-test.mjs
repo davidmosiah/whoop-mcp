@@ -150,4 +150,55 @@ clearCache();
   assert.equal(stats.hit_rate, 0, 'empty cache must yield hit_rate=0 not NaN');
 }
 
-console.log(JSON.stringify({ ok: true, suite: 'http-cache' }, null, 2));
+// Owner regression: the URL-only cache otherwise reuses anonymous or another
+// account's response. Existing smoke cases never send credentials. Exercise the
+// public wrapper with its existing innerFetch seam, without network or tokens.
+const headerForms = [
+  ['object', (name, value) => ({ [name]: value })],
+  ['Headers', (name, value) => new Headers({ [name]: value })],
+  ['pairs', (name, value) => [[name, value]]],
+];
+let authenticatedCases = 0;
+for (const headerName of ['aUtHoRiZaTiOn', 'cOoKiE']) {
+  for (const [form, makeHeaders] of headerForms) {
+    for (const empty of [false, true]) {
+      const label = `${headerName}/${form}/${empty ? 'empty' : 'valued'}`;
+      const url = 'https://api.example/v1/private';
+      const valueA = empty ? '' : 'synthetic-A';
+      const valueB = empty ? '' : 'synthetic-B';
+      let calls = 0;
+      const inner = async (_url, init) => {
+        calls += 1;
+        const headers = new Headers(init?.headers);
+        return okResponse(JSON.stringify({ account: headers.has(headerName) ? headers.get(headerName) : 'anonymous' }));
+      };
+      const opts = { innerFetch: inner, defaultTtlSeconds: 60 };
+
+      clearCache();
+      await fetchWithCache(url, {}, opts);
+      for (const value of [valueA, valueB, valueB]) {
+        const response = await fetchWithCache(url, { headers: makeHeaders(headerName, value) }, opts);
+        assert.equal((await response.json()).account, value, `${label}: authenticated request must not read a cached response`);
+      }
+      assert.equal(calls, 4, `${label}: even repeated credentials must reach innerFetch`);
+      assert.deepEqual(getCacheStats(), { size: 1, hit_count: 0, miss_count: 1, hit_rate: 0 });
+      const anonymous = await fetchWithCache(url, {}, opts);
+      assert.equal((await anonymous.json()).account, 'anonymous', `${label}: authenticated response must not replace anonymous cache`);
+      assert.equal(calls, 4);
+
+      clearCache();
+      calls = 0;
+      await fetchWithCache(url, { headers: makeHeaders(headerName, valueA) }, opts);
+      assert.deepEqual(getCacheStats(), { size: 0, hit_count: 0, miss_count: 0, hit_rate: 0 }, `${label}: authenticated response must not populate cache`);
+      const firstAnonymous = await fetchWithCache(url, {}, opts);
+      const cachedAnonymous = await fetchWithCache(url, {}, opts);
+      assert.equal((await firstAnonymous.json()).account, 'anonymous');
+      assert.equal((await cachedAnonymous.json()).account, 'anonymous');
+      assert.equal(calls, 2, `${label}: anonymous caching must remain effective`);
+      authenticatedCases += 1;
+    }
+  }
+}
+clearCache();
+
+console.log(JSON.stringify({ ok: true, suite: 'http-cache', authenticatedCases }, null, 2));
