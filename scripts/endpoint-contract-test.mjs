@@ -86,6 +86,7 @@ try {
     const storage = {
       get(method, requestUrl) { calls.gets++; return cached.get(`${method} ${requestUrl}`); },
       set(method, requestUrl, payload) { calls.sets++; cached.set(`${method} ${requestUrl}`, payload); },
+      status() { return { enabled: true, path: 'synthetic-cache.sqlite', entries: cached.size }; },
     };
     scoped.getCache = () => { calls.opens++; return storage; };
     let credential = 'synthetic-A';
@@ -127,6 +128,8 @@ try {
     assert.equal(calls.gets, 0, `${scenario.name}: authenticated errors must not read fallback`);
     assert.equal(calls.sets, 0, `${scenario.name}: authenticated successes must not persist payloads`);
     assert.deepEqual([...cached.entries()], [[key, stale]], `${scenario.name}: existing cache entries stay untouched`);
+    assert.equal(scoped.cacheStatus().enabled, false, `${scenario.name}: cache status must not report a persistent cache that authenticated reads never use`);
+    assert.equal(calls.opens, 0, `${scenario.name}: cache status must not open persistent cache`);
     assert.equal(calls.refreshes, scenario.refresh ? 1 : 0, scenario.name);
     assert.deepEqual(calls.requests.map(r => r.url), Array(scenario.refresh ? 3 : 2).fill(url), scenario.name);
     assert.deepEqual(calls.requests.map(r => r.authorization), [

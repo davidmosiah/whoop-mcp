@@ -37,7 +37,7 @@ try {
   assert.equal(ready.ok, true);
   assert.equal(ready.ready_for_whoop_api, true);
   assert.equal(ready.privacy_mode, 'summary');
-  assert.equal(ready.cache.enabled, true);
+  assert.equal(ready.cache.enabled, false, 'WHOOP_CACHE must not report an active cache: authenticated responses are never cached');
   assert.equal(ready.token.exists, true);
   assert.equal(ready.token.secure_permissions, true);
   assert.equal(ready.token.has_refresh_token, true);

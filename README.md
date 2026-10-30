@@ -409,7 +409,7 @@ WHOOP_REDIRECT_URI=http://127.0.0.1:3000/callback
 # Optional
 WHOOP_SCOPES="read:recovery read:cycles read:workout read:sleep read:profile read:body_measurement"
 WHOOP_PRIVACY_MODE=structured        # summary | structured | raw
-WHOOP_CACHE=sqlite                   # optional read-through cache
+WHOOP_CACHE=sqlite                   # no effect: authenticated responses are never cached
 WHOOP_TOKEN_PATH=~/.whoop-mcp/tokens.json
 WHOOP_CACHE_PATH=~/.whoop-mcp/cache.sqlite
 ```
