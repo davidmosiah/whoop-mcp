@@ -33,7 +33,7 @@
     "dev": "tsx src/index.ts",
     "demo:capture": "npm run build && node dist/index.js demo-capture",
     "smoke": "node scripts/smoke-tools.mjs",
-    "test": "npm run typecheck && npm run build && npm run smoke && npm run smoke:http && npm run test:security && npm run test:endpoint-contracts && npm run test:summary && npm run test:demo-contract && npm run test:readme-contract && npm run test:privacy-cache && npm run test:cli-ux && npm run test:agent-readiness && npm run test:hermes-agent && npm run test:metadata && npm run test:demo-capture && npm run test:http-retry && npm run test:http-cache && npm run test:skill-surface && npm run test:input-limits && npm run test:scorecard-gate",
+    "test": "npm run typecheck && npm run build && npm run smoke && npm run smoke:http && npm run test:security && npm run test:endpoint-contracts && npm run test:summary && npm run test:demo-contract && npm run test:readme-contract && npm run test:privacy-cache && npm run test:cli-ux && npm run test:agent-readiness && npm run test:hermes-agent && npm run test:metadata && npm run test:demo-capture && npm run test:http-retry && npm run test:http-cache && npm run test:skill-surface && npm run test:input-limits && npm run test:scorecard-gate && npm run test:profile-boundaries && npm run test:profile-storage",
     "test:security": "node scripts/security-test.mjs && node --test scripts/pkce-state-test.mjs",
     "test:endpoint-contracts": "node scripts/endpoint-contract-test.mjs",
     "test:demo-contract": "node scripts/demo-contract-test.mjs",
@@ -51,7 +51,9 @@
     "test:http-cache": "node scripts/http-cache-test.mjs",
     "test:skill-surface": "node scripts/test-skill-surface.mjs",
     "test:input-limits": "node scripts/input-limits-test.mjs",
-    "test:scorecard-gate": "node scripts/scorecard-gate-test.mjs"
+    "test:scorecard-gate": "node scripts/scorecard-gate-test.mjs",
+    "test:profile-boundaries": "node scripts/test-profile-validation.mjs && node scripts/test-profile-io.mjs && node scripts/test-profile-boundaries.mjs",
+    "test:profile-storage": "node scripts/test-profile-storage.mjs"
   },
   "keywords": [
     "mcp",
