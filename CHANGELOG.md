@@ -1,4 +1,13 @@
-## Unreleased
+## 0.7.0 - 2026-11-02
+
+### Security and compatibility
+
+- Release the merged input, profile-storage and local-only HTTP hardening. Unsafe remote HTTP bindings, invalid/oversized profile values, profile symlinks, compressed requests and excessive tool arguments are rejected.
+- Authenticated responses are not served from the legacy cross-account cache. Existing cache files are not automatically removed.
+- This pre-1.0 minor release includes compatibility restrictions; see [the migration guide](docs/migration-0.7.0.md).
+- Align package, server and runtime release metadata; expand the existing CI matrix to Node.js 20/22/24 without changing permissions.
+
+### Previously unreleased changes
 
 ### Security
 
@@ -6,7 +15,7 @@
 
 ## 0.6.7 - 2026-10-17
 
-## Unreleased
+### Previously unreleased changes
 
 - Update vulnerable dependencies and explicitly bound tool arguments to 10,000 elements.
 - Reject compressed HTTP request bodies; add synthetic stdio/HTTP input-limit regressions.
