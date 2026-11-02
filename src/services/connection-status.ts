@@ -113,7 +113,7 @@ export async function buildConnectionStatus(options: ConnectionStatusOptions = {
     },
     token,
     cache: {
-      enabled: parseBool(value("WHOOP_CACHE")),
+      enabled: false,
       path: cachePath
     },
     client_checks: clientChecks,
@@ -124,10 +124,6 @@ export async function buildConnectionStatus(options: ConnectionStatusOptions = {
 function parsePrivacyMode(value: string | undefined): PrivacyMode {
   if (value === "summary" || value === "structured" || value === "raw") return value;
   return "structured";
-}
-
-function parseBool(value: string | undefined): boolean {
-  return Boolean(value && ["1", "true", "yes", "on", "sqlite"].includes(value.toLowerCase()));
 }
 
 function isLocalHttpRedirect(value: string): boolean {

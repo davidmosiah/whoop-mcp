@@ -585,7 +585,7 @@ export function registerWhoopTools(server: McpServer): void {
     "whoop_cache_status",
     {
       title: "WHOOP Cache Status",
-      description: "Show optional local SQLite cache status. Enable with WHOOP_CACHE=sqlite or WHOOP_CACHE=true.",
+      description: "Show local cache status. Authenticated WHOOP responses are never cached, so WHOOP_CACHE has no effect and the SQLite cache stays off.",
       inputSchema: ResponseOnlyInputSchema.shape,
       outputSchema: CacheStatusOutputSchema.shape,
       annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }

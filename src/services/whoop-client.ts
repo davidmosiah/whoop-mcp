@@ -2,7 +2,7 @@ import { URL, URLSearchParams } from "node:url";
 import { dirname } from "node:path";
 import { DEFAULT_LIMIT, MAX_WHOOP_LIMIT, SERVER_NAME, SERVER_VERSION, WHOOP_API_BASE_URL, WHOOP_AUTH_URL, WHOOP_TOKEN_URL } from "../constants.js";
 import type { WhoopCollection, WhoopConfig, WhoopTokenSet } from "../types.js";
-import { disabledCacheStatus, WhoopCache, type CacheStatus } from "./cache.js";
+import { disabledCacheStatus, type CacheStatus } from "./cache.js";
 import { fetchWithCache, getCacheStats } from "./http-cache.js";
 import { fetchWithRetry as fetchWithRetryMiddleware } from "./http-retry.js";
 import { redactErrorMessage } from "./redaction.js";
@@ -21,7 +21,6 @@ export interface ListParams {
 export class WhoopClient {
   private readonly tokenStore: TokenStore;
   private readonly pkceStore: PkceStore;
-  private cache?: WhoopCache;
 
   constructor(private readonly config: WhoopConfig) {
     this.tokenStore = new TokenStore(config.tokenPath);
@@ -90,8 +89,8 @@ export class WhoopClient {
       default_ttl_seconds: 60,
       bypass_env_var: "WHOOP_NO_CACHE"
     };
-    if (!this.config.cacheEnabled) return { ...disabledCacheStatus(this.config.cachePath), http_cache };
-    return { ...this.getCache().status(), http_cache };
+    // Authenticated responses are never cached, so the SQLite cache stays off even when configured.
+    return { ...disabledCacheStatus(this.config.cachePath), http_cache };
   }
 
   async list(path: string, params: ListParams = {}): Promise<{ records: unknown[]; next_token?: string; pages_fetched: number }> {
@@ -154,10 +153,11 @@ export class WhoopClient {
         },
         body: body ? JSON.stringify(body) : undefined
       });
-      return this.parseAndCache(method, url, retry);
+      return this.parseResponse(retry);
     }
 
-    return this.parseAndCache(method, url, response);
+    // Authenticated payloads must not use a persistent cache keyed only by method and URL.
+    return this.parseResponse(response);
   }
 
   private buildUrl(path: string, params?: Record<string, string | number | boolean | undefined>): string {
@@ -234,34 +234,13 @@ export class WhoopClient {
     if (response.status === 429) {
       const retryAfter = parseRetryAfterSeconds(response.headers.get("retry-after"));
       const retryHint = retryAfter !== undefined ? `retry in ${retryAfter} seconds` : "retry after a short backoff";
-      throw new Error(`WHOOP API HTTP 429: Rate limited by WHOOP — ${retryHint} (or enable caching with WHOOP_CACHE=sqlite to reduce calls).`);
+      throw new Error(`WHOOP API HTTP 429: Rate limited by WHOOP — ${retryHint}.`);
     }
     if (!response.ok) {
       const details = payload && typeof payload === "object" ? JSON.stringify(payload) : text;
       throw new Error(`WHOOP API HTTP ${response.status}: ${redactErrorMessage(details || response.statusText)}`);
     }
     return payload ?? {};
-  }
-
-  private async parseAndCache(method: "GET" | "DELETE", url: string, response: Response): Promise<unknown> {
-    try {
-      const payload = await this.parseResponse(response);
-      if (this.config.cacheEnabled && method === "GET") {
-        this.getCache().set(method, url, payload);
-      }
-      return payload;
-    } catch (error) {
-      if (this.config.cacheEnabled && method === "GET") {
-        const cached = this.getCache().get(method, url);
-        if (cached !== undefined) return cached;
-      }
-      throw error;
-    }
-  }
-
-  private getCache(): WhoopCache {
-    this.cache ??= new WhoopCache(this.config.cachePath);
-    return this.cache;
   }
 
   private async fetchWithRetry(url: string, init: RequestInit): Promise<Response> {

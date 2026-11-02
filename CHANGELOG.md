@@ -1,4 +1,15 @@
+## Unreleased
+
+### Security
+
+- Authenticated WHOOP responses are no longer stored in or served from the HTTP or SQLite cache, which was keyed only by method and URL and could return one account's data to another. `WHOOP_CACHE` is still accepted but has no effect, and cache status, connection status and the privacy audit now report the cache as off. Delete `~/.whoop-mcp/cache.sqlite` to remove entries written by earlier versions.
+
 ## 0.6.7 - 2026-10-17
+
+## Unreleased
+
+- Update vulnerable dependencies and explicitly bound tool arguments to 10,000 elements.
+- Reject compressed HTTP request bodies; add synthetic stdio/HTTP input-limit regressions.
 
 ### Security
 
