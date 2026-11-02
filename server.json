@@ -53,7 +53,7 @@
         },
         {
           "name": "WHOOP_CACHE",
-          "description": "Optional SQLite cache toggle. Set to true or sqlite to enable.",
+          "description": "No effect: authenticated WHOOP responses are never cached. Accepted for compatibility.",
           "isRequired": false,
           "format": "string",
           "isSecret": false
