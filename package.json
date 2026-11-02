@@ -33,7 +33,7 @@
     "dev": "tsx src/index.ts",
     "demo:capture": "npm run build && node dist/index.js demo-capture",
     "smoke": "node scripts/smoke-tools.mjs",
-    "test": "npm run typecheck && npm run build && npm run smoke && npm run smoke:http && npm run test:security && npm run test:endpoint-contracts && npm run test:summary && npm run test:demo-contract && npm run test:readme-contract && npm run test:privacy-cache && npm run test:cli-ux && npm run test:agent-readiness && npm run test:hermes-agent && npm run test:metadata && npm run test:demo-capture && npm run test:http-retry && npm run test:http-cache && npm run test:skill-surface",
+    "test": "npm run typecheck && npm run build && npm run smoke && npm run smoke:http && npm run test:security && npm run test:endpoint-contracts && npm run test:summary && npm run test:demo-contract && npm run test:readme-contract && npm run test:privacy-cache && npm run test:cli-ux && npm run test:agent-readiness && npm run test:hermes-agent && npm run test:metadata && npm run test:demo-capture && npm run test:http-retry && npm run test:http-cache && npm run test:skill-surface && npm run test:input-limits",
     "test:security": "node scripts/security-test.mjs && node --test scripts/pkce-state-test.mjs",
     "test:endpoint-contracts": "node scripts/endpoint-contract-test.mjs",
     "test:demo-contract": "node scripts/demo-contract-test.mjs",
@@ -49,7 +49,8 @@
     "test:demo-capture": "node dist/index.js demo-capture --fixture --assert-sanitized --output /tmp/whoop-demo-capture.json --markdown /tmp/whoop-demo-capture.md",
     "test:http-retry": "node scripts/http-retry-test.mjs",
     "test:http-cache": "node scripts/http-cache-test.mjs",
-    "test:skill-surface": "node scripts/test-skill-surface.mjs"
+    "test:skill-surface": "node scripts/test-skill-surface.mjs",
+    "test:input-limits": "node scripts/input-limits-test.mjs"
   },
   "keywords": [
     "mcp",
@@ -67,12 +68,12 @@
     "url": "https://github.com/sponsors/davidmosiah"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@modelcontextprotocol/sdk": "^1.32.2",
     "better-sqlite3": "^12.9.0",
     "cors": "^2.8.6",
     "delx-mcp-kit": "^0.1.0",
     "express": "^5.2.1",
-    "zod": "^4.4.1"
+    "zod": "^4.6.6"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",
@@ -102,12 +103,12 @@
   },
   "main": "dist/index.js",
   "overrides": {
-    "qs": "6.16.0",
-    "hono": "4.13.7",
-    "fast-uri": "3.1.8",
-    "ip-address": "10.7.1",
+    "qs": "6.16.1",
+    "hono": "4.13.11",
+    "fast-uri": "3.1.9",
+    "ip-address": "10.7.4",
     "esbuild": "0.28.1",
-    "@hono/node-server": "2.1.0",
-    "body-parser": "2.3.0"
+    "@hono/node-server": "2.1.3",
+    "body-parser": "2.4.0"
   }
 }

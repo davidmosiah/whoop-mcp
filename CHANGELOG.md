@@ -1,5 +1,10 @@
 ## 0.6.7 - 2026-10-17
 
+## Unreleased
+
+- Update vulnerable dependencies and explicitly bound tool arguments to 10,000 elements.
+- Reject compressed HTTP request bodies; add synthetic stdio/HTTP input-limit regressions.
+
 ### Security
 
 - Reject OAuth `state` values containing `/`, `\` or null bytes before any PKCE storage access. Caller-supplied state was interpolated into PKCE session filenames next to `tokens.json`, so a crafted value passed to `whoop_get_auth_url` or `whoop_exchange_code` could overwrite or delete the token file or other reachable JSON files. Generated and other path-free custom states keep working. Thanks to @smkrv (#25).
