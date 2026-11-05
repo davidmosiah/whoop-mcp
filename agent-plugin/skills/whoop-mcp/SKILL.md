@@ -6,7 +6,7 @@ description: >-
 
 # WHOOP
 
-MCP server `whoop` from the `whoop-mcp-unofficial@0.6.7` npm package, run locally through `npx`. It reads recovery, HRV, resting heart rate, sleep stages and performance, strain, cycles and workouts. Data source: the official WHOOP OAuth API (v2).
+MCP server `whoop` from the `whoop-mcp-unofficial@0.7.0` npm package, run locally through `npx`. It reads recovery, HRV, resting heart rate, sleep stages and performance, strain, cycles and workouts. Data source: the official WHOOP OAuth API (v2).
 
 ## Workflow
 
@@ -17,9 +17,9 @@ MCP server `whoop` from the `whoop-mcp-unofficial@0.6.7` npm package, run locall
 ## Setup (the user runs this in a terminal, not in chat)
 
 ```bash
-npx -y whoop-mcp-unofficial@0.6.7 setup --client generic
-npx -y whoop-mcp-unofficial@0.6.7 auth
-npx -y whoop-mcp-unofficial@0.6.7 doctor
+npx -y whoop-mcp-unofficial@0.7.0 setup --client generic
+npx -y whoop-mcp-unofficial@0.7.0 auth
+npx -y whoop-mcp-unofficial@0.7.0 doctor
 ```
 
 `setup` asks for the WHOOP developer app client ID and secret and saves them locally (`--client generic` because this plugin already registers the server with Hermes); `auth` opens the WHOOP consent page in the browser and stores the OAuth tokens under `~/.whoop-mcp/` with 0600 permissions; `doctor` confirms readiness.

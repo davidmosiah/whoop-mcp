@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "whoop-mcp",
-  "version": "0.6.7",
+  "version": "0.7.0",
   "description": "Read the user's WHOOP recovery, HRV, sleep and strain through the local whoop MCP server.",
   "author": {
     "name": "David Mosiah",
