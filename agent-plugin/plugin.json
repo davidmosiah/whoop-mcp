@@ -1,0 +1,23 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "whoop-mcp",
+  "version": "0.6.7",
+  "description": "Read the user's WHOOP recovery, HRV, sleep and strain through the local whoop MCP server.",
+  "author": {
+    "name": "David Mosiah",
+    "url": "https://github.com/davidmosiah"
+  },
+  "homepage": "https://github.com/davidmosiah/whoop-mcp",
+  "repository": "https://github.com/davidmosiah/whoop-mcp",
+  "license": "MIT",
+  "keywords": [
+    "ai-agents",
+    "fitness",
+    "health",
+    "hermes",
+    "mcp",
+    "model-context-protocol",
+    "wearable",
+    "whoop"
+  ]
+}
