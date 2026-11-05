@@ -6,7 +6,7 @@
       "command": "npx",
       "args": [
         "-y",
-        "whoop-mcp-unofficial@0.6.7"
+        "whoop-mcp-unofficial@0.7.0"
       ],
       "cwd": "${PLUGIN_DATA}"
     }
